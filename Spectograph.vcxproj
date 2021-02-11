@@ -88,9 +88,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="Spectograph.qrc" />
-  </ItemGroup>
-  <ItemGroup>
     <QtMoc Include="include\Spectograph.h" />
   </ItemGroup>
   <ItemGroup>

@@ -24,11 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="Spectograph.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
     <QtMoc Include="include\Spectograph.h">
       <Filter>Header Files</Filter>
     </QtMoc>
