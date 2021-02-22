@@ -1,10 +1,10 @@
-#include "Spectograph.h"
+#include "SpectrographUI.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Spectograph w;
+    SpectrographUI w;
     w.show();
     return a.exec();
 }

@@ -50,12 +50,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;multimedia;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;multimedia;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
@@ -88,11 +88,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtMoc Include="include\Spectograph.h" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\FrequencySpectrum.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SettingsDialog.cpp" />
+    <ClCompile Include="src\Spectrograph.cpp" />
+    <ClCompile Include="src\SpectrographUI.cpp" />
+    <ClCompile Include="src\SpectrumAnalyser.cpp" />
+    <ClCompile Include="src\utils.cpp" />
+    <ClCompile Include="src\Waveform.cpp" />
+    <ClCompile Include="src\WavFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Spectograph.cpp" />
+    <QtMoc Include="include\SettingsDialog.h" />
+    <ClInclude Include="include\Spectrum.h" />
+    <QtMoc Include="include\SpectrumAnalyser.h" />
+    <QtMoc Include="include\Engine.h" />
+    <ClInclude Include="include\FrequencySpectrum.h" />
+    <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\WavFile.h" />
+    <QtMoc Include="include\Waveform.h" />
+    <QtMoc Include="include\SpectrographUI.h" />
+    <QtMoc Include="include\Spectrograph.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Resource.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
