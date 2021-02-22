@@ -24,7 +24,8 @@ HEADERS += include/Spectrograph.h \
            include/SettingsDialog.h \
            include/Spectrum.h \
            include/SpectrumAnalyser.h \
-           include/WavFile.h
+           include/WavFile.h \
+           include/ProgressBar.h
 
 SOURCES += src/main.cpp \
            src/Spectrograph.cpp \
@@ -35,6 +36,7 @@ SOURCES += src/main.cpp \
            src/Engine.cpp \
            src/SettingsDialog.cpp \
            src/SpectrumAnalyser.cpp \
-           src/WavFile.cpp
+           src/WavFile.cpp \
+           src/ProgressBar.cpp
 
 RESOURCES = Resource.qrc
