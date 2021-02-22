@@ -34,7 +34,7 @@ SpectrumAnalyserThread::SpectrumAnalyserThread(QObject* parent)
 SpectrumAnalyserThread::~SpectrumAnalyserThread()
 {
 #ifndef DISABLE_FFT
-    delete m_fft;
+    //delete m_fft;
 #endif
 }
 

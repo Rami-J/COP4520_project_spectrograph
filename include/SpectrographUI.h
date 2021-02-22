@@ -4,6 +4,7 @@
 #include "Spectrograph.h"
 #include "Engine.h"
 #include "SettingsDialog.h"
+#include "ProgressBar.h"
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QVBoxLayout>
@@ -31,6 +32,8 @@ public:
 public slots:
     void stateChanged(QAudio::Mode mode, QAudio::State state);
     void formatChanged(const QAudioFormat& format);
+    void bufferLengthChanged(qint64 length);
+    void audioPositionChanged(qint64 position);
 
 private slots:
     void showFileDialog();
@@ -46,9 +49,10 @@ private:
     void quitApplication();
 
     Engine* m_engine;
+    ProgressBar* m_progressBar;
     SettingsDialog* m_settingsDialog;
     Waveform* m_waveform;
-    Spectrograph* m_spectrograph;
+    //Spectrograph* m_spectrograph;
     QMenu* m_fileMenu;
     QAction* m_openFileAct;
     QAction* m_exitAct;

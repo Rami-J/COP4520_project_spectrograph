@@ -21,8 +21,8 @@ Waveform::Waveform(QWidget* parent)
     , m_windowPosition(0)
     , m_windowLength(0)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    setMinimumHeight(50);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setMinimumHeight(100);
 }
 
 Waveform::~Waveform()

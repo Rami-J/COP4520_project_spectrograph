@@ -4,6 +4,7 @@ SpectrographUI::SpectrographUI(QWidget *parent)
     : QMainWindow(parent)
     , m_engine(new Engine(this))
     , m_waveform(new Waveform(this))
+    , m_progressBar(new ProgressBar(this))
     , m_pauseButton(new QPushButton(this))
     , m_playButton(new QPushButton(this))
     , m_settingsButton(new QPushButton(this))
@@ -30,12 +31,17 @@ void SpectrographUI::createLayouts()
     QWidget* centralWidget = new QWidget(this);
     centralWidget->setLayout(mainLayout);
 
-    QScopedPointer<QHBoxLayout> waveformLayout(new QHBoxLayout);
+    /*QScopedPointer<QHBoxLayout> waveformLayout(new QHBoxLayout);
     waveformLayout->setContentsMargins(0, 0, 0, 0);
     m_waveform->setLayout(waveformLayout.data());
     waveformLayout.take();
-    mainLayout->addWidget(new QLabel("Spectrum Waveform"));
+    */
+    QLabel* waveformLabel = new QLabel("Spectrum Waveform");
+    waveformLabel->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(waveformLabel);
+    
     mainLayout->addWidget(m_waveform);
+    mainLayout->addWidget(m_progressBar);
 
     // Button panel
     const QSize buttonSize(30, 30);
@@ -153,27 +159,21 @@ void SpectrographUI::connectUI()
     connect(m_engine, &Engine::formatChanged,
         this, &SpectrographUI::formatChanged);
 
-    /*m_progressBar->bufferLengthChanged(m_engine->bufferLength());
+    m_progressBar->bufferLengthChanged(m_engine->bufferLength());
 
     connect(m_engine, &Engine::bufferLengthChanged,
-        this, &SpectrographUI::bufferLengthChanged);*/
+        this, &SpectrographUI::bufferLengthChanged);
 
     connect(m_engine, &Engine::dataLengthChanged,
         this, &SpectrographUI::updateButtonStates);
 
-   /*connect(m_engine, &Engine::recordPositionChanged,
-        m_progressBar, &ProgressBar::recordPositionChanged);
-
     connect(m_engine, &Engine::playPositionChanged,
         m_progressBar, &ProgressBar::playPositionChanged);
 
-    connect(m_engine, &Engine::recordPositionChanged,
-        this, &MainWidget::audioPositionChanged);
-
     connect(m_engine, &Engine::playPositionChanged,
-        this, &MainWidget::audioPositionChanged);
+        this, &SpectrographUI::audioPositionChanged);
 
-    connect(m_engine, &Engine::levelChanged,
+    /*connect(m_engine, &Engine::levelChanged,
         m_levelMeter, &LevelMeter::levelChanged);
 
     connect(m_engine, QOverload<qint64, qint64, const FrequencySpectrum&>::of(&Engine::spectrumChanged),
@@ -218,6 +218,20 @@ void SpectrographUI::formatChanged(const QAudioFormat& format)
                 WaveformWindowDuration);
         }
     #endif
+}
+
+void SpectrographUI::bufferLengthChanged(qint64 length)
+{
+    m_progressBar->bufferLengthChanged(length);
+}
+
+void SpectrographUI::audioPositionChanged(qint64 position)
+{
+#ifndef DISABLE_WAVEFORM
+    m_waveform->audioPositionChanged(position);
+#else
+    Q_UNUSED(position)
+#endif
 }
 
 void SpectrographUI::resetUI()

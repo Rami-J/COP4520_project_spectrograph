@@ -91,6 +91,7 @@
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\FrequencySpectrum.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ProgressBar.cpp" />
     <ClCompile Include="src\SettingsDialog.cpp" />
     <ClCompile Include="src\Spectrograph.cpp" />
     <ClCompile Include="src\SpectrographUI.cpp" />
@@ -101,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\SettingsDialog.h" />
+    <QtMoc Include="include\ProgressBar.h" />
     <ClInclude Include="include\Spectrum.h" />
     <QtMoc Include="include\SpectrumAnalyser.h" />
     <QtMoc Include="include\Engine.h" />

@@ -21,7 +21,7 @@
 QT_FORWARD_DECLARE_CLASS(QAudioFormat)
 QT_FORWARD_DECLARE_CLASS(QThread)
 
-class FFTRealWrapper;
+//class FFTRealWrapper;
 
 class SpectrumAnalyserThreadPrivate;
 
@@ -51,7 +51,7 @@ private:
 
 private:
 #ifndef DISABLE_FFT
-    FFTRealWrapper* m_fft;
+    //FFTRealWrapper* m_fft;
 #endif
 
     const int                                   m_numSamples;
