@@ -26,9 +26,11 @@ class SpectrographUI : public QMainWindow
 
 public:
     SpectrographUI(QWidget *parent = Q_NULLPTR);
+    Engine* getEngine();
 
 public slots:
     void stateChanged(QAudio::Mode mode, QAudio::State state);
+    void formatChanged(const QAudioFormat& format);
 
 private slots:
     void showFileDialog();

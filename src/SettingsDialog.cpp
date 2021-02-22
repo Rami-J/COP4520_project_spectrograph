@@ -1,4 +1,5 @@
 #include "SettingsDialog.h"
+#include "SpectrographUI.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -7,6 +8,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
+#include <QDebug>
 
 SettingsDialog::SettingsDialog(
     const QList<QAudioDeviceInfo>& availableInputDevices,
@@ -19,6 +21,8 @@ SettingsDialog::SettingsDialog(
     , m_windowFunctionComboBox(new QComboBox(this))
 {
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
+
+    m_parentEngine = static_cast<SpectrographUI*>(parent)->getEngine();
 
     // Populate combo boxes
 
@@ -98,10 +102,12 @@ void SettingsDialog::windowFunctionChanged(int index)
 void SettingsDialog::inputDeviceChanged(int index)
 {
     m_inputDevice = m_inputDeviceComboBox->itemData(index).value<QAudioDeviceInfo>();
+    m_parentEngine->setAudioOutputDevice(this->inputDevice());
 }
 
 void SettingsDialog::outputDeviceChanged(int index)
 {
     m_outputDevice = m_outputDeviceComboBox->itemData(index).value<QAudioDeviceInfo>();
+    m_parentEngine->setAudioOutputDevice(this->outputDevice());
 }
 

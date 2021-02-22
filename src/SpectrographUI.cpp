@@ -97,6 +97,11 @@ void SpectrographUI::createMenus()
     m_fileMenu->addAction(m_exitAct);
 }
 
+Engine* SpectrographUI::getEngine()
+{
+    return m_engine;
+}
+
 void SpectrographUI::showFileDialog()
 {
     const QString dir;
@@ -145,10 +150,10 @@ void SpectrographUI::connectUI()
     connect(m_engine, &Engine::stateChanged,
         this, &SpectrographUI::stateChanged);
 
-    /*connect(m_engine, &Engine::formatChanged,
+    connect(m_engine, &Engine::formatChanged,
         this, &SpectrographUI::formatChanged);
 
-    m_progressBar->bufferLengthChanged(m_engine->bufferLength());
+    /*m_progressBar->bufferLengthChanged(m_engine->bufferLength());
 
     connect(m_engine, &Engine::bufferLengthChanged,
         this, &SpectrographUI::bufferLengthChanged);*/
@@ -156,7 +161,7 @@ void SpectrographUI::connectUI()
     connect(m_engine, &Engine::dataLengthChanged,
         this, &SpectrographUI::updateButtonStates);
 
-   /* connect(m_engine, &Engine::recordPositionChanged,
+   /*connect(m_engine, &Engine::recordPositionChanged,
         m_progressBar, &ProgressBar::recordPositionChanged);
 
     connect(m_engine, &Engine::playPositionChanged,
@@ -201,6 +206,18 @@ void SpectrographUI::stateChanged(QAudio::Mode mode, QAudio::State state)
         //m_levelMeter->reset();
         //m_spectrograph->reset();
     }
+}
+
+void SpectrographUI::formatChanged(const QAudioFormat& format)
+{
+    //infoMessage(formatToString(format), NullMessageTimeout);
+
+    #ifndef DISABLE_WAVEFORM
+        if (QAudioFormat() != format) {
+            m_waveform->initialize(format, WaveformTileLength,
+                WaveformWindowDuration);
+        }
+    #endif
 }
 
 void SpectrographUI::resetUI()
