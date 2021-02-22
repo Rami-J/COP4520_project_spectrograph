@@ -1,4 +1,4 @@
-#include "settingsdialog.h"
+#include "SettingsDialog.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>

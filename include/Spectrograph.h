@@ -1,7 +1,7 @@
 #ifndef SPECTROGRAPH_H
 #define SPECTROGRAPH_H
 
-#include "frequencyspectrum.h"
+#include "FrequencySpectrum.h"
 
 #include <QWidget>
 

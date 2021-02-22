@@ -1,4 +1,4 @@
-#include "waveform.h"
+#include "Waveform.h"
 #include "utils.h"
 #include <QPainter>
 #include <QResizeEvent>

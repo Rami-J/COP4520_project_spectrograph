@@ -1,4 +1,4 @@
-#include "spectrumanalyser.h"
+#include "SpectrumAnalyser.h"
 #include "utils.h"
 //#include "fftreal_wrapper.h"
 

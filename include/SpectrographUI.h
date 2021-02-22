@@ -10,7 +10,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QMenubar>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
