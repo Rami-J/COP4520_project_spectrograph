@@ -1,5 +1,5 @@
-#include "progressbar.h"
-#include "spectrum.h"
+#include "ProgressBar.h"
+#include "Spectrum.h"
 #include <QPainter>
 
 ProgressBar::ProgressBar(QWidget* parent)
