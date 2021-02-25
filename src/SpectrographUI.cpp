@@ -25,21 +25,14 @@ SpectrographUI::SpectrographUI(QWidget *parent)
 
 void SpectrographUI::createLayouts()
 {
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);;
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    QHBoxLayout* mediaLayout = new QHBoxLayout(this);;
     QWidget* centralWidget = new QWidget(this);
     centralWidget->setLayout(mainLayout);
 
-    /*QScopedPointer<QHBoxLayout> waveformLayout(new QHBoxLayout);
-    waveformLayout->setContentsMargins(0, 0, 0, 0);
-    m_waveform->setLayout(waveformLayout.data());
-    waveformLayout.take();
-    */
     QLabel* waveformLabel = new QLabel("Spectrum Waveform");
     waveformLabel->setAlignment(Qt::AlignCenter);
     mainLayout->addWidget(waveformLabel);
-    
     mainLayout->addWidget(m_waveform);
     mainLayout->addWidget(m_progressBar);
 
@@ -78,17 +71,16 @@ void SpectrographUI::createLayouts()
     QScopedPointer<QHBoxLayout> bottomPaneLayout(new QHBoxLayout);
     bottomPaneLayout->addWidget(buttonPanel);
     mainLayout->addLayout(bottomPaneLayout.data());
-    bottomPaneLayout.take(); // ownership transferred to windowLayout
-
+    bottomPaneLayout.take(); // ownership transferred to mainLayout
 
     setCentralWidget(centralWidget);
 }
 
 void SpectrographUI::createActions()
 {
-    m_openFileAct = new QAction(tr("&Open Audio File"), this);
+    m_openFileAct = new QAction(tr("&Open WAV File"), this);
     m_openFileAct->setShortcuts(QKeySequence::Open);
-    m_openFileAct->setStatusTip(tr("Open an audio file to analyze"));
+    m_openFileAct->setStatusTip(tr("Open a wav file to analyze"));
     connect(m_openFileAct, &QAction::triggered, this, &SpectrographUI::showFileDialog);
 
     m_exitAct = new QAction(tr("&Exit"), this);
@@ -108,13 +100,28 @@ Engine* SpectrographUI::getEngine()
     return m_engine;
 }
 
+void SpectrographUI::showWarningDialog(QString msg, QString informativeMsg)
+{
+	QMessageBox msgBox;
+	msgBox.setText(msg);
+	msgBox.setInformativeText(informativeMsg);
+    msgBox.setIcon(QMessageBox::Icon::Warning);
+	msgBox.exec();
+}
+
 void SpectrographUI::showFileDialog()
 {
     const QString dir;
     const QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open WAV file"), dir, "*.wav");
     if (fileNames.count()) {
         resetUI();
-        m_engine->loadFile(fileNames.front());
+
+        if (!m_engine->loadFile(fileNames.front()))
+		{
+            showWarningDialog("Failed to load WAV file.",
+                              "The file may contain invalid headers.");
+		}
+
         updateButtonStates();
     }
 }

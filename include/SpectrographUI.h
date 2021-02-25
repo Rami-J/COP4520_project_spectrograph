@@ -9,6 +9,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
@@ -18,6 +19,7 @@
 #include <QtGui/QIcon>
 #include <QCoreApplication>
 #include <QStyle>
+#include <QString>
 #include <QFileDialog>
 #include <QtMultimedia/QAudio>
 
@@ -46,6 +48,7 @@ private:
     void createMenus();
     void connectUI();
     void resetUI();
+	void showWarningDialog(QString msg, QString informativeMsg = "");
     void quitApplication();
 
     Engine* m_engine;

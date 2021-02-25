@@ -110,11 +110,13 @@ bool Engine::loadFile(const QString& fileName)
             result = initialize();
         }
         else {
+            qDebug("Audio format not supported.");
             emit errorMessage(tr("Audio format not supported"),
                 Utils::formatToString(m_file->fileFormat()));
         }
     }
     else {
+        qDebug("Could not open file.");
         emit errorMessage(tr("Could not open file"), fileName);
     }
     if (result) {

@@ -70,7 +70,6 @@ bool WavFile::readHeader()
             && memcmp(&header.riff.type, "WAVE", 4) == 0
             && memcmp(&header.wave.descriptor.id, "fmt ", 4) == 0
             && (header.wave.audioFormat == 1 || header.wave.audioFormat == 0)) {
-
             // Read off remaining header information
             DATAHeader dataHeader;
 
@@ -102,6 +101,7 @@ bool WavFile::readHeader()
         }
         else {
             result = false;
+            qDebug("Failed to open WAV file, invalid header.");
         }
     }
     m_headerLength = pos();
