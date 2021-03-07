@@ -8,10 +8,8 @@ SpectrographUI::SpectrographUI(QWidget *parent)
     , m_pauseButton(new QPushButton(this))
     , m_playButton(new QPushButton(this))
     , m_settingsButton(new QPushButton(this))
-    , m_settingsDialog(new SettingsDialog(
-                    m_engine->availableAudioInputDevices(),
-                    m_engine->availableAudioOutputDevices(),
-                    this))
+    , m_settingsDialog(new SettingsDialog(m_engine->availableAudioOutputDevices(),
+                                          this))
 {
     createLayouts();
     createActions();
@@ -130,7 +128,6 @@ void SpectrographUI::showSettingsDialog()
 {
     m_settingsDialog->exec();
     if (m_settingsDialog->result() == QDialog::Accepted) {
-        m_engine->setAudioInputDevice(m_settingsDialog->inputDevice());
         m_engine->setAudioOutputDevice(m_settingsDialog->outputDevice());
         m_engine->setWindowFunction(m_settingsDialog->windowFunction());
     }

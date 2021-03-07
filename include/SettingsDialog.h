@@ -23,27 +23,22 @@ QT_END_NAMESPACE
     Q_OBJECT
 
 public:
-    SettingsDialog(const QList<QAudioDeviceInfo>& availableInputDevices,
-        const QList<QAudioDeviceInfo>& availableOutputDevices,
-        QWidget* parent = 0);
+    SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDevices,
+                   QWidget* parent = 0);
     ~SettingsDialog();
 
     WindowFunction windowFunction() const { return m_windowFunction; }
-    const QAudioDeviceInfo& inputDevice() const { return m_inputDevice; }
     const QAudioDeviceInfo& outputDevice() const { return m_outputDevice; }
 
 private slots:
     void windowFunctionChanged(int index);
-    void inputDeviceChanged(int index);
     void outputDeviceChanged(int index);
 
 private:
     WindowFunction   m_windowFunction;
-    QAudioDeviceInfo m_inputDevice;
     QAudioDeviceInfo m_outputDevice;
     Engine* m_parentEngine;
 
-    QComboBox* m_inputDeviceComboBox;
     QComboBox* m_outputDeviceComboBox;
     QComboBox* m_windowFunctionComboBox;
 };

@@ -12,6 +12,8 @@
 #include <QDir>
 #include <QObject>
 #include <QVector>
+#include <QAudioDecoder>
+#include <QAudioFormat>
 
 #ifdef DUMP_CAPTURED_AUDIO
 #define DUMP_DATA
@@ -40,11 +42,6 @@ QT_END_NAMESPACE
 public:
     explicit Engine(QObject* parent = 0);
     ~Engine();
-
-    const QList<QAudioDeviceInfo>& availableAudioInputDevices() const
-    {
-        return m_availableAudioInputDevices;
-    }
 
     const QList<QAudioDeviceInfo>& availableAudioOutputDevices() const
     {
@@ -79,17 +76,6 @@ public:
      * Generate tone
      */
     bool generateSweptTone(qreal amplitude);
-
-    /**
-     * Initialize for recording
-     */
-    bool initializeRecord();
-
-    /**
-     * Position of the audio input device.
-     * \return Position in bytes.
-     */
-    qint64 recordPosition() const { return m_recordPosition; }
 
     /**
      * RMS level of the most recently processed set of audio samples.
@@ -127,10 +113,8 @@ public:
     void setWindowFunction(WindowFunction type);
 
 public slots:
-    void startRecording();
     void startPlayback();
     void suspend();
-    void setAudioInputDevice(const QAudioDeviceInfo& device);
     void setAudioOutputDevice(const QAudioDeviceInfo& device);
 
 signals:
@@ -162,12 +146,6 @@ signals:
      * \param Length of data in bytes
      */
     void dataLengthChanged(qint64 duration);
-
-    /**
-     * Position of the audio input device has changed.
-     * \param position Position in bytes
-     */
-    void recordPositionChanged(qint64 position);
 
     /**
      * Position of the audio output device has changed.
@@ -208,12 +186,10 @@ private:
     void resetAudioDevices();
     bool initialize();
     bool selectFormat();
-    void stopRecording();
     void stopPlayback();
     void setState(QAudio::State state);
     void setState(QAudio::Mode mode, QAudio::State state);
     void setFormat(const QAudioFormat& format);
-    void setRecordPosition(qint64 position, bool forceEmit = false);
     void setPlayPosition(qint64 position, bool forceEmit = false);
     void calculateLevel(qint64 position, qint64 length);
     void calculateSpectrum(qint64 position);
@@ -240,13 +216,12 @@ private:
     // for analysis
     WavFile* m_analysisFile;
 
+    QAudioDecoder* m_decoder;
+
     QAudioFormat        m_format;
 
-    const QList<QAudioDeviceInfo> m_availableAudioInputDevices;
-    QAudioDeviceInfo    m_audioInputDevice;
     QAudioInput* m_audioInput;
     QIODevice* m_audioInputIODevice;
-    qint64              m_recordPosition;
 
     const QList<QAudioDeviceInfo> m_availableAudioOutputDevices;
     QAudioDeviceInfo    m_audioOutputDevice;

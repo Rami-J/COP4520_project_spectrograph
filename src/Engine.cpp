@@ -28,17 +28,14 @@ const int    LevelWindowUs = 0.1 * 1000000;
 
 Engine::Engine(QObject* parent)
     : QObject(parent)
+    , m_decoder(new QAudioDecoder(this))
     , m_mode(QAudio::AudioInput)
     , m_state(QAudio::StoppedState)
     , m_generateTone(false)
     , m_file(0)
     , m_analysisFile(0)
-    , m_availableAudioInputDevices
-    (QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
-    , m_audioInputDevice(QAudioDeviceInfo::defaultInputDevice())
     , m_audioInput(0)
     , m_audioInputIODevice(0)
-    , m_recordPosition(0)
     , m_availableAudioOutputDevices
     (QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
     , m_audioOutputDevice(QAudioDeviceInfo::defaultOutputDevice())
@@ -154,17 +151,6 @@ bool Engine::generateSweptTone(qreal amplitude)
     return initialize();
 }
 
-bool Engine::initializeRecord()
-{
-    reset();
-    ENGINE_DEBUG << "Engine::initializeRecord";
-    Q_ASSERT(!m_generateTone);
-    Q_ASSERT(!m_file);
-    m_generateTone = false;
-    m_tone = SweptTone();
-    return initialize();
-}
-
 qint64 Engine::bufferLength() const
 {
     return m_file ? m_file->size() : m_bufferLength;
@@ -179,36 +165,6 @@ void Engine::setWindowFunction(WindowFunction type)
 //-----------------------------------------------------------------------------
 // Public slots
 //-----------------------------------------------------------------------------
-
-void Engine::startRecording()
-{
-    if (m_audioInput) {
-        if (QAudio::AudioInput == m_mode &&
-            QAudio::SuspendedState == m_state) {
-            m_audioInput->resume();
-        }
-        else {
-            m_spectrumAnalyser.cancelCalculation();
-            spectrumChanged(0, 0, FrequencySpectrum());
-
-            m_buffer.fill(0);
-            setRecordPosition(0, true);
-            stopPlayback();
-            m_mode = QAudio::AudioInput;
-            connect(m_audioInput, &QAudioInput::stateChanged,
-                this, &Engine::audioStateChanged);
-            connect(m_audioInput, &QAudioInput::notify,
-                this, &Engine::audioNotify);
-
-            m_count = 0;
-            m_dataLength = 0;
-            emit dataLengthChanged(0);
-            m_audioInputIODevice = m_audioInput->start();
-            connect(m_audioInputIODevice, &QIODevice::readyRead,
-                this, &Engine::audioDataReady);
-        }
-    }
-}
 
 void Engine::startPlayback()
 {
@@ -227,7 +183,6 @@ void Engine::startPlayback()
             m_spectrumAnalyser.cancelCalculation();
             spectrumChanged(0, 0, FrequencySpectrum());
             setPlayPosition(0, true);
-            stopRecording();
             m_mode = QAudio::AudioOutput;
             connect(m_audioOutput, &QAudioOutput::stateChanged,
                 this, &Engine::audioStateChanged);
@@ -266,14 +221,6 @@ void Engine::suspend()
     }
 }
 
-void Engine::setAudioInputDevice(const QAudioDeviceInfo& device)
-{
-    if (device.deviceName() != m_audioInputDevice.deviceName()) {
-        m_audioInputDevice = device;
-        initialize();
-    }
-}
-
 void Engine::setAudioOutputDevice(const QAudioDeviceInfo& device)
 {
     if (device.deviceName() != m_audioOutputDevice.deviceName()) {
@@ -291,8 +238,6 @@ void Engine::audioNotify()
 {
     switch (m_mode) {
     case QAudio::AudioInput: {
-        const qint64 recordPosition = qMin(m_bufferLength, Utils::audioLength(m_format, m_audioInput->processedUSecs()));
-        setRecordPosition(recordPosition);
         const qint64 levelPosition = m_dataLength - m_levelBufferLength;
         if (levelPosition >= 0)
             calculateLevel(levelPosition, m_levelBufferLength);
@@ -391,9 +336,6 @@ void Engine::audioDataReady()
         m_dataLength += bytesRead;
         emit dataLengthChanged(dataLength());
     }
-
-    if (m_buffer.size() == m_dataLength)
-        stopRecording();
 }
 
 void Engine::spectrumChanged(const FrequencySpectrum& spectrum)
@@ -412,7 +354,6 @@ void Engine::resetAudioDevices()
     delete m_audioInput;
     m_audioInput = 0;
     m_audioInputIODevice = 0;
-    setRecordPosition(0);
     delete m_audioOutput;
     m_audioOutput = 0;
     setPlayPosition(0);
@@ -422,7 +363,6 @@ void Engine::resetAudioDevices()
 
 void Engine::reset()
 {
-    stopRecording();
     stopPlayback();
     setState(QAudio::AudioInput, QAudio::StoppedState);
     setFormat(QAudioFormat());
@@ -452,7 +392,6 @@ bool Engine::initialize()
                 emit bufferLengthChanged(bufferLength());
                 emit dataLengthChanged(dataLength());
                 emit bufferChanged(0, 0, m_buffer);
-                setRecordPosition(bufferLength());
                 result = true;
             }
            
@@ -504,9 +443,6 @@ bool Engine::selectFormat()
         sampleRatesList += 8000;
 #endif
 
-        if (!m_generateTone)
-            sampleRatesList += m_audioInputDevice.supportedSampleRates();
-
         sampleRatesList += m_audioOutputDevice.supportedSampleRates();
         std::sort(sampleRatesList.begin(), sampleRatesList.end());
         const auto uniqueRatesEnd = std::unique(sampleRatesList.begin(), sampleRatesList.end());
@@ -514,7 +450,6 @@ bool Engine::selectFormat()
         ENGINE_DEBUG << "Engine::initialize frequenciesList" << sampleRatesList;
 
         QList<int> channelsList;
-        channelsList += m_audioInputDevice.supportedChannelCounts();
         channelsList += m_audioOutputDevice.supportedChannelCounts();
         std::sort(channelsList.begin(), channelsList.end());
         const auto uniqueChannelsEnd = std::unique(channelsList.begin(), channelsList.end());
@@ -532,8 +467,7 @@ bool Engine::selectFormat()
             format.setSampleRate(sampleRate);
             for (int channels : qAsConst(channelsList)) {
                 format.setChannelCount(channels);
-                const bool inputSupport = m_generateTone ||
-                    m_audioInputDevice.isFormatSupported(format);
+                const bool inputSupport = m_generateTone;
                 const bool outputSupport = m_audioOutputDevice.isFormatSupported(format);
                 ENGINE_DEBUG << "Engine::initialize checking " << format
                     << "input" << inputSupport
@@ -552,20 +486,6 @@ bool Engine::selectFormat()
     }
 
     return foundSupportedFormat;
-}
-
-void Engine::stopRecording()
-{
-    if (m_audioInput) {
-        m_audioInput->stop();
-        QCoreApplication::instance()->processEvents();
-        m_audioInput->disconnect();
-    }
-    m_audioInputIODevice = 0;
-
-#ifdef DUMP_AUDIO
-    dumpData();
-#endif
 }
 
 void Engine::stopPlayback()
@@ -593,14 +513,6 @@ void Engine::setState(QAudio::Mode mode, QAudio::State state)
     m_state = state;
     if (changed)
         emit stateChanged(m_mode, m_state);
-}
-
-void Engine::setRecordPosition(qint64 position, bool forceEmit)
-{
-    const bool changed = (m_recordPosition != position);
-    m_recordPosition = position;
-    if (changed || forceEmit)
-        emit recordPositionChanged(m_recordPosition);
 }
 
 void Engine::setPlayPosition(qint64 position, bool forceEmit)

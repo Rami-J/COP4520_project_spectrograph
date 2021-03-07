@@ -10,13 +10,10 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-SettingsDialog::SettingsDialog(
-    const QList<QAudioDeviceInfo>& availableInputDevices,
-    const QList<QAudioDeviceInfo>& availableOutputDevices,
-    QWidget* parent)
+SettingsDialog::SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDevices,
+                               QWidget* parent)
     : QDialog(parent)
     , m_windowFunction(DefaultWindowFunction)
-    , m_inputDeviceComboBox(new QComboBox(this))
     , m_outputDeviceComboBox(new QComboBox(this))
     , m_windowFunctionComboBox(new QComboBox(this))
 {
@@ -25,10 +22,6 @@ SettingsDialog::SettingsDialog(
     m_parentEngine = static_cast<SpectrographUI*>(parent)->getEngine();
 
     // Populate combo boxes
-
-    for (const QAudioDeviceInfo& device : availableInputDevices)
-        m_inputDeviceComboBox->addItem(device.deviceName(),
-            QVariant::fromValue(device));
     for (const QAudioDeviceInfo& device : availableOutputDevices)
         m_outputDeviceComboBox->addItem(device.deviceName(),
             QVariant::fromValue(device));
@@ -37,21 +30,11 @@ SettingsDialog::SettingsDialog(
     m_windowFunctionComboBox->addItem("Hann", QVariant::fromValue(int(HannWindow)));
     m_windowFunctionComboBox->setCurrentIndex(m_windowFunction);
 
-    // Initialize default devices
-    if (!availableInputDevices.empty())
-        m_inputDevice = availableInputDevices.front();
+    // Initialize default output devices
     if (!availableOutputDevices.empty())
         m_outputDevice = availableOutputDevices.front();
 
     // Add widgets to layout
-
-    QScopedPointer<QHBoxLayout> inputDeviceLayout(new QHBoxLayout);
-    QLabel* inputDeviceLabel = new QLabel(tr("Input device"), this);
-    inputDeviceLayout->addWidget(inputDeviceLabel);
-    inputDeviceLayout->addWidget(m_inputDeviceComboBox);
-    dialogLayout->addLayout(inputDeviceLayout.data());
-    inputDeviceLayout.take(); // ownership transferred to dialogLayout
-
     QScopedPointer<QHBoxLayout> outputDeviceLayout(new QHBoxLayout);
     QLabel* outputDeviceLabel = new QLabel(tr("Output device"), this);
     outputDeviceLayout->addWidget(outputDeviceLabel);
@@ -67,8 +50,6 @@ SettingsDialog::SettingsDialog(
     windowFunctionLayout.take(); // ownership transferred to dialogLayout
 
     // Connect
-    connect(m_inputDeviceComboBox, QOverload<int>::of(&QComboBox::activated),
-        this, &SettingsDialog::inputDeviceChanged);
     connect(m_outputDeviceComboBox, QOverload<int>::of(&QComboBox::activated),
         this, &SettingsDialog::outputDeviceChanged);
     connect(m_windowFunctionComboBox, QOverload<int>::of(&QComboBox::activated),
@@ -97,12 +78,6 @@ void SettingsDialog::windowFunctionChanged(int index)
 {
     m_windowFunction = static_cast<WindowFunction>(
         m_windowFunctionComboBox->itemData(index).value<int>());
-}
-
-void SettingsDialog::inputDeviceChanged(int index)
-{
-    m_inputDevice = m_inputDeviceComboBox->itemData(index).value<QAudioDeviceInfo>();
-    m_parentEngine->setAudioOutputDevice(this->inputDevice());
 }
 
 void SettingsDialog::outputDeviceChanged(int index)
