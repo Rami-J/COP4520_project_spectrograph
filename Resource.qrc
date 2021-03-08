@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file alias="settings.png">images/settings.png</file>
+        <file alias="audio-icon.png">images/audio-icon.png</file>
     </qresource>
 </RCC>

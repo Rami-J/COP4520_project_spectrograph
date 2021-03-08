@@ -4,6 +4,7 @@
 #include "Spectrum.h"
 #include "SpectrumAnalyser.h"
 #include "WavFile.h"
+#include "AudioFileStream.h"
 
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <QtMultimedia/QAudioFormat>
@@ -62,6 +63,8 @@ public:
      */
     void reset();
 
+    void setAudioFileStream(AudioFileStream* device);
+
     /**
      * Load data from WAV file
      */
@@ -111,6 +114,11 @@ public:
      * Set window function applied to audio data before spectral analysis.
      */
     void setWindowFunction(WindowFunction type);
+
+    /**
+    * \return The current audio output device.
+    */
+    QAudioDeviceInfo getAudioOutputDevice();
 
 public slots:
     void startPlayback();
@@ -217,6 +225,7 @@ private:
     WavFile* m_analysisFile;
 
     QAudioDecoder* m_decoder;
+    AudioFileStream* m_device;
 
     QAudioFormat        m_format;
 
