@@ -148,7 +148,6 @@ bool AudioFileStream::play(const QString& filePath)
     }
     else if (m_state == State::Stopped)
     {
-        clear();
         m_decoder.start();
     }
 
