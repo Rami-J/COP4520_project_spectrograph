@@ -29,6 +29,7 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QValueAxis>
+#include <QSlider>
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QLineSeries;
@@ -59,6 +60,7 @@ private slots:
     //void updateButtonStates();
     void startPlayback();
     void pausePlayback();
+    void volumeChanged(int value);
 
 private:
     void createLayouts();
@@ -93,6 +95,7 @@ private:
     QIcon m_playIcon;
     QPushButton* m_settingsButton;
     QIcon m_settingsIcon;
+    QSlider* m_volumeSlider;
 
     QString m_currentFilePath;
 };

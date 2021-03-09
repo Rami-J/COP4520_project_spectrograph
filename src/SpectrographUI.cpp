@@ -3,11 +3,14 @@
 static const QString WAV_ICON_PATH = ":/images/audio-icon.png";
 static const QString SETTINGS_ICON_PATH = ":/images/settings.png";
 static const int DEFAULT_SAMPLE_COUNT = 2000;
+static const int MIN_VOLUME = 0;
+static const int MAX_VOLUME = 100;
 
 SpectrographUI::SpectrographUI(QWidget *parent)
     : QMainWindow(parent)
     , m_chart(new QChart)
     , m_series(new QLineSeries)
+    , m_volumeSlider(new QSlider(Qt::Horizontal, this))
     , m_engine(new Engine(this))
     , m_openWavFileButton(new QPushButton(this))
     , m_pauseButton(new QPushButton(this))
@@ -103,6 +106,11 @@ void SpectrographUI::createLayouts()
     buttonPanelLayout->addWidget(m_pauseButton);
     buttonPanelLayout->addWidget(m_playButton);
     buttonPanelLayout->addWidget(m_settingsButton);
+    buttonPanelLayout->addWidget(m_volumeSlider);
+
+    m_volumeSlider->setMinimum(MIN_VOLUME);
+    m_volumeSlider->setMaximum(MAX_VOLUME);
+    m_volumeSlider->setValue(MAX_VOLUME);
 
     QWidget* buttonPanel = new QWidget(this);
     buttonPanel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -226,6 +234,9 @@ void SpectrographUI::connectUI()
     //connect(m_playButton, &QPushButton::clicked,
         //m_engine, &Engine::startPlayback);
 
+    connect(m_volumeSlider, &QSlider::valueChanged,
+            this, &SpectrographUI::volumeChanged);
+
     connect(m_playButton, &QPushButton::clicked,
         this, &SpectrographUI::startPlayback);
 
@@ -307,6 +318,12 @@ void SpectrographUI::pausePlayback()
         //m_spectrograph->reset();
     }
 }*/
+
+void SpectrographUI::volumeChanged(int value)
+{
+    qreal volume = qreal(value) / 100;
+    m_audioOutput->setVolume(volume);
+}
 
 void SpectrographUI::stateChanged(AudioFileStream::State state)
 {
