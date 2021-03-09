@@ -25,8 +25,8 @@ SpectrographUI::SpectrographUI(QWidget *parent)
     connectUI();
 
     setWindowTitle(tr("Spectrograph"));
-    setMinimumSize(1000, 800);
-    resize(480, 320);
+    setMinimumSize(480, 320);
+    resize(800, 640);
 }
 
 void SpectrographUI::createLayouts()
@@ -40,7 +40,8 @@ void SpectrographUI::createLayouts()
     waveformLabel->setAlignment(Qt::AlignCenter);
 
     QChartView* chartView = new QChartView(m_chart);
-    chartView->setMinimumSize(800, 600);
+    chartView->resize(800, 600);
+    chartView->setMinimumSize(380, 300);
     m_chart->addSeries(m_series);
     QValueAxis* axisX = new QValueAxis;
     //axisX->setRange(0, AudioFileStream::sampleCount);

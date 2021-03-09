@@ -17,9 +17,8 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-// Class for decode audio files like MP3 and push decoded audio data to QOutputDevice (like speaker) and also signal newData().
-// For decoding it uses QAudioDecoder which uses QAudioFormat for decode audio file for desire format, then put decoded data to buffer.
-// based on: https://github.com/Znurre/QtMixer
+// Class to decode audio files and push the data to an output device. It also manages
+// media states such as playing, paused.
 class AudioFileStream : public QIODevice
 {
     Q_OBJECT
