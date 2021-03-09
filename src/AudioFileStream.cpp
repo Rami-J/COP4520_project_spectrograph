@@ -37,6 +37,13 @@ bool AudioFileStream::init(const QAudioFormat& format)
     return true;
 }
 
+void AudioFileStream::setFormat(const QAudioFormat& format)
+{
+    delete m_format;
+    m_format = new QAudioFormat(format);
+    m_decoder.setAudioFormat(*m_format);
+}
+
 QFile* AudioFileStream::getFile()
 {
     return m_file;
@@ -45,6 +52,11 @@ QFile* AudioFileStream::getFile()
 QAudioFormat* AudioFileStream::getFormat()
 {
     return m_format;
+}
+
+AudioFileStream::State AudioFileStream::getState()
+{
+    return m_state;
 }
 
 void AudioFileStream::setSampleCount(int sampleCount)
@@ -97,9 +109,8 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         }
     }
 
-    // Is finish of file
-    //if (atEnd())
-    if (m_output.atEnd())
+    // If at end of file and not already stopped, stop
+    if (m_state != State::Stopped && m_output.atEnd())
     {
         stop();
     }

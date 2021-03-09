@@ -57,15 +57,15 @@ void SpectrographUI::createLayouts()
     mainLayout->addWidget(waveformLabel);
     mainLayout->addWidget(chartView);
 
-    QAudioDeviceInfo device = QAudioDeviceInfo::defaultOutputDevice();
-    QAudioFormat desire_audio_romat = device.preferredFormat();
+    m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+    QAudioFormat desired_audio_format = m_deviceInfo.preferredFormat();
 
     m_device = new AudioFileStream(m_series, this);
     //m_device->init(m_engine->getAudioOutputDevice().preferredFormat());
-    m_device->init(desire_audio_romat);
+    m_device->init(desired_audio_format);
     m_device->setSampleCount(DEFAULT_SAMPLE_COUNT);
 
-    m_audioOutput = new QAudioOutput(desire_audio_romat, this);
+    m_audioOutput = new QAudioOutput(desired_audio_format, this);
     m_audioOutput->start(m_device);
 
     //m_engine->setAudioFileStream(m_device);
@@ -185,23 +185,34 @@ void SpectrographUI::showSettingsDialog()
 {
     m_settingsDialog->exec();
     if (m_settingsDialog->result() == QDialog::Accepted) {
-        m_engine->setAudioOutputDevice(m_settingsDialog->outputDevice());
-        m_engine->setWindowFunction(m_settingsDialog->windowFunction());
+        setAudioOutputDevice(m_settingsDialog->outputDevice());
         updateChartTitle();
     }
 }
 
-void SpectrographUI::updateButtonStates()
+void SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
 {
-    const bool pauseEnabled = (QAudio::ActiveState == m_engine->state() ||
-                               QAudio::IdleState == m_engine->state());
-    m_pauseButton->setEnabled(pauseEnabled);
+    if (device.deviceName() != m_deviceInfo.deviceName()) {
+        if (m_device->getState() == AudioFileStream::State::Playing)
+        {
+            m_device->pause();
+        }
 
-    const bool playEnabled = (QAudio::AudioOutput != m_engine->mode() ||
-                              (QAudio::ActiveState != m_engine->state() &&
-                               QAudio::IdleState != m_engine->state() &&
-                               QAudio::InterruptedState != m_engine->state()));
-    m_playButton->setEnabled(playEnabled);
+        qDebug() << "before " << m_deviceInfo.preferredFormat();
+        m_deviceInfo = device;
+        m_audioOutput->reset();
+        m_audioOutput->stop();
+        delete m_audioOutput;
+        qDebug() << "after " << m_deviceInfo.preferredFormat();
+        
+        m_audioOutput = new QAudioOutput(m_deviceInfo, m_deviceInfo.preferredFormat(), this);
+        m_audioOutput->start(m_device);
+
+        if (m_device->getState() == AudioFileStream::State::Paused)
+            m_device->play(m_currentFilePath);
+
+        //m_device->setFormat(m_deviceInfo.preferredFormat());
+    }
 }
 
 void SpectrographUI::connectUI()
@@ -303,10 +314,14 @@ void SpectrographUI::stateChanged(AudioFileStream::State state)
     {
         case AudioFileStream::State::Playing:
         {
+            m_pauseButton->setEnabled(true);
+            m_playButton->setEnabled(false);
             break;
         }
         case AudioFileStream::State::Paused:
         {
+            m_pauseButton->setEnabled(false);
+            m_playButton->setEnabled(true);
             break;
         }
         case AudioFileStream::State::Stopped:

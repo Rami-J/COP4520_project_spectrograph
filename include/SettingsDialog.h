@@ -40,7 +40,7 @@ private:
     Engine* m_parentEngine;
 
     QComboBox* m_outputDeviceComboBox;
-    QComboBox* m_windowFunctionComboBox;
+    //QComboBox* m_windowFunctionComboBox;
 };
 
 #endif // SETTINGSDIALOG_H

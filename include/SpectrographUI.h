@@ -56,7 +56,7 @@ public slots:
 private slots:
     void showFileDialog();
     void showSettingsDialog();
-    void updateButtonStates();
+    //void updateButtonStates();
     void startPlayback();
     void pausePlayback();
 
@@ -68,12 +68,14 @@ private:
     void connectUI();
     void resetUI();
 	void showWarningDialog(QString msg, QString informativeMsg = "");
+    void setAudioOutputDevice(const QAudioDeviceInfo& device);
     void quitApplication();
 
     AudioFileStream* m_device = nullptr;
     QChart* m_chart;
     QLineSeries* m_series;
     QAudioOutput* m_audioOutput = nullptr;
+    QAudioDeviceInfo m_deviceInfo;
 
     Engine* m_engine;
     //ProgressBar* m_progressBar;

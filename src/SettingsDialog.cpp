@@ -15,7 +15,7 @@ SettingsDialog::SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDev
     : QDialog(parent)
     , m_windowFunction(DefaultWindowFunction)
     , m_outputDeviceComboBox(new QComboBox(this))
-    , m_windowFunctionComboBox(new QComboBox(this))
+    //, m_windowFunctionComboBox(new QComboBox(this))
 {
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
 
@@ -26,9 +26,9 @@ SettingsDialog::SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDev
         m_outputDeviceComboBox->addItem(device.deviceName(),
             QVariant::fromValue(device));
 
-    m_windowFunctionComboBox->addItem(tr("None"), QVariant::fromValue(int(NoWindow)));
+    /*m_windowFunctionComboBox->addItem(tr("None"), QVariant::fromValue(int(NoWindow)));
     m_windowFunctionComboBox->addItem("Hann", QVariant::fromValue(int(HannWindow)));
-    m_windowFunctionComboBox->setCurrentIndex(m_windowFunction);
+    m_windowFunctionComboBox->setCurrentIndex(m_windowFunction);*/
 
     // Initialize default output devices
     if (!availableOutputDevices.empty())
@@ -42,18 +42,18 @@ SettingsDialog::SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDev
     dialogLayout->addLayout(outputDeviceLayout.data());
     outputDeviceLayout.take(); // ownership transferred to dialogLayout
 
-    QScopedPointer<QHBoxLayout> windowFunctionLayout(new QHBoxLayout);
-    QLabel* windowFunctionLabel = new QLabel(tr("Window function"), this);
-    windowFunctionLayout->addWidget(windowFunctionLabel);
-    windowFunctionLayout->addWidget(m_windowFunctionComboBox);
-    dialogLayout->addLayout(windowFunctionLayout.data());
-    windowFunctionLayout.take(); // ownership transferred to dialogLayout
+    //QScopedPointer<QHBoxLayout> windowFunctionLayout(new QHBoxLayout);
+    //QLabel* windowFunctionLabel = new QLabel(tr("Window function"), this);
+    //windowFunctionLayout->addWidget(windowFunctionLabel);
+    //windowFunctionLayout->addWidget(m_windowFunctionComboBox);
+    //dialogLayout->addLayout(windowFunctionLayout.data());
+    //windowFunctionLayout.take(); // ownership transferred to dialogLayout
 
     // Connect
     connect(m_outputDeviceComboBox, QOverload<int>::of(&QComboBox::activated),
         this, &SettingsDialog::outputDeviceChanged);
-    connect(m_windowFunctionComboBox, QOverload<int>::of(&QComboBox::activated),
-        this, &SettingsDialog::windowFunctionChanged);
+    //connect(m_windowFunctionComboBox, QOverload<int>::of(&QComboBox::activated),
+        //this, &SettingsDialog::windowFunctionChanged);
 
     // Add standard buttons to layout
     QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
@@ -76,8 +76,8 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::windowFunctionChanged(int index)
 {
-    m_windowFunction = static_cast<WindowFunction>(
-        m_windowFunctionComboBox->itemData(index).value<int>());
+    //m_windowFunction = static_cast<WindowFunction>(
+        //m_windowFunctionComboBox->itemData(index).value<int>());
 }
 
 void SettingsDialog::outputDeviceChanged(int index)

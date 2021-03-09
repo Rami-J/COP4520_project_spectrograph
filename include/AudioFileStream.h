@@ -42,7 +42,9 @@ public:
 
     QFile* getFile();
     QAudioFormat* getFormat();
+    State getState();
     void setSampleCount(int sampleCount);
+    void setFormat(const QAudioFormat& format);
 
 protected:
     qint64 readData(char* data, qint64 maxlen) override;
