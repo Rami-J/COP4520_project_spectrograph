@@ -34,7 +34,7 @@ public:
     bool loadFile(const QString& filePath);
 
     bool play(const QString& filePath);
-    void pause(); // test
+    void pause();
     void stop();
 
     bool atEnd() const override;

@@ -49,8 +49,8 @@ void SpectrographUI::createLayouts()
     axisX->setLabelFormat("%g");
     axisX->setTitleText("Samples");
     QValueAxis* axisY = new QValueAxis;
-    axisY->setRange(-1.5, 1.5);
-    axisY->setTitleText("Audio level");
+    axisY->setRange(-128, 128);
+    axisY->setTitleText("Amplitude");
     m_chart->addAxis(axisX, Qt::AlignBottom);
     m_series->attachAxis(axisX);
     m_chart->addAxis(axisY, Qt::AlignLeft);
@@ -207,20 +207,20 @@ void SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
             m_device->pause();
         }
 
-        qDebug() << "before " << m_deviceInfo.preferredFormat();
+        qDebug() << "audio format before switching output" << m_deviceInfo.preferredFormat();
         m_deviceInfo = device;
         m_audioOutput->reset();
         m_audioOutput->stop();
         delete m_audioOutput;
-        qDebug() << "after " << m_deviceInfo.preferredFormat();
+        qDebug() << "audio format after switching output " << m_deviceInfo.preferredFormat();
+
+        m_device->setFormat(m_deviceInfo.preferredFormat());
         
         m_audioOutput = new QAudioOutput(m_deviceInfo, m_deviceInfo.preferredFormat(), this);
         m_audioOutput->start(m_device);
 
         if (m_device->getState() == AudioFileStream::State::Paused)
             m_device->play(m_currentFilePath);
-
-        //m_device->setFormat(m_deviceInfo.preferredFormat());
     }
 }
 

@@ -64,10 +64,10 @@ void AudioFileStream::setSampleCount(int sampleCount)
     m_sampleCount = sampleCount;
 }
 
-// AudioOutput device (like speaker) call this function for get new audio data
+// AudioOutput device (like speaker) calls this function to get new audio data
 qint64 AudioFileStream::readData(char* data, qint64 maxSize)
 {
-    static const int resolution = 4;
+    static const int resolution = m_format->sampleSize() / 8;
 
     memset(data, 0, maxSize);
 
@@ -75,8 +75,6 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
     if (m_state == State::Playing)
     {
         m_output.read(data, maxSize);
-
-        //qDebug() << m_buffer.size();
 
         if (m_buffer.isEmpty()) {
             m_buffer.reserve(m_sampleCount);
@@ -94,13 +92,14 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         }
 
         for (int s = start; s < m_sampleCount; ++s, data += resolution) {
-            m_buffer[s].setY(qreal(uchar(*data) - 128) / qreal(128));
+            //m_buffer[s].setY(qreal(uchar(*data) - 128) / qreal(128));
+            m_buffer[s].setY(qreal(*data));
         }
             
         m_series->replace(m_buffer);
         
-        // There is we send readed audio data via signal, for ability get audio signal for the who listen this signal.
-        // Other word this emulate QAudioProbe behaviour for retrieve audio data which of sent to output device (speaker).
+        // There is we send readed audio data via signal, for ability get audio signal for listeners of this signal.
+        // This emulates QAudioProbe behaviour for retrieve audio data which of sent to output device (speaker).
         if (maxSize > 0)
         {
             //QByteArray buff(data, maxSize);
@@ -136,7 +135,7 @@ bool AudioFileStream::loadFile(const QString& filePath)
     return true;
 }
 
-// Start play audio file
+// Start playing the audio file
 bool AudioFileStream::play(const QString& filePath)
 {
     if (m_state == State::Paused)
@@ -152,31 +151,20 @@ bool AudioFileStream::play(const QString& filePath)
         m_decoder.start();
     }
 
-    /*clear();
-
-    m_file->setFileName(filePath);
-
-    if (!m_file->open(QIODevice::ReadOnly))
-    {
-        return false;
-    }
-
-    m_decoder.setSourceDevice(m_file);
-    m_decoder.start();*/
-
     m_state = State::Playing;
     emit stateChanged(m_state);
 
     return true;
 }
 
+// Pause the currently playing audio file
 void AudioFileStream::pause()
 {
     m_state = State::Paused;
     emit stateChanged(m_state);
 }
 
-// Stop play audio file
+// Stop playing audio file
 void AudioFileStream::stop()
 {
     m_file->close();
@@ -198,12 +186,10 @@ void AudioFileStream::clear()
         return;
     }
 
-    /*m_buffer.clear();
-    m_series->clear();*/
     isDecodingFinished = false;
 }
 
-// Is finish of file
+// Determines if reached the end of audio file
 bool AudioFileStream::atEnd() const
 {
     return m_output.size()
@@ -211,9 +197,9 @@ bool AudioFileStream::atEnd() const
         && isDecodingFinished;
 }
 
-/////////////////////////////////////////////////////////////////////
-// QAudioDecoder logic this methods responsible for decode audio file and put audio data to stream buffer
-// Run when decode decoded some audio data
+// QAudioDecoder Logic 
+// This method is responsible for decoding the audio file and wrtiing audio data to stream buffer
+// Only runs when decoder processed some audio data
 void AudioFileStream::bufferReady() // SLOT
 {
     const QAudioBuffer& buffer = m_decoder.read();
@@ -222,10 +208,18 @@ void AudioFileStream::bufferReady() // SLOT
 
     const char* data = buffer.constData<char>();
 
+    // For debugging start/endtime
+    /*const qreal s_per_us = (1 / 1e6);
+    qint64 duration = buffer.duration() * s_per_us;
+    qint64 startTime = buffer.startTime() * s_per_us;
+
+    qDebug() << duration << " " << startTime << " " << buffer.isValid();*/
+    //qDebug() << m_format->sampleSize();
+
     m_input.write(data, length);
 }
 
-// Run when decode finished decoding
+// Runs when decoder finished decoding
 void AudioFileStream::finished() // SLOT
 {
     isDecodingFinished = true;
