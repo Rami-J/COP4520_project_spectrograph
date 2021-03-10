@@ -2,7 +2,6 @@
 #define SETTINGSDIALOG_H
 
 #include "Spectrum.h"
-#include "Engine.h"
 #include <QDialog>
 #include <QAudioDeviceInfo>
 
@@ -37,7 +36,6 @@ private slots:
 private:
     WindowFunction   m_windowFunction;
     QAudioDeviceInfo m_outputDevice;
-    Engine* m_parentEngine;
 
     QComboBox* m_outputDeviceComboBox;
     //QComboBox* m_windowFunctionComboBox;

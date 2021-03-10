@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Waveform.h"
 #include "Spectrograph.h"
-#include "Engine.h"
 #include "SettingsDialog.h"
 #include "ProgressBar.h"
 #include "AudioFileStream.h"
@@ -45,10 +43,8 @@ class SpectrographUI : public QMainWindow
 
 public:
     SpectrographUI(QWidget *parent = Q_NULLPTR);
-    Engine* getEngine();
 
 public slots:
-    //void stateChanged(QAudio::Mode mode, QAudio::State state);
     void stateChanged(AudioFileStream::State state);
     void formatChanged(const QAudioFormat& format);
     void bufferLengthChanged(qint64 length);
@@ -57,10 +53,10 @@ public slots:
 private slots:
     void showFileDialog();
     void showSettingsDialog();
-    //void updateButtonStates();
     void startPlayback();
     void pausePlayback();
     void volumeChanged(int value);
+    void toggleVolumeMute();
 
 private:
     void createLayouts();
@@ -79,10 +75,10 @@ private:
     QAudioOutput* m_audioOutput = nullptr;
     QAudioDeviceInfo m_deviceInfo;
 
-    Engine* m_engine;
+    //Engine* m_engine;
     //ProgressBar* m_progressBar;
     SettingsDialog* m_settingsDialog;
-    Waveform* m_waveform;
+    //Waveform* m_waveform;
     //Spectrograph* m_spectrograph;
     QMenu* m_fileMenu;
     QAction* m_openFileAct;
@@ -96,6 +92,10 @@ private:
     QPushButton* m_settingsButton;
     QIcon m_settingsIcon;
     QSlider* m_volumeSlider;
-
+    QIcon m_volumeOnIcon;
+    QIcon m_volumeMutedIcon;
+    QPushButton* m_volumeMuteButton;
     QString m_currentFilePath;
+
+    bool m_volumeMuted;
 };

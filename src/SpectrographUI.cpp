@@ -2,6 +2,8 @@
 
 static const QString WAV_ICON_PATH = ":/images/audio-icon.png";
 static const QString SETTINGS_ICON_PATH = ":/images/settings.png";
+static const QString VOLUME_ICON_PATH = ":/images/volume.png";
+static const QString VOLUME_MUTED_ICON_PATH = ":/images/volume_muted.png";
 static const int DEFAULT_SAMPLE_COUNT = 2000;
 static const int MIN_VOLUME = 0;
 static const int MAX_VOLUME = 100;
@@ -11,13 +13,14 @@ SpectrographUI::SpectrographUI(QWidget *parent)
     , m_chart(new QChart)
     , m_series(new QLineSeries)
     , m_volumeSlider(new QSlider(Qt::Horizontal, this))
-    , m_engine(new Engine(this))
     , m_openWavFileButton(new QPushButton(this))
     , m_pauseButton(new QPushButton(this))
     , m_playButton(new QPushButton(this))
     , m_settingsButton(new QPushButton(this))
-    , m_settingsDialog(new SettingsDialog(m_engine->availableAudioOutputDevices(),
+    , m_volumeMuteButton(new QPushButton(this))
+    , m_settingsDialog(new SettingsDialog(QAudioDeviceInfo::availableDevices(QAudio::AudioOutput),
                                           this))
+    , m_volumeMuted(false)
 {
     createLayouts();
     createActions();
@@ -56,7 +59,6 @@ void SpectrographUI::createLayouts()
     m_chart->addAxis(axisY, Qt::AlignLeft);
     m_series->attachAxis(axisY);
     m_chart->legend()->hide();
-    updateChartTitle();
 
     mainLayout->addWidget(waveformLabel);
     mainLayout->addWidget(chartView);
@@ -65,14 +67,13 @@ void SpectrographUI::createLayouts()
     QAudioFormat desired_audio_format = m_deviceInfo.preferredFormat();
 
     m_device = new AudioFileStream(m_series, this);
-    //m_device->init(m_engine->getAudioOutputDevice().preferredFormat());
     m_device->init(desired_audio_format);
     m_device->setSampleCount(DEFAULT_SAMPLE_COUNT);
 
     m_audioOutput = new QAudioOutput(desired_audio_format, this);
     m_audioOutput->start(m_device);
 
-    //m_engine->setAudioFileStream(m_device);
+    updateChartTitle();
 
     // Button panel
     const QSize buttonSize(30, 30);
@@ -101,20 +102,34 @@ void SpectrographUI::createLayouts()
     m_settingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_settingsButton->setMinimumSize(buttonSize);
 
+    m_volumeOnIcon = QIcon(VOLUME_ICON_PATH);
+    m_volumeMutedIcon = QIcon(VOLUME_MUTED_ICON_PATH);
+    m_volumeMuteButton->setIcon(m_volumeOnIcon);
+    m_volumeMuteButton->setEnabled(true);
+    m_volumeMuteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_volumeMuteButton->setMinimumSize(buttonSize);
+
+    m_volumeSlider->setMaximumWidth(m_volumeSlider->width());
+
+    QHBoxLayout* volumeSliderLayout = new QHBoxLayout(this);
+    volumeSliderLayout->setAlignment(Qt::AlignRight);
+    volumeSliderLayout->addWidget(m_volumeMuteButton);
+    volumeSliderLayout->addWidget(m_volumeSlider);
+
     QScopedPointer<QHBoxLayout> buttonPanelLayout(new QHBoxLayout);
     buttonPanelLayout->addStretch();
     buttonPanelLayout->addWidget(m_openWavFileButton);
     buttonPanelLayout->addWidget(m_pauseButton);
     buttonPanelLayout->addWidget(m_playButton);
     buttonPanelLayout->addWidget(m_settingsButton);
-    buttonPanelLayout->addWidget(m_volumeSlider);
+    buttonPanelLayout->addLayout(volumeSliderLayout);
 
     m_volumeSlider->setMinimum(MIN_VOLUME);
     m_volumeSlider->setMaximum(MAX_VOLUME);
     m_volumeSlider->setValue(MAX_VOLUME);
 
     QWidget* buttonPanel = new QWidget(this);
-    buttonPanel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    buttonPanel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     buttonPanel->setLayout(buttonPanelLayout.data());
     buttonPanelLayout.take(); // ownership transferred to buttonPanel
 
@@ -147,12 +162,7 @@ void SpectrographUI::createMenus()
 
 void SpectrographUI::updateChartTitle()
 {
-    m_chart->setTitle("Audio Output: " + m_engine->getAudioOutputDevice().deviceName());
-}
-
-Engine* SpectrographUI::getEngine()
-{
-    return m_engine;
+    m_chart->setTitle("Audio Output: " + m_deviceInfo.deviceName());
 }
 
 void SpectrographUI::showWarningDialog(QString msg, QString informativeMsg)
@@ -235,6 +245,9 @@ void SpectrographUI::connectUI()
     //connect(m_playButton, &QPushButton::clicked,
         //m_engine, &Engine::startPlayback);
 
+    connect(m_volumeMuteButton, &QPushButton::clicked,
+            this, &SpectrographUI::toggleVolumeMute);
+
     connect(m_volumeSlider, &QSlider::valueChanged,
             this, &SpectrographUI::volumeChanged);
 
@@ -306,22 +319,35 @@ void SpectrographUI::pausePlayback()
     m_pauseButton->setEnabled(false);
 }
 
-/*void SpectrographUI::stateChanged(QAudio::Mode mode, QAudio::State state)
+void SpectrographUI::toggleVolumeMute()
 {
-    Q_UNUSED(mode);
-
-    updateButtonStates();
-
-    if (QAudio::ActiveState != state &&
-        QAudio::SuspendedState != state &&
-        QAudio::InterruptedState != state) {
-        //m_levelMeter->reset();
-        //m_spectrograph->reset();
+    m_volumeMuted = !m_volumeMuted;
+    
+    if (m_volumeMuted)
+    {
+        m_volumeSlider->setValue(MIN_VOLUME);
+        m_volumeMuteButton->setIcon(m_volumeMutedIcon);
     }
-}*/
+    else
+    {
+        m_volumeSlider->setValue(MAX_VOLUME);
+        m_volumeMuteButton->setIcon(m_volumeOnIcon);
+    }
+}
 
 void SpectrographUI::volumeChanged(int value)
 {
+    if (value == MIN_VOLUME)
+    {
+        m_volumeMuted = true;
+        m_volumeMuteButton->setIcon(m_volumeMutedIcon);
+    }
+    else if (value > MIN_VOLUME && m_volumeMuted == true)
+    {
+        m_volumeMuted = false;
+        m_volumeMuteButton->setIcon(m_volumeOnIcon);
+    }
+
     qreal volume = qreal(value) / 100;
     m_audioOutput->setVolume(volume);
 }

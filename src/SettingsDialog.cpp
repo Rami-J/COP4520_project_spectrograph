@@ -19,8 +19,6 @@ SettingsDialog::SettingsDialog(const QList<QAudioDeviceInfo>& availableOutputDev
 {
     QVBoxLayout* dialogLayout = new QVBoxLayout(this);
 
-    m_parentEngine = static_cast<SpectrographUI*>(parent)->getEngine();
-
     // Populate combo boxes
     for (const QAudioDeviceInfo& device : availableOutputDevices)
         m_outputDeviceComboBox->addItem(device.deviceName(),
@@ -83,6 +81,5 @@ void SettingsDialog::windowFunctionChanged(int index)
 void SettingsDialog::outputDeviceChanged(int index)
 {
     m_outputDevice = m_outputDeviceComboBox->itemData(index).value<QAudioDeviceInfo>();
-    m_parentEngine->setAudioOutputDevice(this->outputDevice());
 }
 
