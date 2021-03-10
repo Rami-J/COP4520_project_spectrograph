@@ -52,7 +52,7 @@ void SpectrographUI::createLayouts()
     axisX->setLabelFormat("%g");
     axisX->setTitleText("Samples");
     QValueAxis* axisY = new QValueAxis;
-    axisY->setRange(-128, 128);
+    axisY->setRange(-1, 1);
     axisY->setTitleText("Amplitude");
     m_chart->addAxis(axisX, Qt::AlignBottom);
     m_series->attachAxis(axisX);
@@ -188,15 +188,6 @@ void SpectrographUI::showFileDialog()
         m_audioOutput->start(m_device);
         m_playButton->setEnabled(true);
         m_device->loadFile(m_currentFilePath);
-
-        /*if (!m_engine->loadFile(fileNames.front()))
-		{
-            showWarningDialog("Failed to load WAV file.",
-                              "The file may contain invalid headers.");
-		}*/
-        //m_device->play(fileNames.front());
-
-        //updateButtonStates();
     }
 }
 
@@ -217,12 +208,10 @@ void SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
             m_device->pause();
         }
 
-        qDebug() << "audio format before switching output" << m_deviceInfo.preferredFormat();
         m_deviceInfo = device;
         m_audioOutput->reset();
         m_audioOutput->stop();
         delete m_audioOutput;
-        qDebug() << "audio format after switching output " << m_deviceInfo.preferredFormat();
 
         m_device->setFormat(m_deviceInfo.preferredFormat());
         
@@ -238,12 +227,6 @@ void SpectrographUI::connectUI()
 {
     connect(m_openWavFileButton, &QPushButton::clicked,
         this, &SpectrographUI::showFileDialog);
-
-    //connect(m_pauseButton, &QPushButton::clicked,
-        //m_engine, &Engine::suspend);
-
-    //connect(m_playButton, &QPushButton::clicked,
-        //m_engine, &Engine::startPlayback);
 
     connect(m_volumeMuteButton, &QPushButton::clicked,
             this, &SpectrographUI::toggleVolumeMute);
@@ -263,26 +246,6 @@ void SpectrographUI::connectUI()
     connect(m_device, &AudioFileStream::stateChanged,
             this, &SpectrographUI::stateChanged);
 
-    //connect(m_engine, &Engine::stateChanged,
-        //this, &SpectrographUI::stateChanged);
-
-    //connect(m_engine, &Engine::formatChanged,
-        //this, &SpectrographUI::formatChanged);
-
-    //m_progressBar->bufferLengthChanged(m_engine->bufferLength());
-
-    //connect(m_engine, &Engine::bufferLengthChanged,
-        //this, &SpectrographUI::bufferLengthChanged);
-
-    //connect(m_engine, &Engine::dataLengthChanged,
-        //this, &SpectrographUI::updateButtonStates);
-
-    //connect(m_engine, &Engine::playPositionChanged,
-        //m_progressBar, &ProgressBar::playPositionChanged);
-
-    //connect(m_engine, &Engine::playPositionChanged,
-        //this, &SpectrographUI::audioPositionChanged);
-
     /*connect(m_engine, &Engine::levelChanged,
         m_levelMeter, &LevelMeter::levelChanged);
 
@@ -297,11 +260,6 @@ void SpectrographUI::connectUI()
 
     connect(m_spectrograph, &Spectrograph::infoMessage,
         this, &MainWidget::infoMessage);*/
-
-#ifndef DISABLE_WAVEFORM
-    //connect(m_engine, &Engine::bufferChanged,
-        //m_waveform, &Waveform::bufferChanged);
-#endif
 }
 
 void SpectrographUI::startPlayback()
@@ -377,35 +335,8 @@ void SpectrographUI::stateChanged(AudioFileStream::State state)
     }
 }
 
-void SpectrographUI::formatChanged(const QAudioFormat& format)
-{
-    //infoMessage(formatToString(format), NullMessageTimeout);
-
-    #ifndef DISABLE_WAVEFORM
-        if (QAudioFormat() != format) {
-            //m_waveform->initialize(format, WaveformTileLength,
-                //WaveformWindowDuration);
-        }
-    #endif
-}
-
-void SpectrographUI::bufferLengthChanged(qint64 length)
-{
-    //m_progressBar->bufferLengthChanged(length);
-}
-
-void SpectrographUI::audioPositionChanged(qint64 position)
-{
-#ifndef DISABLE_WAVEFORM
-    //m_waveform->audioPositionChanged(position);
-#else
-    Q_UNUSED(position)
-#endif
-}
-
 void SpectrographUI::resetUI()
 {
-    //m_waveform->reset();
     //m_spectrograph->reset();
 }
 

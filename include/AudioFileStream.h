@@ -40,7 +40,7 @@ public:
     bool atEnd() const override;
 
     QFile* getFile();
-    QAudioFormat* getFormat();
+    QAudioFormat getFormat();
     State getState();
     void setSampleCount(int sampleCount);
     void setFormat(const QAudioFormat& format);
@@ -50,17 +50,20 @@ protected:
     qint64 writeData(const char* data, qint64 len) override;
 
 private:
+    qreal getPeakValue(const QAudioFormat& format);
+
     QFile* m_file;
     QBuffer m_input;
     QBuffer m_output;
     QByteArray m_data;
     QAudioDecoder m_decoder;
-    QAudioFormat* m_format;
+    QAudioFormat m_format;
 
     QXYSeries* m_series;
     QVector<QPointF> m_buffer;
 
     State m_state;
+    qreal m_peakVal;
 
     bool isInited;
     bool isDecodingFinished;

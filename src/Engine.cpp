@@ -460,7 +460,7 @@ bool Engine::selectFormat()
     if (m_device == nullptr)
         qDebug("test1");
     else
-        setFormat(*(m_device->getFormat()));
+        setFormat(m_device->getFormat());
 
     /*bool foundSupportedFormat = false;
 

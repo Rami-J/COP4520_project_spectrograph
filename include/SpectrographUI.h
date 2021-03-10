@@ -2,7 +2,6 @@
 
 #include "Spectrograph.h"
 #include "SettingsDialog.h"
-#include "ProgressBar.h"
 #include "AudioFileStream.h"
 
 #include <QtWidgets/QMainWindow>
@@ -46,9 +45,6 @@ public:
 
 public slots:
     void stateChanged(AudioFileStream::State state);
-    void formatChanged(const QAudioFormat& format);
-    void bufferLengthChanged(qint64 length);
-    void audioPositionChanged(qint64 position);
 
 private slots:
     void showFileDialog();
@@ -75,10 +71,7 @@ private:
     QAudioOutput* m_audioOutput = nullptr;
     QAudioDeviceInfo m_deviceInfo;
 
-    //Engine* m_engine;
-    //ProgressBar* m_progressBar;
     SettingsDialog* m_settingsDialog;
-    //Waveform* m_waveform;
     //Spectrograph* m_spectrograph;
     QMenu* m_fileMenu;
     QAction* m_openFileAct;
