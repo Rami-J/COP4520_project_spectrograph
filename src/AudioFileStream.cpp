@@ -101,8 +101,8 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         m_series->replace(m_buffer);
     }
 
-    // If at end of file and not already stopped, stop
-    if (m_state != State::Stopped && m_output.atEnd())
+    // If at end of file
+    if (m_output.atEnd())
     {
         stop();
     }
