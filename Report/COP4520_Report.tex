@@ -9,9 +9,7 @@
 
 
 \documentclass[journal]{IEEEtran}
-\usepackage[backend=biber, style=authoryear-icomp]{biblatex}
 \usepackage[utf8]{inputenc}
-\addbibresource{report.bib}
 
 
 \begin{document}
@@ -103,6 +101,9 @@ Parallel FFS & foo.WAV & 100 kb & N \\
 \end{tabular}
 
 \section{State-of-the-Art Research}
+The papers that we will use to implement the parallel 1D Fast Fourier Transform
+algorithm are the \textit{Proceedings of the Thirty-Seventh 
+Southeastern Symposium on System Theory} \cite{1dFft}, the ..............
 
 \section{Related Work}
 
@@ -113,8 +114,9 @@ Parallel FFS & foo.WAV & 100 kb & N \\
 % As \textcite{1dFft} says, there some weird stuff.
 
 % test \parencite{1dFft}
-
-\printbibliography
+\medskip
+\bibliographystyle{ieeetr}
+\bibliography{report.bib}
 
 \end{document}
 
