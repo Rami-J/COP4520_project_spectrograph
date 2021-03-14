@@ -1,0 +1,121 @@
+\title{Spectrograph COP4520}
+\author{
+	Rami Jurdi \\
+	Zachary Noble \\
+	Gregory Freitas \\
+	Jayden Bendezu
+}
+\date{\today}
+
+
+\documentclass[12pt]{article}
+\usepackage[backend=biber, style=authoryear-icomp]{biblatex}
+\usepackage[utf8]{inputenc}
+\addbibresource{report.bib}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This research is in the Digtial Signal Processing field. Where are our aims are to improve the performance of realtime
+ signal processing using parallel processing techniques coupled with 1 dimensional Fast Fourier Transforms.
+ It has been done before by other researchers implementing multi-dimensional Fast Fourier Transforms in a
+ multithreadeed context. The purpose of our research is to gain a better understanding of parallel processing
+ techniques and digital signal processing. Thus the main goal is to learn.
+\end{abstract}
+
+\section{Target Problem}
+The main problem at hand is to create an application that is able to process signals provided to the program as audio 
+files such as .WAV, .MP3, and .MP4. Then displaying the audio files as a spectrograph of its signals. This problem 
+can be broken into several steps of what we need to acheive.
+\begin{itemize}
+	\item A GUI to interact with.
+	\item Accepting audio files via local upload or recording.
+	\item Processing the audio files.
+	\item Processing the signals for audio files.
+	\item Displaying the signals of the audio files on a spectrograph.
+\end{itemize}
+
+\subsection{Approach}
+Tackling some of the above sub-problems. In order to create a GUI to interact with, we will write the program using 
+QT Creator's GUI framework to simplify taking input files and recording. Through the use of provided libraries of QT 
+the basic functionality of loading files and recording audio is handled and we use them on a higher level. This will 
+allow for use to focus more on the problem of processing signals for the audio files. Then by handling extracting 
+raw data from the audio files using the QAudioDecoder, we intend to use one-dimensional Fast Fourier Transforms to 
+process the signals. (How do we plan to parllelize the FFT is what would be discussed here briefly since will be 
+explained througouly within the algorithms subsection).
+
+\subsection{Plan Outline} (Temporary to keep this in)
+
+\begin{enumerate}
+	\item Setup programming enviornment using Qt C++.
+	\item Add support using Qt multimedia API's to load and decode audio files from disk.
+	\item Stream audio data to an output device such as speakers or headphones.
+	\item Display a waveform of the audio.
+	\item Implement single-threaded Fast Fourier Transforms.
+	\item Implement multi-threaded Fast Fourier Transforms.
+	\item Display the frequency vs. amplitude data calculated from the Fourier transform.
+	\item Conducting experimental tests comparing multi-threaded implementation vs sequential implementation. 
+Observing any performance boosts if any.
+\end{enumerate}
+
+\subsection{Algorithm}
+Will speak about what type of algorithm we intend to use to parallelize it. Discuss it in depth and even evaluate 
+expected Big O runtime of our implementation. 
+
+\subsection{Experimental Results}
+Here I imagine we can create some test data sets using tables.
+
+\begin{tabular} { |c|c|c|c| }
+\hline
+\multicolumn{4} {|c|} {Data Set 1} \\
+\hline
+Algorithm & File Type & File Size & Computation Time \\
+\hline
+Sequential FFS & foo.WAV & 100 kb & N \\
+Parallel FFS & foo.WAV & 100 kb & N \\
+\hline
+\end{tabular}
+
+
+\begin{tabular} { |c|c|c|c| }
+\hline
+\multicolumn{4} {|c|} {Data Set 2} \\
+\hline
+Algorithm & File Type & File Size & Computation Time \\
+\hline
+Sequential FFS & foo.WAV & 100 kb & N \\
+Parallel FFS & foo.WAV & 100 kb & N \\
+\hline
+\end{tabular}
+
+\begin{tabular} { |c|c|c|c| }
+\hline
+\multicolumn{4} {|c|} {Data Set 3} \\
+\hline
+Algorithm & File Type & File Size & Computation Time \\
+\hline
+Sequential FFS & foo.WAV & 100 kb & N \\
+Parallel FFS & foo.WAV & 100 kb & N \\
+\hline
+\end{tabular}
+
+\section{State-of-the-Art Research}
+
+\section{Related Work}
+
+\section{Our Contributions}
+
+% This was just for testing biber, as I have never used before...
+
+% As \textcite{1dFft} says, there some weird stuff.
+
+% test \parencite{1dFft}
+
+\printbibliography
+
+\end{document}
+
+
+
