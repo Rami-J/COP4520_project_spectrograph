@@ -8,7 +8,7 @@
 \date{\today}
 
 
-\documentclass[12pt]{article}
+\documentclass[journal]{IEEEtran}
 \usepackage[backend=biber, style=authoryear-icomp]{biblatex}
 \usepackage[utf8]{inputenc}
 \addbibresource{report.bib}
@@ -18,11 +18,12 @@
 \maketitle
 
 \begin{abstract}
-This research is in the Digtial Signal Processing field. Where are our aims are to improve the performance of realtime
+This research is in the Digtial Signal Processing field. Where our aims are to improve the performance of realtime
  signal processing using parallel processing techniques coupled with 1 dimensional Fast Fourier Transforms.
  It has been done before by other researchers implementing multi-dimensional Fast Fourier Transforms in a
  multithreadeed context. The purpose of our research is to gain a better understanding of parallel processing
- techniques and digital signal processing. Thus the main goal is to learn.
+ techniques and digital signal processing. Thus the main goal is to observe the outcome of implementing the
+ multithreaded Fast Fourier transform algorithm and learn from the state-of-the-art research.
 \end{abstract}
 
 \section{Target Problem}
@@ -39,10 +40,10 @@ can be broken into several steps of what we need to acheive.
 
 \subsection{Approach}
 Tackling some of the above sub-problems. In order to create a GUI to interact with, we will write the program using 
-QT Creator's GUI framework to simplify taking input files and recording. Through the use of provided libraries of QT 
-the basic functionality of loading files and recording audio is handled and we use them on a higher level. This will 
-allow for use to focus more on the problem of processing signals for the audio files. Then by handling extracting 
-raw data from the audio files using the QAudioDecoder, we intend to use one-dimensional Fast Fourier Transforms to 
+the QT C++ GUI framework to simplify taking audio files from disk and decoding the raw data. Through the use of provided libraries of QT 
+the basic functionality of loading files and playing/decoding audio is handled and we use them on a higher level. This will 
+allow us to focus more on the problem of processing signals for the audio files. Then by handling extracting 
+raw data from the audio files using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast Fourier Transforms to 
 process the signals. (How do we plan to parllelize the FFT is what would be discussed here briefly since will be 
 explained througouly within the algorithms subsection).
 
