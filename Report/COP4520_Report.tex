@@ -8,9 +8,11 @@
 \date{\today}
 
 
+
+\addbibresource{report.bib}
+
 \documentclass[journal]{IEEEtran}
 \usepackage[utf8]{inputenc}
-
 
 \begin{document}
 \maketitle
@@ -45,7 +47,7 @@ raw data from the audio files using the QAudioDecoder class provided by QT, we i
 process the signals. (How do we plan to parllelize the FFT is what would be discussed here briefly since will be 
 explained througouly within the algorithms subsection).
 
-\subsection{Plan Outline} (Temporary to keep this in)
+\subsection{Plan Outline}
 
 \begin{enumerate}
 	\item Setup programming enviornment using Qt C++.
@@ -60,11 +62,15 @@ Observing any performance boosts if any.
 \end{enumerate}
 
 \subsection{Algorithm}
-Will speak about what type of algorithm we intend to use to parallelize it. Discuss it in depth and even evaluate 
-expected Big O runtime of our implementation. 
+While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms
+resolves to a $O(n^2)$ runtime according to \textcite{Xie}. It is essential that we use an implementation that yields 
+a better runtime as in the case of our program, operating on larger audio files will begin to take much longer being 
+inefficient. Thus we will be working with the Fast Fourier transfom algorithm to reduce our upper asymptotic bound. 
+(Going to find a reference for this line to talk more about the $O(nlog{}n)$ implementation. But i need to read more). 
+
 
 \subsection{Experimental Results}
-Here I imagine we can create some test data sets using tables.
+Creating testing data sets...
 
 \begin{tabular} { |c|c|c|c| }
 \hline
@@ -101,11 +107,13 @@ Parallel FFS & foo.WAV & 100 kb & N \\
 \end{tabular}
 
 \section{State-of-the-Art Research}
+
 The papers that we will use to implement the parallel 1D Fast Fourier Transform
 algorithm are the \textit{Proceedings of the Thirty-Seventh 
 Southeastern Symposium on System Theory} \cite{1dFft}, the ..............
 
 \section{Related Work}
+Here we will talk about how our work relates to currently worked on research.
 
 \section{Our Contributions}
 
