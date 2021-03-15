@@ -9,6 +9,7 @@ AudioFileStream::AudioFileStream(QXYSeries* series, QObject* parent) :
     m_input(&m_data),
     m_output(&m_data),
     m_state(State::Stopped),
+    m_peakVal(0),
     m_file(new QFile(this))
 {
     setOpenMode(QIODevice::ReadOnly);
@@ -136,6 +137,8 @@ void AudioFileStream::drawChartSamples(int start, char* data)
                 m_buffer[s].setY((uchar)*data / m_peakVal);
             }
         }
+        break;
+    default:
         break;
     }
 }
@@ -289,17 +292,10 @@ bool AudioFileStream::atEnd() const
 void AudioFileStream::bufferReady() // SLOT
 {
     const QAudioBuffer& buffer = m_decoder.read();
-    qreal peakVal = getPeakValue(buffer.format());
 
-    if (peakVal == qreal(0))
+    if (m_peakVal == qreal(0))
     {
-        qDebug("Audio format is not supported");
-        return;
-    }
-    else
-    {
-        m_peakVal = peakVal;
-        m_format = buffer.format();
+        m_peakVal = getPeakValue(buffer.format());
     }
 
     const int length = buffer.byteCount();

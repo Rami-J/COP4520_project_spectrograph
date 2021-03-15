@@ -1,4 +1,5 @@
 # Spectrograph Visualizer (COP 4520)
+https://github.com/znoble360/COP4520_project_spectrograph
 
 ## Build Requirements
 ### For all systems:
