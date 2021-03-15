@@ -113,6 +113,13 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         }
 
         m_series->replace(m_buffer);
+
+        // Send read audio data via signal to output device.
+        if (maxSize > 0)
+        {
+            QByteArray buff(data, maxSize);
+            emit newData(buff);
+        }
     }
 
     // If at end of file
