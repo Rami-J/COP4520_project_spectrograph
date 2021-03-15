@@ -51,6 +51,7 @@ protected:
     qint64 writeData(const char* data, qint64 len) override;
 
 private:
+    void drawChartSamples(int start, char* data);
     qreal getPeakValue(const QAudioFormat& format);
 
     QFile* m_file;

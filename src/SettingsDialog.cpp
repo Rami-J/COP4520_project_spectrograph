@@ -60,5 +60,6 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::outputDeviceChanged(int index)
 {
     m_outputDevice = m_outputDeviceComboBox->itemData(index).value<QAudioDeviceInfo>();
+    qDebug() << "SettingsDialog::outputDeviceChanged Output device changed to " << m_outputDevice.deviceName();
 }
 

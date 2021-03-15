@@ -76,6 +76,70 @@ void AudioFileStream::setSampleCount(int sampleCount)
     m_sampleCount = sampleCount;
 }
 
+void AudioFileStream::drawChartSamples(int start, char* data)
+{
+    switch (m_format.sampleType())
+    {
+    case QAudioFormat::Float:
+    case QAudioFormat::SignedInt:
+        // For 32bit sample size
+        if (m_format.sampleSize() == 32)
+        {
+            int* data_int = (int*)data;
+            for (int s = start; s < m_sampleCount; ++s, ++data_int)
+            {
+                m_buffer[s].setY((int)*data_int / m_peakVal);
+            }
+        }
+        // For 16bit sample size
+        else if (m_format.sampleSize() == 16)
+        {
+            short* data_short = (short*)data;
+            for (int s = start; s < m_sampleCount; ++s, ++data_short)
+            {
+                m_buffer[s].setY((short)*data_short / m_peakVal);
+            }
+        }
+        // For 8bit sample size
+        else if (m_format.sampleSize() == 8)
+        {
+            for (int s = start; s < m_sampleCount; ++s, ++data)
+            {
+                m_buffer[s].setY((char)*data / m_peakVal);
+            }
+        }
+        break;
+    case QAudioFormat::UnSignedInt:
+        // For 32bit sample size
+        if (m_format.sampleSize() == 32)
+        {
+            uint* data_int = (uint*)data;
+            for (int s = start; s < m_sampleCount; ++s, ++data_int)
+            {
+                m_buffer[s].setY((uint)*data_int / m_peakVal);
+            }
+        }
+        // For 16bit sample size
+        else if (m_format.sampleSize() == 16)
+        {
+            ushort* data_short = (ushort*)data;
+            for (int s = start; s < m_sampleCount; ++s, ++data_short)
+            {
+                m_buffer[s].setY((ushort)*data_short / m_peakVal);
+            }
+        }
+        // For 8bit sample size
+        else if (m_format.sampleSize() == 8)
+        {
+            for (int s = start; s < m_sampleCount; ++s, ++data)
+            {
+                m_buffer[s].setY((uchar)*data / m_peakVal);
+            }
+        }
+        break;
+    }
+}
+
 // AudioOutput device (like speaker) calls this function to get new audio data
 qint64 AudioFileStream::readData(char* data, qint64 maxSize)
 {
@@ -84,7 +148,6 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
     // If playing, read audio from m_output, else don't process any data
     if (m_state == State::Playing)
     {
-        short* data_short = (short*)data;
         static const int resolution = m_format.sampleSize() / 8;
 
         m_output.read(data, maxSize);
@@ -96,6 +159,7 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
                 m_buffer.append(QPointF(i, 0));
         }
 
+        // Draw the available sample points to the chart
         int start = 0;
         const int availableSamples = int(maxSize) / resolution;
         if (availableSamples < m_sampleCount)
@@ -107,10 +171,8 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
             }
         }
 
-        for (int s = start; s < m_sampleCount; ++s, ++data_short)
-        {
-            m_buffer[s].setY((short)*data_short / m_peakVal);
-        }
+        // Draw the rest of the chart's y-values based on sample-size data type
+        drawChartSamples(start, data);
 
         m_series->replace(m_buffer);
 
