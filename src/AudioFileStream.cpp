@@ -22,6 +22,12 @@ bool AudioFileStream::init(const QAudioFormat& format)
     m_format = format;
     m_decoder.setAudioFormat(m_format);
 
+    if (m_decoder.error() != QAudioDecoder::Error::NoError)
+    {
+        qDebug("Decoder failed to set audio format.");
+        return false;
+    }
+
     connect(&m_decoder, &QAudioDecoder::bufferReady, this, &AudioFileStream::bufferReady);
     connect(&m_decoder, &QAudioDecoder::finished, this, &AudioFileStream::finished);
 
@@ -36,10 +42,18 @@ bool AudioFileStream::init(const QAudioFormat& format)
     return true;
 }
 
-void AudioFileStream::setFormat(const QAudioFormat& format)
+bool AudioFileStream::setFormat(const QAudioFormat& format)
 {
+    m_decoder.setAudioFormat(format);
+
+    if (m_decoder.error() != QAudioDecoder::Error::NoError)
+    {
+        m_decoder.setAudioFormat(m_format);
+        return false;
+    }
+
     m_format = format;
-    m_decoder.setAudioFormat(m_format);
+    return true;
 }
 
 QFile* AudioFileStream::getFile()
@@ -120,7 +134,8 @@ qint64 AudioFileStream::writeData(const char* data, qint64 maxSize)
 
 bool AudioFileStream::loadFile(const QString& filePath)
 {
-    clear();
+    if (!clear())
+        return false;
 
     m_decoder.setSourceFilename(filePath);
     m_decoder.start();
@@ -131,6 +146,12 @@ bool AudioFileStream::loadFile(const QString& filePath)
 // Start playing the audio file
 bool AudioFileStream::play(const QString& filePath)
 {
+    if (m_decoder.error() != QAudioDecoder::Error::NoError)
+    {
+        qDebug() << m_decoder.error();
+        return false;
+    }
+
     if (m_state == State::Paused)
     {
         qDebug() << "resuming audio " << filePath.toLatin1();
@@ -166,7 +187,7 @@ void AudioFileStream::stop()
     emit stateChanged(m_state);
 }
 
-void AudioFileStream::clear()
+bool AudioFileStream::clear()
 {
     m_decoder.stop();
     m_data.clear();
@@ -178,10 +199,12 @@ void AudioFileStream::clear()
 
     if (!m_output.open(QIODevice::ReadOnly) || !m_input.open(QIODevice::WriteOnly))
     {
-        return;
+        return false;
     }
 
     isDecodingFinished = false;
+
+    return true;
 }
 
 // Determines if reached the end of audio file

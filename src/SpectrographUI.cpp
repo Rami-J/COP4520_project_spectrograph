@@ -67,7 +67,11 @@ void SpectrographUI::createLayouts()
     QAudioFormat desired_audio_format = m_deviceInfo.preferredFormat();
 
     m_device = new AudioFileStream(m_series, this);
-    m_device->init(desired_audio_format);
+    if (!m_device->init(desired_audio_format))
+    {
+        showWarningDialog("Failed to initialize audio file stream with default output device!");
+    }
+    
     m_device->setSampleCount(DEFAULT_SAMPLE_COUNT);
 
     m_audioOutput = new QAudioOutput(desired_audio_format, this);
@@ -185,41 +189,64 @@ void SpectrographUI::showFileDialog()
 
         m_device->stop();
         m_audioOutput->reset();
+        m_audioOutput->stop();
+
+        if (!m_device->loadFile(m_currentFilePath))
+        {
+            showWarningDialog("Failed to load audio file.");
+            return;
+        }
+
         m_audioOutput->start(m_device);
         m_playButton->setEnabled(true);
-        m_device->loadFile(m_currentFilePath);
     }
 }
 
 void SpectrographUI::showSettingsDialog()
 {
     m_settingsDialog->exec();
-    if (m_settingsDialog->result() == QDialog::Accepted) {
-        setAudioOutputDevice(m_settingsDialog->outputDevice());
+    if (m_settingsDialog->result() == QDialog::Accepted) 
+    {
+        if (!setAudioOutputDevice(m_settingsDialog->outputDevice()))
+            return;
+
         updateChartTitle();
     }
 }
 
-void SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
+bool SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
 {
-    if (device.deviceName() != m_deviceInfo.deviceName()) {
+    if (device.deviceName() != m_deviceInfo.deviceName())
+    {
         if (m_device->getState() == AudioFileStream::State::Playing)
         {
             m_device->pause();
+        }
+
+        if (!m_device->setFormat(device.preferredFormat()))
+        {
+            showWarningDialog("Output device format not supported.");
+            return false;
         }
 
         m_deviceInfo = device;
         m_audioOutput->reset();
         m_audioOutput->stop();
         delete m_audioOutput;
-
-        m_device->setFormat(m_deviceInfo.preferredFormat());
         
         m_audioOutput = new QAudioOutput(m_deviceInfo, m_deviceInfo.preferredFormat(), this);
         m_audioOutput->start(m_device);
 
         if (m_device->getState() == AudioFileStream::State::Paused)
-            m_device->play(m_currentFilePath);
+        {
+            if (!m_device->play(m_currentFilePath))
+            {
+                showWarningDialog("Failed to play audio file.", "File: " + m_currentFilePath);
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
 
@@ -254,7 +281,12 @@ void SpectrographUI::connectUI()
 
 void SpectrographUI::startPlayback()
 {
-    m_device->play(m_currentFilePath);
+    if (!m_device->play(m_currentFilePath))
+    {
+        showWarningDialog("Failed to play audio file.", "File: " + m_currentFilePath);
+        return;
+    }
+
     m_playButton->setEnabled(false);
     m_pauseButton->setEnabled(true);
 }

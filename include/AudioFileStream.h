@@ -44,7 +44,7 @@ public:
     QAudioFormat getFormat();
     State getState();
     void setSampleCount(int sampleCount);
-    void setFormat(const QAudioFormat& format);
+    bool setFormat(const QAudioFormat& format);
 
 protected:
     qint64 readData(char* data, qint64 maxlen) override;
@@ -70,7 +70,7 @@ private:
     bool isDecodingFinished;
     int m_sampleCount;
 
-    void clear();
+    bool clear();
 
 private slots:
     void bufferReady();

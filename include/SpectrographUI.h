@@ -62,7 +62,7 @@ private:
     void connectUI();
     void resetUI();
 	void showWarningDialog(QString msg, QString informativeMsg = "");
-    void setAudioOutputDevice(const QAudioDeviceInfo& device);
+    bool setAudioOutputDevice(const QAudioDeviceInfo& device);
     void quitApplication();
 
     AudioFileStream* m_device = nullptr;
