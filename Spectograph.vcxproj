@@ -88,32 +88,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\FrequencySpectrum.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ProgressBar.cpp" />
     <ClCompile Include="src\SettingsDialog.cpp" />
-    <ClCompile Include="src\Spectrograph.cpp" />
     <ClCompile Include="src\SpectrographUI.cpp" />
-    <ClCompile Include="src\SpectrumAnalyser.cpp" />
-    <ClCompile Include="src\utils.cpp" />
-    <ClCompile Include="src\Waveform.cpp" />
-    <ClCompile Include="src\WavFile.cpp" />
     <ClCompile Include="src\AudioFileStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\AudioFileStream.h" />
     <QtMoc Include="include\SettingsDialog.h" />
-    <QtMoc Include="include\ProgressBar.h" />
-    <ClInclude Include="include\Spectrum.h" />
-    <QtMoc Include="include\SpectrumAnalyser.h" />
-    <QtMoc Include="include\Engine.h" />
-    <ClInclude Include="include\FrequencySpectrum.h" />
-    <ClInclude Include="include\utils.h" />
-    <ClInclude Include="include\WavFile.h" />
-    <QtMoc Include="include\Waveform.h" />
     <QtMoc Include="include\SpectrographUI.h" />
-    <QtMoc Include="include\Spectrograph.h" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Resource.qrc" />

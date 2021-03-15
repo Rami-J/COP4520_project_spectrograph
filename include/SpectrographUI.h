@@ -1,6 +1,6 @@
-#pragma once
+#ifndef SPECTROGRAPHUI_H
+#define SPECTROGRAPHUI_H
 
-#include "Spectrograph.h"
 #include "SettingsDialog.h"
 #include "AudioFileStream.h"
 
@@ -92,3 +92,5 @@ private:
 
     bool m_volumeMuted;
 };
+
+#endif // SPECTROGRAPHUI_H

@@ -27,34 +27,10 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Spectrograph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SpectrographUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Waveform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FrequencySpectrum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WavFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpectrumAnalyser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SettingsDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ProgressBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\AudioFileStream.cpp">
@@ -62,44 +38,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="include\Spectrograph.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="include\SpectrographUI.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="include\Waveform.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="include\Engine.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="include\SpectrumAnalyser.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="include\SettingsDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="include\ProgressBar.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="include\AudioFileStream.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\FrequencySpectrum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\WavFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Spectrum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Resource.qrc">

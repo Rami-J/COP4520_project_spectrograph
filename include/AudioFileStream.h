@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AUDIOFILESTREAM_H
+#define AUDIOFILESTREAM_H
 
 #include <QDebug>
 #include <QIODevice>
@@ -79,3 +80,5 @@ signals:
     void stateChanged(AudioFileStream::State state);
     void newData(const QByteArray& data);
 };
+
+#endif // AUDIOFILESTREAM_H

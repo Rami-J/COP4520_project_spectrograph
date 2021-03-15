@@ -246,20 +246,10 @@ void SpectrographUI::connectUI()
     connect(m_device, &AudioFileStream::stateChanged,
             this, &SpectrographUI::stateChanged);
 
-    /*connect(m_engine, &Engine::levelChanged,
-        m_levelMeter, &LevelMeter::levelChanged);
-
-    connect(m_engine, QOverload<qint64, qint64, const FrequencySpectrum&>::of(&Engine::spectrumChanged),
-        this, QOverload<qint64, qint64, const FrequencySpectrum&>::of(&MainWidget::spectrumChanged));
-
-    connect(m_engine, &Engine::infoMessage,
-        this, &MainWidget::infoMessage);
-
-    connect(m_engine, &Engine::errorMessage,
-        this, &MainWidget::errorMessage);
-
+    /*
     connect(m_spectrograph, &Spectrograph::infoMessage,
-        this, &MainWidget::infoMessage);*/
+        this, &MainWidget::infoMessage);
+    */
 }
 
 void SpectrographUI::startPlayback()

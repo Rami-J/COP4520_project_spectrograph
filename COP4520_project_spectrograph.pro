@@ -15,30 +15,13 @@ INCLUDEPATH += ./include
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += include/Spectrograph.h \
-           include/AudioFileStream.h \
-           include/FrequencySpectrum.h \
+HEADERS += include/AudioFileStream.h \
            include/SpectrographUI.h \
-           include/utils.h \
-           include/Waveform.h \
-           include/Engine.h \
            include/SettingsDialog.h \
-           include/Spectrum.h \
-           include/SpectrumAnalyser.h \
-           include/WavFile.h \
-           include/ProgressBar.h \
 
 SOURCES += src/main.cpp \
            src/AudioFileStream.cpp \
-           src/Spectrograph.cpp \
-           src/FrequencySpectrum.cpp \
            src/SpectrographUI.cpp \
-           src/utils.cpp \
-           src/Waveform.cpp \
-           src/Engine.cpp \
            src/SettingsDialog.cpp \
-           src/SpectrumAnalyser.cpp \
-           src/WavFile.cpp \
-           src/ProgressBar.cpp
 
 RESOURCES = Resource.qrc
