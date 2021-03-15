@@ -1,4 +1,4 @@
-\title{Spectrograph COP4520}
+\title{Comparison of Sequential and Parallel Fast Fourier Transform}
 \author{
 	Rami Jurdi \\
 	Zachary Noble \\
@@ -21,6 +21,25 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
  techniques and digital signal processing. Thus the main goal is to observe the outcome of implementing the
  multithreaded Fast Fourier transform algorithm and learn from the state-of-the-art research.
 \end{abstract}
+
+\section{Introduction}
+The Fast Fourier transform (FFT) is an algorithm that uses Discrete Fourier transforms (DFT)
+on a time sequence to convert a signal, usually based on time, to a signal based
+in the frequency domain. This allows us to analyze a sequence of time-values by decomposing
+it into bins of different frequencies. The Fast Fourier transform is used in many
+applications ranging from digital signal processing, sampling, 
+pitch correction software, and wave analysis.
+
+The direct computation of the DFT results in $n^2$ multiplications and $n(n-1)$
+additions, making the computation greatly expensive for sufficiently large $n$. 
+Over the course of many years of research done by researchers in the field,
+more efficient algorithms were developed for computing DFTs, such as the
+Cooley-Tukey FFT algorithm. This algorithm reduces the time complexity of the
+computation of Fourier transforms from $O(n^2)$ to $O(nlogn)$ \cite{Xiang}.
+
+In this paper, we present our process of implementing the parallel FFT algorithm,
+specifically the Cooley-Tukey algorithm, and conduct performance comparisons
+between the sequential and parallel versions of the algorithm in C++.
 
 \section{Target Problem}
 The main problem at hand is to create an application that is able to process signals provided to the program as audio 
@@ -46,7 +65,7 @@ explained througouly within the algorithms subsection).
 \subsection{Plan Outline}
 
 \begin{enumerate}
-	\item Setup programming enviornment using Qt C++.
+	\item Setup programming environment using Qt C++.
 	\item Add support using Qt multimedia API's to load and decode audio files from disk.
 	\item Stream audio data to an output device such as speakers or headphones.
 	\item Display a waveform of the audio.
@@ -74,8 +93,8 @@ Creating testing data sets...
 \hline
 Algorithm & File Type & File Size & Computation Time \\
 \hline
-Sequential FFS & foo.WAV & 100 kb & N \\
-Parallel FFS & foo.WAV & 100 kb & N \\
+Sequential FFT & foo.WAV & 100 kb & N \\
+Parallel FFT & foo.WAV & 100 kb & N \\
 \hline
 \end{tabular}
 
@@ -86,8 +105,8 @@ Parallel FFS & foo.WAV & 100 kb & N \\
 \hline
 Algorithm & File Type & File Size & Computation Time \\
 \hline
-Sequential FFS & foo.WAV & 100 kb & N \\
-Parallel FFS & foo.WAV & 100 kb & N \\
+Sequential FFT & foo.WAV & 100 kb & N \\
+Parallel FFT & foo.WAV & 100 kb & N \\
 \hline
 \end{tabular}
 
@@ -97,8 +116,8 @@ Parallel FFS & foo.WAV & 100 kb & N \\
 \hline
 Algorithm & File Type & File Size & Computation Time \\
 \hline
-Sequential FFS & foo.WAV & 100 kb & N \\
-Parallel FFS & foo.WAV & 100 kb & N \\
+Sequential FFT & foo.WAV & 100 kb & N \\
+Parallel FFT & foo.WAV & 100 kb & N \\
 \hline
 \end{tabular}
 
