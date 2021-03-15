@@ -175,13 +175,13 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         drawChartSamples(start, data);
 
         m_series->replace(m_buffer);
+    }
 
-        // Send read audio data via signal to output device.
-        if (maxSize > 0)
-        {
-            QByteArray buff(data, maxSize);
-            emit newData(buff);
-        }
+    // Send read audio data via signal to output device.
+    if (maxSize > 0)
+    {
+        QByteArray buff(data, maxSize);
+        emit newData(buff);
     }
 
     // If at end of file
@@ -207,7 +207,6 @@ bool AudioFileStream::loadFile(const QString& filePath)
         return false;
 
     m_decoder.setSourceFilename(filePath);
-    m_decoder.start();
 
     return true;
 }
