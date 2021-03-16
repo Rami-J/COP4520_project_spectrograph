@@ -26,7 +26,7 @@ public:
 	Spectrograph(QString title = "", QObject* parent = nullptr);
 	QChartView* getChartView();
 	QLineSeries* getSeries();
-	QChart* Spectrograph::getChart();
+	QChart* getChart();
 	QValueAxis* getAxisX();
 	QValueAxis* getAxisY();
 
