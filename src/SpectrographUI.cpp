@@ -66,8 +66,8 @@ void SpectrographUI::createLayouts()
     m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
     QAudioFormat desired_audio_format = m_deviceInfo.preferredFormat();
 
-    qDebug() << "Your device is " << m_deviceInfo.deviceName();
-    qDebug() << "Your preferred device format = " << m_deviceInfo.preferredFormat();
+    qDebug() << "SpectrographUI::createLayouts() Your device is " << m_deviceInfo.deviceName();
+    qDebug() << "SpectrographUI::createLayouts() Your preferred device format = " << m_deviceInfo.preferredFormat();
 
     m_device = new AudioFileStream(m_series, this);
     if (!m_device->init(desired_audio_format))
@@ -226,8 +226,8 @@ bool SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
             m_device->pause();
         }
 
-        qDebug() << "Your device is " << device.deviceName();
-        qDebug() << "Your preferred device format = " << device.preferredFormat();
+        qDebug() << "SpectrographUI::setAudioOutputDevice() Your device is " << device.deviceName();
+        qDebug() << "SpectrographUI::setAudioOutputDevice() Your preferred device format = " << device.preferredFormat();
 
         if (!m_device->setFormat(device.preferredFormat()))
         {

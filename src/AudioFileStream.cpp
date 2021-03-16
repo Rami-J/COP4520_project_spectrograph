@@ -25,7 +25,7 @@ bool AudioFileStream::init(const QAudioFormat& format)
 
     if (m_decoder.error() != QAudioDecoder::Error::NoError)
     {
-        qDebug("Decoder failed to set audio format.");
+        qDebug("AudioFileStream::init() Decoder failed to set audio format.");
         return false;
     }
 
@@ -178,19 +178,19 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
         drawChartSamples(start, data);
 
         m_series->replace(m_buffer);
-    }
 
-    // Send read audio data via signal to output device.
-    if (maxSize > 0)
-    {
-        QByteArray buff(data, maxSize);
-        emit newData(buff);
-    }
+        // Send read audio data via signal to output device.
+        if (maxSize > 0)
+        {
+            QByteArray buff(data, maxSize);
+            emit newData(buff);
+        }
 
-    // If at end of file
-    if (m_output.atEnd())
-    {
-        stop();
+        // If at end of file
+        if (m_output.atEnd())
+        {
+            stop();
+        }
     }
 
     return maxSize;
@@ -210,6 +210,7 @@ bool AudioFileStream::loadFile(const QString& filePath)
         return false;
 
     m_decoder.setSourceFilename(filePath);
+    m_decoder.start();
 
     return true;
 }
@@ -219,22 +220,24 @@ bool AudioFileStream::play(const QString& filePath)
 {
     if (m_decoder.error() != QAudioDecoder::Error::NoError)
     {
-        qDebug() << m_decoder.error();
+        qDebug() << "AudioFileStream::play() ERROR: " << m_decoder.error();
+        qDebug() << "AudioFileStream::play() Current value of m_format = " << m_format;
         return false;
     }
 
     if (m_state == State::Paused)
     {
-        qDebug() << "resuming audio " << filePath.toLatin1();
+        qDebug() << "AudioFileStream::play() Resuming audio " << filePath.toLatin1();
 
         m_state = State::Playing;
         emit stateChanged(m_state);
         return true;
     }
-    else if (m_decoder.state() != QAudioDecoder::State::DecodingState && !isDecodingFinished && m_state == State::Stopped)
-    {
-        m_decoder.start();
-    }
+//    else if (m_decoder.state() != QAudioDecoder::State::DecodingState && !isDecodingFinished && m_state == State::Stopped)
+//    {
+//        qDebug() << "starting decoder";
+//        m_decoder.start();
+//    }
 
     m_state = State::Playing;
     emit stateChanged(m_state);
