@@ -36,6 +36,12 @@
     <ClCompile Include="src\AudioFileStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Spectrograph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Waveform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\SpectrographUI.h">
@@ -45,6 +51,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="include\AudioFileStream.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="include\Spectrograph.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="include\Waveform.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

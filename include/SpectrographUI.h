@@ -3,6 +3,8 @@
 
 #include "SettingsDialog.h"
 #include "AudioFileStream.h"
+#include "Spectrograph.h"
+#include "Waveform.h"
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QVBoxLayout>
@@ -65,14 +67,13 @@ private:
     bool setAudioOutputDevice(const QAudioDeviceInfo& device);
     void quitApplication();
 
+    Waveform* m_waveform;
+    Spectrograph* m_spectrograph;
     AudioFileStream* m_device = nullptr;
-    QChart* m_chart;
-    QLineSeries* m_series;
     QAudioOutput* m_audioOutput = nullptr;
     QAudioDeviceInfo m_deviceInfo;
 
     SettingsDialog* m_settingsDialog;
-    //Spectrograph* m_spectrograph;
     QMenu* m_fileMenu;
     QAction* m_openFileAct;
     QAction* m_exitAct;

@@ -18,10 +18,14 @@ INCLUDEPATH += ./include
 HEADERS += include/AudioFileStream.h \
            include/SpectrographUI.h \
            include/SettingsDialog.h \
+           include/Waveform.h \
+           include/Spectrograph.h
 
 SOURCES += src/main.cpp \
            src/AudioFileStream.cpp \
            src/SpectrographUI.cpp \
            src/SettingsDialog.cpp \
+           src/Waveform.cpp \
+           src/Spectrograph.cpp
 
 RESOURCES = Resource.qrc

@@ -1,6 +1,9 @@
 #ifndef AUDIOFILESTREAM_H
 #define AUDIOFILESTREAM_H
 
+#include "Waveform.h"
+#include "Spectrograph.h"
+
 #include <QDebug>
 #include <QIODevice>
 #include <QBuffer>
@@ -25,9 +28,7 @@ class AudioFileStream : public QIODevice
     Q_OBJECT
 
 public:
-    //static const int sampleCount = 2000;
-
-    AudioFileStream(QXYSeries* series, QObject* parent = nullptr);
+    AudioFileStream(Waveform* waveform, Spectrograph* spectrograph, QObject* parent = nullptr);
     bool init(const QAudioFormat& format);
 
     enum State { Playing, Paused, Stopped };
@@ -61,15 +62,16 @@ private:
     QAudioDecoder m_decoder;
     QAudioFormat m_format;
 
-    QXYSeries* m_series;
-    QVector<QPointF> m_buffer;
+    Waveform* m_waveform;
+    QVector<QPointF> m_waveformBuffer;
+    Spectrograph* m_spectrograph;
+    QVector<QPointF> m_spectrumBuffer;
 
     State m_state;
     qreal m_peakVal;
 
     bool isInited;
     bool isDecodingFinished;
-    int m_sampleCount;
 
     bool clear();
 

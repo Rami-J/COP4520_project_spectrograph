@@ -4,14 +4,14 @@ static const QString WAV_ICON_PATH = ":/images/audio-icon.png";
 static const QString SETTINGS_ICON_PATH = ":/images/settings.png";
 static const QString VOLUME_ICON_PATH = ":/images/volume.png";
 static const QString VOLUME_MUTED_ICON_PATH = ":/images/volume_muted.png";
-static const int DEFAULT_SAMPLE_COUNT = 2000;
+static const QString SPECTROGRAPH_TITLE = "Spectrograph (Frequency vs. Amplitude)";
 static const int MIN_VOLUME = 0;
 static const int MAX_VOLUME = 100;
 
 SpectrographUI::SpectrographUI(QWidget *parent)
     : QMainWindow(parent)
-    , m_chart(new QChart)
-    , m_series(new QLineSeries)
+    , m_waveform(new Waveform("Audio Output: Default", Waveform::DEFAULT_SAMPLE_COUNT, this))
+    , m_spectrograph(new Spectrograph(SPECTROGRAPH_TITLE, this))
     , m_volumeSlider(new QSlider(Qt::Horizontal, this))
     , m_openWavFileButton(new QPushButton(this))
     , m_pauseButton(new QPushButton(this))
@@ -28,8 +28,8 @@ SpectrographUI::SpectrographUI(QWidget *parent)
     connectUI();
 
     setWindowTitle(tr("Spectrograph"));
-    setMinimumSize(480, 320);
-    resize(800, 640);
+    setMinimumSize(800, 740);
+    resize(800, 740);
 }
 
 void SpectrographUI::createLayouts()
@@ -42,26 +42,9 @@ void SpectrographUI::createLayouts()
     QLabel* waveformLabel = new QLabel("Spectrum Waveform");
     waveformLabel->setAlignment(Qt::AlignCenter);
 
-    QChartView* chartView = new QChartView(m_chart);
-    chartView->resize(800, 600);
-    chartView->setMinimumSize(380, 300);
-    m_chart->addSeries(m_series);
-    QValueAxis* axisX = new QValueAxis;
-    //axisX->setRange(0, AudioFileStream::sampleCount);
-    axisX->setRange(0, DEFAULT_SAMPLE_COUNT);
-    axisX->setLabelFormat("%g");
-    axisX->setTitleText("Samples");
-    QValueAxis* axisY = new QValueAxis;
-    axisY->setRange(-1, 1);
-    axisY->setTitleText("Amplitude");
-    m_chart->addAxis(axisX, Qt::AlignBottom);
-    m_series->attachAxis(axisX);
-    m_chart->addAxis(axisY, Qt::AlignLeft);
-    m_series->attachAxis(axisY);
-    m_chart->legend()->hide();
-
     mainLayout->addWidget(waveformLabel);
-    mainLayout->addWidget(chartView);
+    mainLayout->addWidget(m_waveform->getChartView());
+    mainLayout->addWidget(m_spectrograph->getChartView());
 
     m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
     QAudioFormat desired_audio_format = m_deviceInfo.preferredFormat();
@@ -69,14 +52,12 @@ void SpectrographUI::createLayouts()
     qDebug() << "SpectrographUI::createLayouts() Your device is " << m_deviceInfo.deviceName();
     qDebug() << "SpectrographUI::createLayouts() Your preferred device format = " << m_deviceInfo.preferredFormat();
 
-    m_device = new AudioFileStream(m_series, this);
+    m_device = new AudioFileStream(m_waveform, m_spectrograph, this);
     if (!m_device->init(desired_audio_format))
     {
         showWarningDialog("Failed to initialize audio file stream with default output device!");
     }
     
-    m_device->setSampleCount(DEFAULT_SAMPLE_COUNT);
-
     m_audioOutput = new QAudioOutput(desired_audio_format, this);
     m_audioOutput->start(m_device);
 
@@ -169,7 +150,7 @@ void SpectrographUI::createMenus()
 
 void SpectrographUI::updateChartTitle()
 {
-    m_chart->setTitle("Audio Output: " + m_deviceInfo.deviceName());
+    m_waveform->getChart()->setTitle("Audio Output: " + m_deviceInfo.deviceName());
 }
 
 void SpectrographUI::showWarningDialog(QString msg, QString informativeMsg)
@@ -299,7 +280,6 @@ void SpectrographUI::startPlayback()
 
 void SpectrographUI::pausePlayback()
 {
-    //m_device->stop();
     m_device->pause();
     m_playButton->setEnabled(true);
     m_pauseButton->setEnabled(false);

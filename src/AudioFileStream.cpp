@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-AudioFileStream::AudioFileStream(QXYSeries* series, QObject* parent) :
+// TODO: calculate FFT/DFT algorithm and populate spectrograph buffer values to display in chart
+
+AudioFileStream::AudioFileStream(Waveform* waveform, Spectrograph* spectrograph, QObject* parent) :
     QIODevice(parent),
-    m_series(series),
-    m_sampleCount(0),
+    m_waveform(waveform),
+    m_spectrograph(spectrograph),
     m_input(&m_data),
     m_output(&m_data),
     m_state(State::Stopped),
@@ -72,13 +74,10 @@ AudioFileStream::State AudioFileStream::getState()
     return m_state;
 }
 
-void AudioFileStream::setSampleCount(int sampleCount)
-{
-    m_sampleCount = sampleCount;
-}
-
 void AudioFileStream::drawChartSamples(int start, char* data)
 {
+    static const int sampleCount = m_waveform->getSampleCount();
+
     switch (m_format.sampleType())
     {
     case QAudioFormat::Float:
@@ -87,26 +86,26 @@ void AudioFileStream::drawChartSamples(int start, char* data)
         if (m_format.sampleSize() == 32)
         {
             int* data_int = (int*)data;
-            for (int s = start; s < m_sampleCount; ++s, ++data_int)
+            for (int s = start; s < sampleCount; ++s, ++data_int)
             {
-                m_buffer[s].setY((int)*data_int / m_peakVal);
+                m_waveformBuffer[s].setY((int)*data_int / m_peakVal);
             }
         }
         // For 16bit sample size
         else if (m_format.sampleSize() == 16)
         {
             short* data_short = (short*)data;
-            for (int s = start; s < m_sampleCount; ++s, ++data_short)
+            for (int s = start; s < sampleCount; ++s, ++data_short)
             {
-                m_buffer[s].setY((short)*data_short / m_peakVal);
+                m_waveformBuffer[s].setY((short)*data_short / m_peakVal);
             }
         }
         // For 8bit sample size
         else if (m_format.sampleSize() == 8)
         {
-            for (int s = start; s < m_sampleCount; ++s, ++data)
+            for (int s = start; s < sampleCount; ++s, ++data)
             {
-                m_buffer[s].setY((char)*data / m_peakVal);
+                m_waveformBuffer[s].setY((char)*data / m_peakVal);
             }
         }
         break;
@@ -115,26 +114,26 @@ void AudioFileStream::drawChartSamples(int start, char* data)
         if (m_format.sampleSize() == 32)
         {
             uint* data_int = (uint*)data;
-            for (int s = start; s < m_sampleCount; ++s, ++data_int)
+            for (int s = start; s < sampleCount; ++s, ++data_int)
             {
-                m_buffer[s].setY((uint)*data_int / m_peakVal);
+                m_waveformBuffer[s].setY((uint)*data_int / m_peakVal);
             }
         }
         // For 16bit sample size
         else if (m_format.sampleSize() == 16)
         {
             ushort* data_short = (ushort*)data;
-            for (int s = start; s < m_sampleCount; ++s, ++data_short)
+            for (int s = start; s < sampleCount; ++s, ++data_short)
             {
-                m_buffer[s].setY((ushort)*data_short / m_peakVal);
+                m_waveformBuffer[s].setY((ushort)*data_short / m_peakVal);
             }
         }
         // For 8bit sample size
         else if (m_format.sampleSize() == 8)
         {
-            for (int s = start; s < m_sampleCount; ++s, ++data)
+            for (int s = start; s < sampleCount; ++s, ++data)
             {
-                m_buffer[s].setY((uchar)*data / m_peakVal);
+                m_waveformBuffer[s].setY((uchar)*data / m_peakVal);
             }
         }
         break;
@@ -151,33 +150,34 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
     // If playing, read audio from m_output, else don't process any data
     if (m_state == State::Playing)
     {
+        static const int sampleCount = m_waveform->getSampleCount();
         static const int resolution = m_format.sampleSize() / 8;
 
         m_output.read(data, maxSize);
 
-        if (m_buffer.isEmpty()) 
+        if (m_waveformBuffer.isEmpty())
         {
-            m_buffer.reserve(m_sampleCount);
-            for (int i = 0; i < m_sampleCount; ++i)
-                m_buffer.append(QPointF(i, 0));
+            m_waveformBuffer.reserve(sampleCount);
+            for (int i = 0; i < sampleCount; ++i)
+                m_waveformBuffer.append(QPointF(i, 0));
         }
 
         // Draw the available sample points to the chart
         int start = 0;
         const int availableSamples = int(maxSize) / resolution;
-        if (availableSamples < m_sampleCount)
+        if (availableSamples < sampleCount)
         {
-            start = m_sampleCount - availableSamples;
+            start = sampleCount - availableSamples;
             for (int s = 0; s < start; ++s)
             {
-                m_buffer[s].setY(m_buffer.at(s + availableSamples).y());
+                m_waveformBuffer[s].setY(m_waveformBuffer.at(s + availableSamples).y());
             }
         }
 
         // Draw the rest of the chart's y-values based on sample-size data type
         drawChartSamples(start, data);
 
-        m_series->replace(m_buffer);
+        m_waveform->getSeries()->replace(m_waveformBuffer);
 
         // Send read audio data via signal to output device.
         if (maxSize > 0)
@@ -265,8 +265,8 @@ bool AudioFileStream::clear()
 {
     m_decoder.stop();
     m_data.clear();
-    m_buffer.clear();
-    m_series->clear();
+    m_waveformBuffer.clear();
+    m_waveform->getSeries()->clear();
 
     m_output.close();
     m_input.close();

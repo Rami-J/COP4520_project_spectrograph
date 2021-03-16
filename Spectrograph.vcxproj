@@ -91,8 +91,10 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SettingsDialog.cpp" />
+    <ClCompile Include="src\Spectrograph.cpp" />
     <ClCompile Include="src\SpectrographUI.cpp" />
     <ClCompile Include="src\AudioFileStream.cpp" />
+    <ClCompile Include="src\Waveform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\AudioFileStream.h" />
@@ -101,6 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Resource.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\Spectrograph.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\Waveform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
