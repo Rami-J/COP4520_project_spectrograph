@@ -9,10 +9,14 @@ for free via the open-source version at https://www.qt.io/download-open-source o
 * You also need the Qt Charts library that is not included with the base Qt installation by default.
 
 ### Linux:
-* qmake package
-* make package
+>Packages:
+>* qmake
+>* make
+>* qt5-charts (installed above)
+>* qt5-gstreamer
+>* qt5-multimedia
 ### Windows:
-* MSVC_2019 64-bit compiler
+* MSVC_2019 64-bit compiler (can be installed with Qt online installer)
 
 ## Project Description
 Project for COP 4520 to visualize the spectrum of audio files and their Fourier Transforms while evaluating the performance of using threading. The project uses the Qt C++ framework for the GUI elements of the program built upon one of the default examples Qt provides for their multimedia library.
