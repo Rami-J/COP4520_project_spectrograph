@@ -27,7 +27,7 @@ bool AudioFileStream::init(const QAudioFormat& format)
 
     if (m_decoder.error() != QAudioDecoder::Error::NoError)
     {
-        qDebug("AudioFileStream::init() Decoder failed to set audio format.");
+        qDebug("AudioFileStream::init() ERROR: Audio decoder failed to set audio format.");
         return false;
     }
 
@@ -37,6 +37,14 @@ bool AudioFileStream::init(const QAudioFormat& format)
     // Initialize buffers
     if (!m_output.open(QIODevice::ReadOnly) || !m_input.open(QIODevice::WriteOnly))
     {
+        return false;
+    }
+
+    m_peakVal = getPeakValue(m_format);
+
+    if (m_peakVal == qreal(0))
+    {
+        qDebug("AudioFileStream::init() ERROR: Failed to get peak value, invalid audio format.");
         return false;
     }
 
@@ -56,6 +64,14 @@ bool AudioFileStream::setFormat(const QAudioFormat& format)
     }
 
     m_format = format;
+    m_peakVal = getPeakValue(m_format);
+
+    if (m_peakVal == qreal(0))
+    {
+        qDebug("AudioFileStream::setFormat() ERROR: Failed to get peak value, invalid audio format.");
+        return false;
+    }
+
     return true;
 }
 
@@ -76,7 +92,7 @@ AudioFileStream::State AudioFileStream::getState()
 
 void AudioFileStream::drawChartSamples(int start, char* data)
 {
-    static const int sampleCount = m_waveform->getSampleCount();
+    int sampleCount = m_waveform->getSampleCount();
 
     switch (m_format.sampleType())
     {
@@ -150,8 +166,8 @@ qint64 AudioFileStream::readData(char* data, qint64 maxSize)
     // If playing, read audio from m_output, else don't process any data
     if (m_state == State::Playing)
     {
-        static const int sampleCount = m_waveform->getSampleCount();
-        static const int resolution = m_format.sampleSize() / 8;
+        int sampleCount = m_waveform->getSampleCount();
+        int resolution = m_format.sampleSize() / 8;
 
         m_output.read(data, maxSize);
 
@@ -206,7 +222,7 @@ qint64 AudioFileStream::writeData(const char* data, qint64 maxSize)
 
 bool AudioFileStream::loadFile(const QString& filePath)
 {
-    if (!clear())
+    if (m_peakVal == qreal(0) || !clear())
         return false;
 
     m_decoder.setSourceFilename(filePath);
@@ -218,7 +234,7 @@ bool AudioFileStream::loadFile(const QString& filePath)
 // Start playing the audio file
 bool AudioFileStream::play(const QString& filePath)
 {
-    if (m_decoder.error() != QAudioDecoder::Error::NoError)
+    if (m_peakVal == qreal(0) || m_decoder.error() != QAudioDecoder::Error::NoError)
     {
         qDebug() << "AudioFileStream::play() ERROR: " << m_decoder.error();
         qDebug() << "AudioFileStream::play() Current value of m_format = " << m_format;
@@ -295,11 +311,6 @@ bool AudioFileStream::atEnd() const
 void AudioFileStream::bufferReady() // SLOT
 {
     const QAudioBuffer& buffer = m_decoder.read();
-
-    if (m_peakVal == qreal(0))
-    {
-        m_peakVal = getPeakValue(buffer.format());
-    }
 
     const int length = buffer.byteCount();
     const char* data = buffer.constData<char>();

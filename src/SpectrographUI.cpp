@@ -220,8 +220,8 @@ bool SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
         m_audioOutput->reset();
         m_audioOutput->stop();
         delete m_audioOutput;
-        
-        m_audioOutput = new QAudioOutput(m_deviceInfo, m_deviceInfo.preferredFormat(), this);
+
+        m_audioOutput = new QAudioOutput(m_deviceInfo, m_device->getFormat(), this);
         m_audioOutput->start(m_device);
 
         if (m_device->getState() == AudioFileStream::State::Paused)
@@ -232,7 +232,7 @@ bool SpectrographUI::setAudioOutputDevice(const QAudioDeviceInfo& device)
                 return false;
             }
         }
-        
+
         return true;
     }
 }
