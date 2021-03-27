@@ -1,6 +1,8 @@
 #ifndef SPECTROGRAPH_H
 #define SPECTROGRAPH_H
 
+#include <complex>
+
 #include <QtCore/QObject>
 #include <QtCore/QPointF>
 #include <QtCore/QVector>
@@ -10,6 +12,10 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QChart>
 #include <QtCharts/QValueAxis>
+#include <QBuffer>
+#include <QAudioDecoder>
+
+#define _USE_MATH_DEFINES
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QLineSeries;
@@ -29,6 +35,10 @@ public:
 	QChart* getChart();
 	QValueAxis* getAxisX();
 	QValueAxis* getAxisY();
+	QBuffer* getDataBuffer();
+	void clear();
+
+	void calculateDFT(const QAudioFormat format, const qreal peakVal);
 
 private:
 	QChart* m_spectrumChart;
@@ -36,6 +46,8 @@ private:
 	QChartView* m_spectrumChartView;
 	QValueAxis* m_axisX;
 	QValueAxis* m_axisY;
+	QAudioBuffer m_buffer;
+	QBuffer* m_dataBuffer;
 };
 
 #endif // SPECTROGRAPH_H

@@ -4,6 +4,7 @@
 #include "Waveform.h"
 #include "Spectrograph.h"
 
+#include <thread>
 #include <QDebug>
 #include <QIODevice>
 #include <QBuffer>
@@ -46,6 +47,7 @@ public:
     State getState();
     void setSampleCount(int sampleCount);
     bool setFormat(const QAudioFormat& format);
+    static qreal getPeakValue(const QAudioFormat& format);
 
 protected:
     qint64 readData(char* data, qint64 maxlen) override;
@@ -53,7 +55,6 @@ protected:
 
 private:
     void drawChartSamples(int start, char* data);
-    qreal getPeakValue(const QAudioFormat& format);
 
     QFile* m_file;
     QBuffer m_input;
