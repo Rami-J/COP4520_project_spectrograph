@@ -31,6 +31,15 @@ qmake && make
 ```
 
 ### Windows
-To build and run on Windows using Visual Studio open the solution Spectrograph.sln and download the Qt VS Tools extension. Then hit the green run button at the top to build and run.
+1. To build and run on Windows using Visual Studio open the solution Spectrograph.sln and download the Qt VS Tools extension. 
 
-The project can also be built and run using QtCreator just by opening the COP4520_project_spectrograph.pro file and configuring the build settings to build with the MSVC_2019 64-bit compiler.
+2. Navigate to Extensions -> Qt VS Tools -> Qt Versions
+and add the msvc2019_64 Qt version by browsing to its folder located in the Qt\5.15.2 folder.
+(Example: C:\Qt\5.15.2\msvc2019_64)
+
+3. Navigate to Extensions -> Qt VS Tools -> Qt Project Settings
+and make sure that Qt Installation = msvc2019_64 and Qt Modules = charts;core;gui;multimedia;widgets
+
+4. Then hit the green run button at the top to build the solution and run.
+
+The project can also be built and run using QtCreator by opening the COP4520_project_spectrograph.pro file and configuring the build settings to build with the MSVC_2019 64-bit compiler.
