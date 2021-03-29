@@ -49,7 +49,6 @@ private:
 	QChartView* m_spectrumChartView;
 	QValueAxis* m_axisX;
 	QValueAxis* m_axisY;
-	//QBuffer* m_dataBuffer;
 	FTController* m_FTController;
 };
 

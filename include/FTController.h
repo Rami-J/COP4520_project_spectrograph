@@ -2,6 +2,7 @@
 #define FTCONTROLLER_H
 
 #include "DFTWorkerThread.h"
+#include "DistributedDFTWorkerThread.h"
 
 #include <QtCore/QThread>
 #include <QtCore/QObject>
@@ -29,6 +30,7 @@ public:
     FTController();
     ~FTController();
     void startDFTInAThread(const QAudioFormat format);
+    void startDistributedDFT(const QAudioFormat format);
     QBuffer* getDataBuffer();
     void setAudioFormat(QAudioFormat);
     void clear();
@@ -38,11 +40,14 @@ signals:
 
 public slots:
     void handleResults(const QVector<QPointF> points);
+    void handleDistributedResults(const QVector<QPointF> points, const int workerID);
 
 private:
-    DFTWorkerThread m_DFTWorkerThreads[NUM_DFT_WORKERS];
+    DistributedDFTWorkerThread* m_DistributedDFTWorkerThreads[NUM_DFT_WORKERS];
     DFTWorkerThread* m_DFTWorkerThread;
     QAudioFormat m_format;
+
+    void terminateRunningThreads();
 };
 
 #endif // FTCONTROLLER_H

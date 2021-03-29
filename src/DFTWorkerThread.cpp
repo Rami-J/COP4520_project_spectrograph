@@ -29,18 +29,23 @@ void DFTWorkerThread::clearData()
     m_dataBuffer->close();
     m_dataBuffer->setData(nullptr);
     m_dataBuffer->open(QIODevice::ReadWrite);
-    spectrumBuffer.clear();
+    m_spectrumBuffer.clear();
 }
 
 void DFTWorkerThread::run()
 {
-    spectrumBuffer.clear();
+    m_spectrumBuffer.clear();
 
     // Reset data buffer to position 0
     m_dataBuffer->seek(0);
 
     // Calculate number of samples
     const ulong N = m_dataBuffer->bytesAvailable() / (m_format.sampleSize() / 8);
+
+    if (N == 0)
+    {
+        return;
+    }
 
     qDebug() << "DFTWorkerThread::run() Number of samples received: " << N;
 
@@ -49,7 +54,7 @@ void DFTWorkerThread::run()
     short* data_short = (short*)data;
     const int K = Constants::MAX_FREQUENCY;
 
-    spectrumBuffer.reserve(K);
+    m_spectrumBuffer.reserve(K - Constants::MIN_FREQUENCY);
 
     double currentSum = 0.0;
     double maxSum = 0.0;
@@ -80,15 +85,14 @@ void DFTWorkerThread::run()
             maxSum = currentSum;
 
         // Add point to chart buffer
-        spectrumBuffer.append(QPointF(k, currentSum));
+        m_spectrumBuffer.append(QPointF(k, currentSum));
     }
 
     // Normalize y values
-    for (int i = 0; i < spectrumBuffer.size(); ++i)
+    for (int i = 0; i < m_spectrumBuffer.size(); ++i)
     {
-        spectrumBuffer[i].setY(spectrumBuffer[i].y() / maxSum);
+        m_spectrumBuffer[i].setY(m_spectrumBuffer[i].y() / maxSum);
     }
 
-    emit resultReady(spectrumBuffer);
+    emit resultReady(m_spectrumBuffer);
 }
-

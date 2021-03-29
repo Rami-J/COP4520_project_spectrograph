@@ -48,6 +48,9 @@
     <ClCompile Include="src\DFTWorkerThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DistributedDFTWorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\SpectrographUI.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="include\DFTWorkerThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="include\DistributedDFTWorkerThread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
