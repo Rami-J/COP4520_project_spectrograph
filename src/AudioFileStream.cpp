@@ -336,6 +336,7 @@ void AudioFileStream::finished() // SLOT
 
     // When audio decoding is finished we can start calculating and plotting the
     // DFT graph. Later on we can make this run in parallel to prevent freeze-ups.
+    //dftThread = std::thread(&Spectrograph::calculateDFT, m_spectrograph, m_format, m_peakVal);
     m_spectrograph->calculateDFT(m_format, m_peakVal);
 }
 

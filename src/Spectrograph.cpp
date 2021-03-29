@@ -21,7 +21,7 @@ Spectrograph::Spectrograph(QString title, QObject* parent)
     m_axisX->setLabelFormat("%g");
     m_axisX->setTitleText("Frequency (Hz)");
     m_axisY = new QValueAxis;
-    m_axisY->setRange(-1, 1);
+    m_axisY->setRange(0, 1);
     m_axisY->setTitleText("Amplitude");
     m_spectrumChart->addAxis(m_axisX, Qt::AlignBottom);
     m_spectrumSeries->attachAxis(m_axisX);
@@ -64,7 +64,9 @@ QBuffer* Spectrograph::getDataBuffer()
 void Spectrograph::clear()
 {
     // Reset the audio data buffer
-    m_dataBuffer->setBuffer(nullptr);
+    m_dataBuffer->close();
+    m_dataBuffer->setData(nullptr);
+    m_dataBuffer->open(QIODevice::ReadWrite);
 }
 
 void Spectrograph::calculateDFT(const QAudioFormat format, const qreal peakVal)
@@ -74,6 +76,8 @@ void Spectrograph::calculateDFT(const QAudioFormat format, const qreal peakVal)
 
     // Calculate number of samples
     const ulong N = m_dataBuffer->bytesAvailable() / (format.sampleSize() / 8);
+
+    qDebug() << "Spectrograph::calculateDFT() Number of samples: " << N;
 
     // Get raw data and define K
     const char* data = m_dataBuffer->buffer().constData();
@@ -98,6 +102,8 @@ void Spectrograph::calculateDFT(const QAudioFormat format, const qreal peakVal)
             double real = xn * std::cos(((2 * M_PI) / N) * k * n);
             currentSum += real;
         }
+
+        currentSum = std::abs(currentSum);
 
         // Keep track of largest y-value seen so far
         if (currentSum > maxSum)

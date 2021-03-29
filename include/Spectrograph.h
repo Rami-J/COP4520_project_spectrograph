@@ -2,6 +2,7 @@
 #define SPECTROGRAPH_H
 
 #include <complex>
+#include <atomic>
 
 #include <QtCore/QObject>
 #include <QtCore/QPointF>

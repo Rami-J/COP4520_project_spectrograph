@@ -74,6 +74,8 @@ private:
     bool isInited;
     bool isDecodingFinished;
 
+    //std::thread dftThread;
+
     bool clear();
 
 private slots:
