@@ -1,8 +1,4 @@
 #include "Spectrograph.h"
-#include <math.h>
-
-static const int MAX_FREQUENCY = 1000;
-static const int MIN_FREQUENCY = 100;
 
 Spectrograph::Spectrograph(QString title, QObject* parent) 
 	: QObject(parent)
@@ -11,13 +7,12 @@ Spectrograph::Spectrograph(QString title, QObject* parent)
     , m_spectrumChartView(new QChartView(m_spectrumChart))
     , m_axisX(new QValueAxis)
     , m_axisY(new QValueAxis)
-    , m_dataBuffer(new QBuffer)
+    , m_FTController(new FTController)
 {
-    m_dataBuffer->open(QIODevice::ReadWrite);
     m_spectrumChartView->resize(800, 600);
     m_spectrumChartView->setMinimumSize(380, 300);
     m_spectrumChart->addSeries(m_spectrumSeries);
-    m_axisX->setRange(MIN_FREQUENCY, MAX_FREQUENCY);
+    m_axisX->setRange(Constants::MIN_FREQUENCY, Constants::MAX_FREQUENCY);
     m_axisX->setLabelFormat("%g");
     m_axisX->setTitleText("Frequency (Hz)");
     m_axisY = new QValueAxis;
@@ -29,6 +24,8 @@ Spectrograph::Spectrograph(QString title, QObject* parent)
     m_spectrumSeries->attachAxis(m_axisY);
     m_spectrumChart->legend()->hide();
     m_spectrumChart->setTitle(title);
+
+    connect(m_FTController, &FTController::spectrumDataReady, this, &Spectrograph::plotSpectrumData);
 }
 
 QChartView* Spectrograph::getChartView()
@@ -58,66 +55,25 @@ QValueAxis* Spectrograph::getAxisY()
 
 QBuffer* Spectrograph::getDataBuffer()
 {
-    return m_dataBuffer;
+    return m_FTController->getDataBuffer();
 }
 
-void Spectrograph::clear()
+void Spectrograph::cancelCalculation()
 {
     // Reset the audio data buffer
-    m_dataBuffer->close();
-    m_dataBuffer->setData(nullptr);
-    m_dataBuffer->open(QIODevice::ReadWrite);
+    m_FTController->clear();
 }
 
-void Spectrograph::calculateDFT(const QAudioFormat format, const qreal peakVal)
+void Spectrograph::calculateDFT(const QAudioFormat format)
 {
-    // Reset data buffer to position 0
-    m_dataBuffer->seek(0);
+    m_FTController->startDFTInAThread(format);
+}
 
-    // Calculate number of samples
-    const ulong N = m_dataBuffer->bytesAvailable() / (format.sampleSize() / 8);
+void Spectrograph::plotSpectrumData(const QVector<QPointF> points)
+{
+    qDebug() << "Spectrograph::plotSpectrumData() plotting " << points.size() << " points";
 
-    qDebug() << "Spectrograph::calculateDFT() Number of samples: " << N;
-
-    // Get raw data and define K
-    const char* data = m_dataBuffer->buffer().constData();
-    short* data_short = (short*)data;
-    const int K = MAX_FREQUENCY;
-
-    QVector<QPointF> spectrumBuffer;
-    spectrumBuffer.reserve(K);
-
-    double currentSum = 0.0;
-    double maxSum = 0.0;
-
-    // Loop through each k
-    for (int k = MIN_FREQUENCY; k < K; ++k)
-    {
-        currentSum = 0.0;
-
-        // Loop through each sample n
-        for (int n = 0; n < N; ++n)
-        {
-            double xn = data_short[n];
-            double real = xn * std::cos(((2 * M_PI) / N) * k * n);
-            currentSum += real;
-        }
-
-        currentSum = std::abs(currentSum);
-
-        // Keep track of largest y-value seen so far
-        if (currentSum > maxSum)
-            maxSum = currentSum;
-
-        // Add point to chart buffer
-        spectrumBuffer.append(QPointF(k, currentSum));
-    }
-    
-    // Normalize y values
-    for (int i = 0; i < spectrumBuffer.size(); ++i)
-    {
-        spectrumBuffer[i].setY(spectrumBuffer[i].y() / maxSum);
-    }
-
-    m_spectrumSeries->replace(spectrumBuffer);
+    // Waiting to replace all the points on the graph at once is more efficient than constantly
+    // appending the data points as it's being computed.
+    m_spectrumSeries->replace(points);
 }

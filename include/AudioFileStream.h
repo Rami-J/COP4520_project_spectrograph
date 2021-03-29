@@ -4,7 +4,6 @@
 #include "Waveform.h"
 #include "Spectrograph.h"
 
-#include <thread>
 #include <QDebug>
 #include <QIODevice>
 #include <QBuffer>
@@ -46,6 +45,7 @@ public:
     QAudioFormat getFormat();
     State getState();
     void setSampleCount(int sampleCount);
+    void cancelSpectrum();
     bool setFormat(const QAudioFormat& format);
     static qreal getPeakValue(const QAudioFormat& format);
 
@@ -73,8 +73,6 @@ private:
 
     bool isInited;
     bool isDecodingFinished;
-
-    //std::thread dftThread;
 
     bool clear();
 

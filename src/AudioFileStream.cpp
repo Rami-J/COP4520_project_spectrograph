@@ -284,7 +284,7 @@ bool AudioFileStream::clear()
     m_data.clear();
     m_waveformBuffer.clear();
     m_waveform->getSeries()->clear();
-    m_spectrograph->clear();
+    //m_spectrograph->clear();
 
     m_output.close();
     m_input.close();
@@ -335,9 +335,13 @@ void AudioFileStream::finished() // SLOT
     isDecodingFinished = true;
 
     // When audio decoding is finished we can start calculating and plotting the
-    // DFT graph. Later on we can make this run in parallel to prevent freeze-ups.
-    //dftThread = std::thread(&Spectrograph::calculateDFT, m_spectrograph, m_format, m_peakVal);
-    m_spectrograph->calculateDFT(m_format, m_peakVal);
+    // DFT graph on a new thread.
+    m_spectrograph->calculateDFT(m_format);
+}
+
+void AudioFileStream::cancelSpectrum()
+{
+    m_spectrograph->cancelCalculation();
 }
 
 qreal AudioFileStream::getPeakValue(const QAudioFormat& format)

@@ -42,6 +42,12 @@
     <ClCompile Include="src\Waveform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FTController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DFTWorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\SpectrographUI.h">
@@ -59,10 +65,21 @@
     <QtMoc Include="include\Waveform.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="include\FTController.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="include\DFTWorkerThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="Resource.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

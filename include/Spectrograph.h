@@ -1,8 +1,7 @@
 #ifndef SPECTROGRAPH_H
 #define SPECTROGRAPH_H
 
-#include <complex>
-#include <atomic>
+#include "FTController.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QPointF>
@@ -25,7 +24,7 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-class Spectrograph : QObject
+class Spectrograph : public QObject
 {
 	Q_OBJECT
 
@@ -37,9 +36,12 @@ public:
 	QValueAxis* getAxisX();
 	QValueAxis* getAxisY();
 	QBuffer* getDataBuffer();
-	void clear();
+	void cancelCalculation();
 
-	void calculateDFT(const QAudioFormat format, const qreal peakVal);
+	void calculateDFT(const QAudioFormat format);
+
+private slots:
+	void plotSpectrumData(const QVector<QPointF> points);
 
 private:
 	QChart* m_spectrumChart;
@@ -47,8 +49,8 @@ private:
 	QChartView* m_spectrumChartView;
 	QValueAxis* m_axisX;
 	QValueAxis* m_axisY;
-	QAudioBuffer m_buffer;
-	QBuffer* m_dataBuffer;
+	//QBuffer* m_dataBuffer;
+	FTController* m_FTController;
 };
 
 #endif // SPECTROGRAPH_H

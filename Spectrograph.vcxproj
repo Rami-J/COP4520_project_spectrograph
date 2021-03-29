@@ -89,6 +89,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\FTController.cpp" />
+    <ClCompile Include="src\DFTWorkerThread.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SettingsDialog.cpp" />
     <ClCompile Include="src\Spectrograph.cpp" />
@@ -109,6 +111,15 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\Waveform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\FTController.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\DFTWorkerThread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

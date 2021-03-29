@@ -171,6 +171,7 @@ void SpectrographUI::showFileDialog()
 
         m_currentFilePath = fileNames.front();
 
+        m_device->cancelSpectrum();
         m_device->stop();
         m_audioOutput->reset();
         m_audioOutput->stop();
