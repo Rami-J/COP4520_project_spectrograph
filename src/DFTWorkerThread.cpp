@@ -2,21 +2,19 @@
 #include <math.h>
 
 DFTWorkerThread::DFTWorkerThread()
-    : m_dataBuffer(new QBuffer)
+    : m_dataBuffer(nullptr)
 {
     qRegisterMetaType<QVector<QPointF>>("QVector<QPointF>");
-    m_dataBuffer->open(QIODevice::ReadWrite);
 }
 
 DFTWorkerThread::~DFTWorkerThread()
 {
-    m_dataBuffer->close();
-    m_dataBuffer->setData(nullptr);
+
 }
 
-QBuffer* DFTWorkerThread::getDataBuffer()
+void DFTWorkerThread::setDataBuffer(const QBuffer* dataBuffer)
 {
-    return m_dataBuffer;
+    m_dataBuffer = dataBuffer;
 }
 
 void DFTWorkerThread::setAudioFormat(QAudioFormat format)
@@ -26,18 +24,12 @@ void DFTWorkerThread::setAudioFormat(QAudioFormat format)
 
 void DFTWorkerThread::clearData()
 {
-    m_dataBuffer->close();
-    m_dataBuffer->setData(nullptr);
-    m_dataBuffer->open(QIODevice::ReadWrite);
     m_spectrumBuffer.clear();
 }
 
 void DFTWorkerThread::run()
 {
     m_spectrumBuffer.clear();
-
-    // Reset data buffer to position 0
-    m_dataBuffer->seek(0);
 
     // Calculate number of samples
     const ulong N = m_dataBuffer->bytesAvailable() / (m_format.sampleSize() / 8);

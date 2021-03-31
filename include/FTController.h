@@ -1,8 +1,12 @@
 #ifndef FTCONTROLLER_H
 #define FTCONTROLLER_H
 
+#include "Constants.h"
 #include "DFTWorkerThread.h"
 #include "DistributedDFTWorkerThread.h"
+
+#include <atomic>
+#include <chrono>
 
 #include <QtCore/QThread>
 #include <QtCore/QObject>
@@ -22,10 +26,6 @@ class FTController : public QObject
 {
     Q_OBJECT
 
-    // Define number of DFT workers to 9 since we can split up the k-frequency calculations evenly
-    // because MAX_FREQUENCY - MIN_FREQUENCY = 1000 - 100 = 900 and 900 / 9 = 100 frequency bins per thread
-    const static int NUM_DFT_WORKERS = 9;
-
 public:
     FTController();
     ~FTController();
@@ -37,15 +37,23 @@ public:
 
 signals:
     void spectrumDataReady(const QVector<QPointF> points);
+    void distributedSpectrumDataReady(const QVector<QPointF> points);
 
 public slots:
     void handleResults(const QVector<QPointF> points);
     void handleDistributedResults(const QVector<QPointF> points, const int workerID);
 
 private:
-    DistributedDFTWorkerThread* m_DistributedDFTWorkerThreads[NUM_DFT_WORKERS];
+    DistributedDFTWorkerThread* m_DistributedDFTWorkerThreads[Constants::NUM_DFT_WORKERS];
     DFTWorkerThread* m_DFTWorkerThread;
     QAudioFormat m_format;
+    QBuffer* m_dataBuffer;
+
+    QVector<QPointF> m_combinedPoints;
+    std::atomic<int> m_numWorkersFinished;
+
+    std::chrono::steady_clock::time_point m_timeStart;
+    std::chrono::steady_clock::time_point m_timeEnd;
 
     void terminateRunningThreads();
     void resetThreadData();

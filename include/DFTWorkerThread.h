@@ -24,7 +24,7 @@ public:
 
     void setAudioFormat(QAudioFormat format);
 
-    QBuffer* getDataBuffer();
+    void setDataBuffer(const QBuffer* dataBuffer);
 
     void clearData();
 
@@ -32,7 +32,7 @@ signals:
     void resultReady(const QVector<QPointF> points);
 
 private:
-    QBuffer* m_dataBuffer;
+    const QBuffer* m_dataBuffer;
     QVector<QPointF> m_spectrumBuffer;
     QAudioFormat m_format;
 };
