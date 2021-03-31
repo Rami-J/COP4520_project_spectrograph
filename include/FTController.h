@@ -52,8 +52,8 @@ private:
     QVector<QPointF> m_combinedPoints;
     std::atomic<int> m_numWorkersFinished;
 
-    std::chrono::steady_clock::time_point m_timeStart;
-    std::chrono::steady_clock::time_point m_timeEnd;
+    std::chrono::high_resolution_clock::time_point m_timeStart;
+    std::chrono::high_resolution_clock::time_point m_timeEnd;
 
     void terminateRunningThreads();
     void resetThreadData();

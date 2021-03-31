@@ -113,6 +113,8 @@ void FTController::handleResults(const QVector<QPointF> points)
 
 void FTController::handleDistributedResults(const QVector<QPointF> points, const int workerID)
 {
+    Q_UNUSED(workerID);
+
     for (int i = 0; i < points.size(); ++i)
     {
         int index = points[i].x() - Constants::MIN_FREQUENCY;
