@@ -36,10 +36,20 @@ void FTController::terminateRunningThreads()
     }
 }
 
+void FTController::resetThreadData()
+{
+    m_DFTWorkerThread->clearData();
+
+    for (int i = 0; i < NUM_DFT_WORKERS; ++i)
+    {
+        m_DistributedDFTWorkerThreads[i]->clearData();
+    }
+}
+
 void FTController::clear()
 {
     terminateRunningThreads();
-    m_DFTWorkerThread->clearData();
+    resetThreadData();
 }
 
 QBuffer* FTController::getDataBuffer()

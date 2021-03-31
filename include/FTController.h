@@ -48,6 +48,7 @@ private:
     QAudioFormat m_format;
 
     void terminateRunningThreads();
+    void resetThreadData();
 };
 
 #endif // FTCONTROLLER_H
