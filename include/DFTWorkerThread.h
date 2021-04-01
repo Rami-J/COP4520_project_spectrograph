@@ -3,6 +3,8 @@
 
 #include "Constants.h"
 
+#include <complex>
+
 #include <QDebug>
 #include <QtCore/QThread>
 #include <QtCore/QObject>

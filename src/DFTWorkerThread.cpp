@@ -48,14 +48,16 @@ void DFTWorkerThread::run()
 
     m_spectrumBuffer.reserve(K - Constants::MIN_FREQUENCY);
 
-    double currentSum = 0.0;
     double maxSum = 0.0;
-    ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
+    std::complex<double> currentSum;
+
+    std::vector<std::pair<ulong, std::complex<double>>> output;
+    output.reserve(N);
 
     // Loop through each k
-    for (int k = Constants::MIN_FREQUENCY; k < K; ++k)
+    for (ulong k = 0; k < N; ++k)
     {
-        currentSum = 0.0;
+        currentSum = std::complex<double>(0, 0);
 
         // Loop through each sample n
         for (ulong n = 0; n < N; ++n)
@@ -67,24 +69,35 @@ void DFTWorkerThread::run()
             }
 
             double xn = data_short[n];
-            double real = xn * std::cos(((2 * M_PI) / samplesPerSec) * k * n);
-            currentSum += real;
+            double real = std::cos(((2 * M_PI) / N) * k * n);
+            double imag = std::sin(((2 * M_PI) / N) * k * n);
+            std::complex<double> w (real, -imag);
+            currentSum += xn * w;
         }
 
-        currentSum = std::abs(currentSum);
+        double mag = std::fabs(currentSum);
 
         // Keep track of largest y-value seen so far
-        if (currentSum > maxSum)
-            maxSum = currentSum;
+        if (mag > maxSum)
+            maxSum = mag;
 
-        // Add point to chart buffer
-        m_spectrumBuffer.append(QPointF(k, currentSum));
+        // Add point to output buffer
+        output.push_back(std::make_pair(k, currentSum));
     }
 
     // Normalize y values
-    for (int i = 0; i < m_spectrumBuffer.size(); ++i)
+    for (size_t i = 0; i < (output.size() / 2); ++i)
     {
-        m_spectrumBuffer[i].setY(m_spectrumBuffer[i].y() / maxSum);
+        // Only plot the frequencies we're interested in
+        if (output[i].first > Constants::MAX_FREQUENCY)
+            break;
+        else if (output[i].first < Constants::MIN_FREQUENCY)
+            continue;
+
+        double abs = std::fabs(output[i].second) / maxSum;
+        QPointF point(output[i].first, abs);
+        qDebug() << "DFTWorkerThread::run() Adding point " << point;
+        m_spectrumBuffer.append(point);
     }
 
     emit resultReady(m_spectrumBuffer);

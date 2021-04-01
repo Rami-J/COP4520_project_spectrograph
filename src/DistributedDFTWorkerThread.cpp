@@ -100,7 +100,7 @@ void DistributedDFTWorkerThread::run()
             currentSum += real;
         }
 
-        currentSum = std::abs(currentSum);
+        currentSum = std::fabs(currentSum);
 
         // Keep track of largest y-value seen so far
         if (currentSum > maxSum)
