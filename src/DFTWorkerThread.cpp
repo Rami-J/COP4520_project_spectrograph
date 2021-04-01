@@ -50,6 +50,7 @@ void DFTWorkerThread::run()
 
     double currentSum = 0.0;
     double maxSum = 0.0;
+    ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
 
     // Loop through each k
     for (int k = Constants::MIN_FREQUENCY; k < K; ++k)
@@ -66,7 +67,7 @@ void DFTWorkerThread::run()
             }
 
             double xn = data_short[n];
-            double real = xn * std::cos(((2 * M_PI) / N) * k * n);
+            double real = xn * std::cos(((2 * M_PI) / samplesPerSec) * k * n);
             currentSum += real;
         }
 

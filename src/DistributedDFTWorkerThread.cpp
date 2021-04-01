@@ -79,6 +79,7 @@ void DistributedDFTWorkerThread::run()
     m_spectrumBuffer.reserve(k_end - k_start);
 
     double currentSum = 0.0;
+    ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
 
     // Loop through each k
     for (int k = k_start; k < k_end; ++k)
@@ -95,7 +96,7 @@ void DistributedDFTWorkerThread::run()
             }
 
             double xn = data_short[n];
-            double real = xn * std::cos(((2 * M_PI) / N) * k * n);
+            double real = xn * std::cos(((2 * M_PI) / samplesPerSec) * k * n);
             currentSum += real;
         }
 
