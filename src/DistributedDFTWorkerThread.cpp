@@ -53,8 +53,6 @@ void DistributedDFTWorkerThread::setDataBuffer(const QBuffer* dataBuffer)
 
 void DistributedDFTWorkerThread::run()
 {
-    // TODO: further split up the N samples of work between threads?
-
     m_spectrumBuffer.clear();
 
     // Calculate number of samples
@@ -65,29 +63,35 @@ void DistributedDFTWorkerThread::run()
         return;
     }
 
-    qDebug() << "DistributedDFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << N;
-
     // Get raw data
     const char* data = m_dataBuffer->buffer().constData();
     short* data_short = (short*)data;
 
-    // k range calculation for current worker
-    const int num_frequency_bins = (Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY);
-    const int k_start = (m_workerID * num_frequency_bins) / Constants::NUM_DFT_WORKERS + Constants::MIN_FREQUENCY;
-    const int k_end = ((m_workerID + 1) * num_frequency_bins) / Constants::NUM_DFT_WORKERS + Constants::MIN_FREQUENCY;
+    // range calculation for current worker
+    ulong k_start = (m_workerID * N) / Constants::NUM_DFT_WORKERS;
+    ulong k_end = ((m_workerID + 1) * N) / Constants::NUM_DFT_WORKERS;
 
-    m_spectrumBuffer.reserve(k_end - k_start);
+    if (k_end < N && (m_workerID + 1) == Constants::NUM_DFT_WORKERS)
+        k_end = N;
 
-    double currentSum = 0.0;
-    ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
+    qDebug() << "DistributedDFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << (k_end - k_start + 1);
+
+    m_spectrumBuffer.reserve(Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY);
+
+    std::complex<double> currentSum;
+
+    std::vector<std::pair<ulong, std::complex<double>>> output;
+    output.reserve(N);
+
+    const ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
 
     // Loop through each k
-    for (int k = k_start; k < k_end; ++k)
+    for (ulong k = k_start; k < k_end; ++k)
     {
-        currentSum = 0.0;
+        currentSum = std::complex<double>(0, 0);
 
         // Loop through each sample n
-        for (ulong n = 0; n < N; ++n)
+        for (ulong n = k_start; n < k_end; ++n)
         {
             if (isInterruptionRequested())
             {
@@ -96,18 +100,33 @@ void DistributedDFTWorkerThread::run()
             }
 
             double xn = data_short[n];
-            double real = xn * std::cos(((2 * M_PI) / samplesPerSec) * k * n);
-            currentSum += real;
+            double real = std::cos(((2 * M_PI) / samplesPerSec) * k * n);
+            double imag = std::sin(((2 * M_PI) / samplesPerSec) * k * n);
+            std::complex<double> w (real, -imag);
+            currentSum += xn * w;
         }
 
-        currentSum = std::fabs(currentSum);
+        double mag = std::fabs(currentSum);
 
         // Keep track of largest y-value seen so far
-        if (currentSum > maxSum)
-            maxSum = currentSum;
+        if (mag > maxSum)
+            maxSum = mag;
 
-        // Add point to chart buffer
-        m_spectrumBuffer.append(QPointF(k, currentSum));
+        // Add point to output buffer
+        output.push_back(std::make_pair(k, currentSum));
+    }
+
+    for (size_t i = 0; i < (output.size() / 2); ++i)
+    {
+        // Only plot the frequencies we're interested in
+        if (output[i].first > Constants::MAX_FREQUENCY)
+            break;
+        else if (output[i].first < Constants::MIN_FREQUENCY)
+            continue;
+
+        double abs = std::fabs(output[i].second);
+        QPointF point(output[i].first, abs);
+        m_spectrumBuffer.append(point);
     }
 
     emit distributedResultReady(m_spectrumBuffer, m_workerID);

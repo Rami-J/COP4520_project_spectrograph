@@ -54,6 +54,8 @@ void DFTWorkerThread::run()
     std::vector<std::pair<ulong, std::complex<double>>> output;
     output.reserve(N);
 
+    const ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
+
     // Loop through each k
     for (ulong k = 0; k < N; ++k)
     {
@@ -69,8 +71,8 @@ void DFTWorkerThread::run()
             }
 
             double xn = data_short[n];
-            double real = std::cos(((2 * M_PI) / N) * k * n);
-            double imag = std::sin(((2 * M_PI) / N) * k * n);
+            double real = std::cos(((2 * M_PI) / samplesPerSec) * k * n);
+            double imag = std::sin(((2 * M_PI) / samplesPerSec) * k * n);
             std::complex<double> w (real, -imag);
             currentSum += xn * w;
         }

@@ -5,7 +5,7 @@ FTController::FTController()
     , m_DFTWorkerThread(new DFTWorkerThread)
     , m_numWorkersFinished(0)
 {
-    m_combinedPoints.resize((Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY));
+    m_combinedPoints.resize((Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY + 1));
 
     m_dataBuffer->open(QIODevice::ReadWrite);
     m_DFTWorkerThread->setDataBuffer(m_dataBuffer);
@@ -129,6 +129,7 @@ void FTController::handleDistributedResults(const QVector<QPointF> points, const
         for (int i = 0; i < m_combinedPoints.size(); ++i)
         {
             m_combinedPoints[i].setY(m_combinedPoints[i].y() / DistributedDFTWorkerThread::getMaxSum());
+            qDebug() << "DistributedDFTWorkerThread Point is " << m_combinedPoints[i];
         }
 
         m_numWorkersFinished = 0;

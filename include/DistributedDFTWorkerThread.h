@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 
+#include <complex>
 #include <atomic>
 
 #include <QDebug>
