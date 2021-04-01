@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-// TODO: calculate FFT/DFT algorithm and populate spectrograph buffer values to display in chart,
-// create another class to test the performance of the different algorithms, has its own main function and command-line args, etc.
-
 AudioFileStream::AudioFileStream(Waveform* waveform, Spectrograph* spectrograph, QObject* parent) :
     QIODevice(parent),
     m_waveform(waveform),

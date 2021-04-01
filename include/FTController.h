@@ -19,8 +19,7 @@
 *   asynchronously on a thread separate from the main GUI thread, through the use of the
 *   DFTWorker class.
 *  
-*   TODO: perform distributed computation of DFT by using multiple DFT worker threads, create an FFTWorker as well
-*         for comparison between DFT and FFT
+*   TODO: perform FFT calculation via FFTWorker and DistributedFFTWorker classes
 */
 class FTController : public QObject
 {

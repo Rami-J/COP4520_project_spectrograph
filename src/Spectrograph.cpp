@@ -66,7 +66,7 @@ void Spectrograph::cancelCalculation()
 
 void Spectrograph::calculateDFT(const QAudioFormat format)
 {
-    // Comment first line and uncomment second line to perform distributed DFT calculation (not done yet)
+    // Comment first line and uncomment second line to perform distributed DFT calculation
     //m_FTController->startDFTInAThread(format);
     m_FTController->startDistributedDFT(format);
 }
