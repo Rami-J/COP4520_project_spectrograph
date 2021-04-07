@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-// TODO: calculate FFT/DFT algorithm and populate spectrograph buffer values to display in chart
-
 AudioFileStream::AudioFileStream(Waveform* waveform, Spectrograph* spectrograph, QObject* parent) :
     QIODevice(parent),
     m_waveform(waveform),
@@ -283,6 +281,7 @@ bool AudioFileStream::clear()
     m_data.clear();
     m_waveformBuffer.clear();
     m_waveform->getSeries()->clear();
+    //m_spectrograph->clear();
 
     m_output.close();
     m_input.close();
@@ -324,12 +323,22 @@ void AudioFileStream::bufferReady() // SLOT
     //qDebug() << m_format->sampleSize();
 
     m_input.write(data, length);
+    m_spectrograph->getDataBuffer()->write(data, length);
 }
 
 // Runs when decoder finished decoding
 void AudioFileStream::finished() // SLOT
 {
     isDecodingFinished = true;
+
+    // When audio decoding is finished we can start calculating and plotting the
+    // DFT graph on a new thread.
+    m_spectrograph->calculateDFT(m_format);
+}
+
+void AudioFileStream::cancelSpectrum()
+{
+    m_spectrograph->cancelCalculation();
 }
 
 qreal AudioFileStream::getPeakValue(const QAudioFormat& format)

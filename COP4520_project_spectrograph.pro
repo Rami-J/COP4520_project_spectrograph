@@ -20,13 +20,20 @@ HEADERS += include/AudioFileStream.h \
            include/SpectrographUI.h \
            include/SettingsDialog.h \
            include/Waveform.h \
-           include/Spectrograph.h
+           include/Spectrograph.h \
+           include/Constants.h \
+           include/FTController.h \
+           include/DFTWorkerThread.h \
+           include/DistributedDFTWorkerThread.h
 
 SOURCES += src/main.cpp \
            src/AudioFileStream.cpp \
            src/SpectrographUI.cpp \
            src/SettingsDialog.cpp \
            src/Waveform.cpp \
-           src/Spectrograph.cpp
+           src/Spectrograph.cpp \
+           src/FTController.cpp \
+           src/DFTWorkerThread.cpp \
+           src/DistributedDFTWorkerThread.cpp
 
 RESOURCES = Resource.qrc
