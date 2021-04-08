@@ -106,7 +106,7 @@ void DistributedDFTWorkerThread::run()
             currentSum += xn * w;
         }
 
-        double mag = std::fabs(currentSum);
+        double mag = std::abs(currentSum);
 
         // Keep track of largest y-value seen so far
         if (mag > maxSum)
@@ -124,7 +124,7 @@ void DistributedDFTWorkerThread::run()
         else if (output[i].first < Constants::MIN_FREQUENCY)
             continue;
 
-        double abs = std::fabs(output[i].second);
+        double abs = std::abs(output[i].second);
         QPointF point(output[i].first, abs);
         m_spectrumBuffer.append(point);
     }
