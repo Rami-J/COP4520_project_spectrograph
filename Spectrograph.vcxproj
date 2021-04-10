@@ -90,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\DistributedDFTWorkerThread.cpp" />
+    <ClCompile Include="src\FFTUtils.cpp" />
     <ClCompile Include="src\FFTWorkerThread.cpp" />
     <ClCompile Include="src\FTController.cpp" />
     <ClCompile Include="src\DFTWorkerThread.cpp" />
@@ -122,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Constants.h" />
+    <ClInclude Include="include\FFTUtils.h" />
     <QtMoc Include="include\FFTWorkerThread.h" />
     <QtMoc Include="include\DistributedDFTWorkerThread.h" />
   </ItemGroup>

@@ -28,25 +28,6 @@ void FFTWorkerThread::clearData()
     m_spectrumBuffer.clear();
 }
 
-size_t FFTWorkerThread::reverseBits(size_t val, int width)
-{
-    size_t result = 0;
-
-    // Loop through each bit in val, bitwise-or the LSB with the current reversed result
-    // and right-shift out the LSB each iteration.
-    for (int i = 0; i < width; i++, val >>= 1)
-    {
-        result = (result << 1) | (val & 1U);
-    }
-
-    return result;
-}
-
-double FFTWorkerThread::index2Freq(int i, double samples, int nFFT) 
-{
-    return (double)i * (samples / nFFT);
-}
-
 // Common implementation of the Cooley-Tukey FFT algorithm, modified for our use case.
 // https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
 std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<double> &real, std::vector<double> &imag)
@@ -83,6 +64,12 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     std::vector<double> sinTable(n / 2);
     for (size_t i = 0; i < n / 2; i++)
     {
+        if (isInterruptionRequested())
+        {
+            clearData();
+            return output;
+        }
+
         cosTable[i] = std::cos(2 * M_PI * i / n);
         sinTable[i] = std::sin(2 * M_PI * i / n);
     }
@@ -91,8 +78,14 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     // https://en.wikipedia.org/wiki/Bit-reversal_permutation
     for (size_t i = 0; i < n; i++)
     {
+        if (isInterruptionRequested())
+        {
+            clearData();
+            return output;
+        }
+
         // Reverse the current index with bit width equal to number of levels
-        size_t j = reverseBits(i, levels);
+        size_t j = FFTUtils::reverseBits(i, levels);
 
         // If the reversed index is greater than the current index,
         // swap the values in the real/imaginary vectors.
@@ -112,6 +105,12 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
         {
             for (size_t j = i, k = 0; j < i + halfsize; j++, k += tablestep)
             {
+                if (isInterruptionRequested())
+                {
+                    clearData();
+                    return output;
+                }
+
                 size_t l = j + halfsize;
                 double tpre =  real[l] * cosTable[k] + imag[l] * sinTable[k];
                 double tpim = -real[l] * sinTable[k] + imag[l] * cosTable[k];
@@ -128,22 +127,27 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     double maxSum = 0.0;
 
     // Fill output vector
-    int prevIndex = -1;
+    int prevK = -1;
     for (size_t i = 0; i < real.size(); ++i)
     {
+        // Calculate magnitude of complex element
         std::complex<double> complex(real[i], imag[i]);
         double abs = std::abs(complex);
 
+        // Update maxSum
         if (abs > maxSum)
             maxSum = abs;
 
-        int index = index2Freq(i, samplesPerSec, real.size());
+        // Get the corresponding frequency bin from the current index.
+        int k = FFTUtils::index2Freq(i, samplesPerSec, real.size());
 
-        if (index == prevIndex)
+        // Skip duplicate frequencies (since we are casting to int, we lose the float precision)
+        if (k == prevK)
             continue;
 
-        output.push_back(std::make_pair(index, abs));
-        prevIndex = index;
+        // Add the frequency, amplitude pair to the output vector
+        output.push_back(std::make_pair(k, abs));
+        prevK = k;
     }
 
     // Normalization by maxSum
@@ -177,7 +181,6 @@ void FFTWorkerThread::run()
     m_spectrumBuffer.reserve(K - Constants::MIN_FREQUENCY);
 
     std::vector<std::pair<size_t, double>> output;
-    output.reserve(N);
 
     // Prepare real/imag vectors
     std::vector<double> real(data_short, data_short + N);
@@ -189,6 +192,12 @@ void FFTWorkerThread::run()
         output = cooleyTukey(real, imag);
     }  catch (std::invalid_argument e) {
         qDebug() << "Invalid sizes of reals/imags vectors, aborting FFTWorkerThread::run()";
+        return;
+    }
+
+    if (isInterruptionRequested())
+    {
+        clearData();
         return;
     }
 

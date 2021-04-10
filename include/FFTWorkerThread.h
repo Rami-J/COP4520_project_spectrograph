@@ -2,6 +2,7 @@
 #define FFTWORKERTHREAD_H
 
 #include "Constants.h"
+#include "FFTUtils.h"
 
 #include <complex>
 #include <vector>
@@ -48,13 +49,6 @@ private:
      * Returns a vector of the normalized frequency amplitude output.
      */
     std::vector<std::pair<size_t, double>> cooleyTukey(std::vector<double> &real, std::vector<double> &imag);
-
-    // Reverses bits of parameter val with bit-width width.
-    static size_t reverseBits(size_t val, int width);
-
-    // Returns the corresponding frequency, given an index, sample rate, and number
-    // of elements in the FFT output vector.
-    double index2Freq(int i, double samples, int nFFT);
 };
 
 #endif // FFTWORKERTHREAD_H
