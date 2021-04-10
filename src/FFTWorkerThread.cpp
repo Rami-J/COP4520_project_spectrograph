@@ -36,14 +36,17 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
 
     // Check the length of both real/imag vectors
     size_t n = real.size();
-    size_t test = n;
     if (n != imag.size())
-        throw std::invalid_argument("Mismatched lengths");
+    {
+        throw std::invalid_argument("FFTWorkerThread::cooleyTukey() Size mismatch for real/imag vectors");
+    }
 
     // Compute the number of total levels for the FFT using bit shifting
     int levels = 0;
     for (size_t temp = n; temp > 1U; temp >>= 1)
+    {
         levels++;
+    }
 
     // If length is not a power of 2, resize both vectors to next highest power of 2.
     if (static_cast<size_t>(1U) << levels != n)
@@ -182,7 +185,7 @@ void FFTWorkerThread::run()
 
     std::vector<std::pair<size_t, double>> output;
 
-    // Prepare real/imag vectors
+    // Prepare real/imag vectors, imaginary vector is zeroed out
     std::vector<double> real(data_short, data_short + N);
     std::vector<double> imag;
     imag.resize(real.size());
