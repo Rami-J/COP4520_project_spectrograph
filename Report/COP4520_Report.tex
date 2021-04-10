@@ -37,6 +37,8 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 
 \subsection{Approach}
 	\par Tackling some of the above sub-problems. In order to create a GUI to interact with, we will write the program using the QT C++ GUI framework to simplify taking audio files from disk and decoding the raw data. Through the use of provided libraries of QT the basic functionality of loading files and playing/decoding audio is handled and we use them on a higher level. This will allow us to focus more on the problem of processing signals for the audio files. Then by handling extracting raw data from the audio files using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast Fourier Transforms to process the signals. (How do we plan to parllelize the FFT is what would be discussed here briefly since will be explained througouly within the algorithms subsection).
+\subsubsection{Project Architecture}
+
 
 \subsection{Plan Outline}
 
@@ -53,8 +55,15 @@ Observing any performance boosts if any.
 \end{enumerate}
 
 \subsection{Algorithm}
-	\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}. It is essential that we use an implementation that yields a better runtime as in the case of our program, operating on larger audio files will begin to take much longer being inefficient. Thus we will be working with the Fast Fourier transfom algorithm to reduce our upper asymptotic bound.  (Going to find a reference for this line to talk more about the $O(nlog{}n)$ implementation. But i need to read more). 
-
+	 
+\subsubsection{Discrete Fourier Transform}
+% can go into just what the disrete fourier transform is and its runtime and space complexity.
+	\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
+\subsubsection{Fast Fourier Transform}
+% can go into just what the fast fourier transform is and its runtime and space complexity.
+	\par It is essential that we use an implementation that yields a better runtime as in the case of our program, operating on larger audio files will begin to take much longer being inefficient. Thus we will be working with the Fast Fourier transfom algorithm to reduce our upper asymptotic bound.  (Going to find a reference for this line to talk more about the $O(nlog{}n)$ implementation. But i need to read more).
+\subsection{Paralellized Fast Fourier Transform}
+% Can specify more on how the threads will interact with the fourier transform, why the number of threads we chose and such.
 
 \subsection{Experimental Results}
 Creating testing data sets \dots
