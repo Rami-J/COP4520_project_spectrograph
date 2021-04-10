@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "DFTWorkerThread.h"
 #include "DistributedDFTWorkerThread.h"
+#include "FFTWorkerThread.h"
 
 #include <atomic>
 #include <chrono>
@@ -19,7 +20,7 @@
 *   asynchronously on a thread separate from the main GUI thread, through the use of the
 *   DFTWorker class.
 *  
-*   TODO: perform FFT calculation via FFTWorker and DistributedFFTWorker classes
+*   TODO: perform FFT calculation DistributedFFTWorker classes
 */
 class FTController : public QObject
 {
@@ -30,6 +31,7 @@ public:
     ~FTController();
     void startDFTInAThread(const QAudioFormat format);
     void startDistributedDFT(const QAudioFormat format);
+    void startFFTInAThread(const QAudioFormat format);
     QBuffer* getDataBuffer();
     void setAudioFormat(QAudioFormat);
     void clear();
@@ -45,6 +47,7 @@ public slots:
 private:
     DistributedDFTWorkerThread* m_DistributedDFTWorkerThreads[Constants::NUM_DFT_WORKERS];
     DFTWorkerThread* m_DFTWorkerThread;
+    FFTWorkerThread* m_FFTWorkerThread;
     QAudioFormat m_format;
     QBuffer* m_dataBuffer;
 
