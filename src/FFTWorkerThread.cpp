@@ -42,13 +42,13 @@ size_t FFTWorkerThread::reverseBits(size_t val, int width)
     return result;
 }
 
-double index2Freq(int i, double samples, int nFFT) 
+double FFTWorkerThread::index2Freq(int i, double samples, int nFFT) 
 {
     return (double)i * (samples / nFFT);
 }
 
-// TODO: return vector of frequency, value pairs
-// TODO: maybe instead also do normalization of values and return the QVector<QPointF> directly?
+// Common implementation of the Cooley-Tukey FFT algorithm, modified for our use case.
+// https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
 std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<double> &real, std::vector<double> &imag)
 {
     std::vector<std::pair<size_t, double>> output;
@@ -56,7 +56,6 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     // Check the length of both real/imag vectors
     size_t n = real.size();
     size_t test = n;
-    qDebug() << "n = " << n;
     if (n != imag.size())
         throw std::invalid_argument("Mismatched lengths");
 
@@ -73,7 +72,7 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
         imag.resize(powOf2);
         n = powOf2;
         levels++;
-        qDebug() << "Padded vector to size " << powOf2 << " levels = " << levels;
+        qDebug() << "FFTWorkerThread::cooleyTukey() padded vector to size " << powOf2;
     }
 
     output.reserve(n);
@@ -145,7 +144,6 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
 
         output.push_back(std::make_pair(index, abs));
         prevIndex = index;
-        //output.push_back(std::make_pair(i, real.size()), abs));
     }
 
     // Normalization by maxSum
@@ -153,8 +151,6 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     {
         output[i].second /= maxSum;
     }
-
-    qDebug() << "output size = " << output.size();
 
     return output;
 }
@@ -165,8 +161,6 @@ void FFTWorkerThread::run()
 
     // Calculate number of samples
     const ulong N = m_dataBuffer->bytesAvailable() / (m_format.sampleSize() / 8);
-
-    qDebug() << "N = " << N;
 
     if (N == 0)
     {
@@ -198,6 +192,7 @@ void FFTWorkerThread::run()
         return;
     }
 
+    // Fill the spectrum graph buffer
     for (size_t i = 0; i < output.size(); ++i)
     {
         if (output[i].first > Constants::MAX_FREQUENCY)
