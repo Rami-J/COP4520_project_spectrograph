@@ -42,6 +42,11 @@ size_t FFTWorkerThread::reverseBits(size_t val, int width)
     return result;
 }
 
+double index2Freq(int i, double samples, int nFFT) 
+{
+    return (double)i * (samples / nFFT);
+}
+
 // TODO: return vector of frequency, value pairs
 // TODO: maybe instead also do normalization of values and return the QVector<QPointF> directly?
 std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<double> &real, std::vector<double> &imag)
@@ -67,9 +72,11 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
         real.resize(powOf2);
         imag.resize(powOf2);
         n = powOf2;
-        //levels++;
+        levels++;
         qDebug() << "Padded vector to size " << powOf2 << " levels = " << levels;
     }
+
+    output.reserve(n);
 
     // cos/sin calculations
     const ulong samplesPerSec = m_format.bytesForDuration(1e6) / (m_format.sampleSize() / 8);
@@ -122,6 +129,7 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
     double maxSum = 0.0;
 
     // Fill output vector
+    int prevIndex = -1;
     for (size_t i = 0; i < real.size(); ++i)
     {
         std::complex<double> complex(real[i], imag[i]);
@@ -130,11 +138,18 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
         if (abs > maxSum)
             maxSum = abs;
 
-        output.push_back(std::make_pair(i, abs));
+        int index = index2Freq(i, samplesPerSec, real.size());
+
+        if (index == prevIndex)
+            continue;
+
+        output.push_back(std::make_pair(index, abs));
+        prevIndex = index;
+        //output.push_back(std::make_pair(i, real.size()), abs));
     }
 
     // Normalization by maxSum
-    for (size_t i = 0; i < real.size(); ++i)
+    for (size_t i = 0; i < output.size(); ++i)
     {
         output[i].second /= maxSum;
     }
