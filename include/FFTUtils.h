@@ -1,6 +1,8 @@
 #ifndef FFTUTILS_H
 #define FFTUTILS_H
 
+#include <cstddef>
+
 class FFTUtils
 {
 public:
