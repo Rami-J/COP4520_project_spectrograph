@@ -5,6 +5,7 @@
 #include "DFTWorkerThread.h"
 #include "DistributedDFTWorkerThread.h"
 #include "FFTWorkerThread.h"
+#include "DistributedFFTWorkerThread.h"
 
 #include <atomic>
 #include <chrono>
@@ -32,6 +33,7 @@ public:
     void startDFTInAThread(const QAudioFormat format);
     void startDistributedDFT(const QAudioFormat format);
     void startFFTInAThread(const QAudioFormat format);
+    void startDistributedFFT(const QAudioFormat format);
     QBuffer* getDataBuffer();
     void setAudioFormat(QAudioFormat);
     void clear();
@@ -42,10 +44,12 @@ signals:
 
 public slots:
     void handleResults(const QVector<QPointF> points);
-    void handleDistributedResults(const QVector<QPointF> points, const int workerID);
+    void handleDistributedDFTResults(const QVector<QPointF> points, const int workerID);
+    void handleDistributedFFTResults(const QVector<QPointF> points, const int workerID);
 
 private:
     DistributedDFTWorkerThread* m_DistributedDFTWorkerThreads[Constants::NUM_DFT_WORKERS];
+    DistributedFFTWorkerThread* m_DistributedFFTWorkerThreads[Constants::NUM_FFT_WORKERS];
     DFTWorkerThread* m_DFTWorkerThread;
     FFTWorkerThread* m_FFTWorkerThread;
     QAudioFormat m_format;
