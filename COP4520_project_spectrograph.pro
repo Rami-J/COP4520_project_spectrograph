@@ -17,6 +17,7 @@ QMAKE_CXXFLAGS += -g
 
 # Input
 HEADERS += include/AudioFileStream.h \
+           include/FFTWorkerThread.h \
            include/SpectrographUI.h \
            include/SettingsDialog.h \
            include/Waveform.h \
@@ -28,6 +29,7 @@ HEADERS += include/AudioFileStream.h \
 
 SOURCES += src/main.cpp \
            src/AudioFileStream.cpp \
+           src/FFTWorkerThread.cpp \
            src/SpectrographUI.cpp \
            src/SettingsDialog.cpp \
            src/Waveform.cpp \

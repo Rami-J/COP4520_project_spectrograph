@@ -3,13 +3,16 @@
 FTController::FTController()
     : m_dataBuffer(new QBuffer)
     , m_DFTWorkerThread(new DFTWorkerThread)
+    , m_FFTWorkerThread(new FFTWorkerThread)
     , m_numWorkersFinished(0)
 {
     m_combinedPoints.resize((Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY + 1));
 
     m_dataBuffer->open(QIODevice::ReadWrite);
     m_DFTWorkerThread->setDataBuffer(m_dataBuffer);
+    m_FFTWorkerThread->setDataBuffer(m_dataBuffer);
     connect(m_DFTWorkerThread, &DFTWorkerThread::resultReady, this, &FTController::handleResults);
+    connect(m_FFTWorkerThread, &FFTWorkerThread::resultReady, this, &FTController::handleResults);
 
     for (int i = 0; i < Constants::NUM_DFT_WORKERS; ++i)
     {
@@ -33,6 +36,12 @@ void FTController::terminateRunningThreads()
         m_DFTWorkerThread->wait();
     }
 
+    if (m_FFTWorkerThread->isRunning())
+    {
+        m_FFTWorkerThread->requestInterruption();
+        m_FFTWorkerThread->wait();
+    }
+
     for (int i = 0; i < Constants::NUM_DFT_WORKERS; ++i)
     {
         if (m_DistributedDFTWorkerThreads[i]->isRunning())
@@ -46,6 +55,7 @@ void FTController::terminateRunningThreads()
 void FTController::resetThreadData()
 {
     m_DFTWorkerThread->clearData();
+    m_FFTWorkerThread->clearData();
 
     for (int i = 0; i < Constants::NUM_DFT_WORKERS; ++i)
     {
@@ -72,7 +82,6 @@ QBuffer* FTController::getDataBuffer()
 void FTController::setAudioFormat(QAudioFormat format)
 {
     m_format = format;
-    m_DFTWorkerThread->setAudioFormat(format);
 }
 
 void FTController::startDFTInAThread(const QAudioFormat format)
@@ -100,6 +109,17 @@ void FTController::startDistributedDFT(const QAudioFormat format)
     }
 }
 
+void FTController::startFFTInAThread(const QAudioFormat format)
+{
+    m_timeStart = std::chrono::high_resolution_clock::now();
+
+    // Reset data buffer to position 0
+    m_dataBuffer->seek(0);
+
+    m_FFTWorkerThread->setAudioFormat(format);
+    m_FFTWorkerThread->start();
+}
+
 void FTController::handleResults(const QVector<QPointF> points)
 {
     emit spectrumDataReady(points);
@@ -108,7 +128,7 @@ void FTController::handleResults(const QVector<QPointF> points)
 
     /* Getting number of seconds as a double. */
     std::chrono::duration<double> elapsedSeconds = m_timeEnd - m_timeStart;
-    qDebug() << "FTController::startDFTInAThread() Total Elapsed Time (s): " << elapsedSeconds.count();
+    qDebug() << "FTController Total Elapsed Time (s): " << elapsedSeconds.count();
 }
 
 void FTController::handleDistributedResults(const QVector<QPointF> points, const int workerID)
