@@ -167,8 +167,6 @@ void SpectrographUI::showFileDialog()
     const QString dir;
     const QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open Audio file"), dir, "(*.wav *.mp3 *.mp4)");
     if (fileNames.count()) {
-        resetUI();
-
         m_currentFilePath = fileNames.front();
 
         m_device->cancelSpectrum();
@@ -260,11 +258,6 @@ void SpectrographUI::connectUI()
 
     connect(m_device, &AudioFileStream::stateChanged,
             this, &SpectrographUI::stateChanged);
-
-    /*
-    connect(m_spectrograph, &Spectrograph::infoMessage,
-        this, &MainWidget::infoMessage);
-    */
 }
 
 void SpectrographUI::startPlayback()
@@ -342,11 +335,6 @@ void SpectrographUI::stateChanged(AudioFileStream::State state)
             break;
         }
     }
-}
-
-void SpectrographUI::resetUI()
-{
-    //m_spectrograph->reset();
 }
 
 void SpectrographUI::quitApplication()

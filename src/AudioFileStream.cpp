@@ -247,11 +247,6 @@ bool AudioFileStream::play(const QString& filePath)
         emit stateChanged(m_state);
         return true;
     }
-//    else if (m_decoder.state() != QAudioDecoder::State::DecodingState && !isDecodingFinished && m_state == State::Stopped)
-//    {
-//        qDebug() << "starting decoder";
-//        m_decoder.start();
-//    }
 
     m_state = State::Playing;
     emit stateChanged(m_state);
@@ -281,7 +276,6 @@ bool AudioFileStream::clear()
     m_data.clear();
     m_waveformBuffer.clear();
     m_waveform->getSeries()->clear();
-    //m_spectrograph->clear();
 
     m_output.close();
     m_input.close();
@@ -313,14 +307,6 @@ void AudioFileStream::bufferReady() // SLOT
 
     const int length = buffer.byteCount();
     const char* data = buffer.constData<char>();
-
-    // For debugging start/endtime
-    /*const qreal s_per_us = (1 / 1e6);
-    qint64 duration = buffer.duration() * s_per_us;
-    qint64 startTime = buffer.startTime() * s_per_us;
-
-    qDebug() << duration << " " << startTime << " " << buffer.isValid();*/
-    //qDebug() << m_format->sampleSize();
 
     m_input.write(data, length);
     m_spectrograph->getDataBuffer()->write(data, length);

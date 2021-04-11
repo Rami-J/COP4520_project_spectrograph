@@ -19,7 +19,7 @@
 /**
 *   Fourier Transform Controller (FTController) handles calculation of DFT/FFT
 *   asynchronously on a thread separate from the main GUI thread, through the use of the
-*   DFTWorker class.
+*   worker classes.
 *  
 */
 class FTController : public QObject

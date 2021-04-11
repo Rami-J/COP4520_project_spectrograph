@@ -62,7 +62,6 @@ private:
     void createMenus();
     void updateChartTitle();
     void connectUI();
-    void resetUI();
 	void showWarningDialog(QString msg, QString informativeMsg = "");
     bool setAudioOutputDevice(const QAudioDeviceInfo& device);
     void quitApplication();
