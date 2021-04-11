@@ -41,7 +41,7 @@ public:
 	void calculateDFT(const QAudioFormat format);
 
 private slots:
-	void plotSpectrumData(const QVector<QPointF> points);
+    void plotSpectrumData(const QVector<QPointF> points, const double elapsedSeconds);
 
 private:
 	QChart* m_spectrumChart;

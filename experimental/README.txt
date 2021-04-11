@@ -27,3 +27,7 @@ Linux:
 
 	qmake && make
 	./COP4520_project_spectrograph
+	
+All sample audio files (located in experimental/audio) were generated as WAV
+files via Audacity's tone generator and are used to gauge the performance of the
+sequential/parallel DFT/FFT algorithms.
