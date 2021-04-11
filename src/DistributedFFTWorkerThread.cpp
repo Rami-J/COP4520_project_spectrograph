@@ -51,9 +51,8 @@ void DistributedFFTWorkerThread::setDataBuffer(const QBuffer* dataBuffer)
     m_dataBuffer = dataBuffer;
 }
 
-
-// Common implementation of the Cooley-Tukey FFT algorithm, modified for our use case.
-// https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
+// Implementation of the Cooley-Tukey FFT algorithm, modified for our use case,
+// adapted from https://www.nayuki.io/page/free-small-fft-in-multiple-languages
 std::vector<std::pair<size_t, double>> DistributedFFTWorkerThread::cooleyTukey(std::vector<double>& real, std::vector<double>& imag)
 {
     std::vector<std::pair<size_t, double>> output;
