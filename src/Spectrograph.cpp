@@ -69,7 +69,8 @@ void Spectrograph::calculateDFT(const QAudioFormat format)
     // Uncomment one of the lines to test parallel/sequential DFT/FFT
     //m_FTController->startDFTInAThread(format);
     //m_FTController->startDistributedDFT(format);
-    m_FTController->startFFTInAThread(format);
+    //m_FTController->startFFTInAThread(format);
+    m_FTController->startDistributedFFT(format);
 }
 
 void Spectrograph::plotSpectrumData(const QVector<QPointF> points)

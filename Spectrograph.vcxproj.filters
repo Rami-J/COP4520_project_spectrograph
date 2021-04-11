@@ -57,6 +57,9 @@
     <ClCompile Include="src\FFTUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DistributedFFTWorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\SpectrographUI.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="include\FFTWorkerThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="include\DistributedFFTWorkerThread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

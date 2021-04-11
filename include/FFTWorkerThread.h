@@ -46,7 +46,7 @@ private:
      * using the Cooley-Tukey decimation-in-time radix-2 algorithm.
      * If the vectors are not a power of 2, they are padded to the next highest power of 2.
      *
-     * Returns a vector of the normalized frequency amplitude output.
+     * Returns a vector of the normalized the (frequency_bin, amplitude) output.
      */
     std::vector<std::pair<size_t, double>> cooleyTukey(std::vector<double> &real, std::vector<double> &imag);
 };
