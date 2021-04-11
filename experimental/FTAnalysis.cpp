@@ -6,7 +6,8 @@ static const QString SAMPLE_FILE_30s = ":/audio/440Hz-30s.wav";
 static const int NUM_TRIALS = 10;
 
 FTAnalysis::FTAnalysis(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_avgTime(0.0)
 {
     connect(&m_ftController, &FTController::spectrumDataReady, this, &FTAnalysis::receiveFTResults);
     connect(&m_decoder, &QAudioDecoder::bufferReady, this, &FTAnalysis::writeAudioDataToBuffer);
@@ -14,6 +15,8 @@ FTAnalysis::FTAnalysis(QObject *parent)
 
 void FTAnalysis::startPerformanceAnalysis()
 {
+    std::cout << "Conducting performance analysis on parallel/sequential FFT for " << NUM_TRIALS << " trials each." << std::endl;
+
     std::cout << "Starting Single-Threaded FFT on 440Hz-1s.wav" << std::endl;
     startTrials(SAMPLE_FILE_1s, SLOT(calcFFT()));
     std::cout << std::endl;
@@ -49,14 +52,21 @@ void FTAnalysis::startTrials(const QString& filePath, const char* slot)
         startDecoder(filePath);
     }
     disconnect(&m_decoder, SIGNAL(finished()), this, slot);
+
+    m_avgTime /= NUM_TRIALS;
+
+    std::cout << "Average running time: " << m_avgTime << std::endl;
+
+    m_avgTime = 0.0;
 }
 
 void FTAnalysis::receiveFTResults(const QVector<QPointF> points, const double elapsedSeconds)
 {
     Q_UNUSED(points);
-    Q_UNUSED(elapsedSeconds);
 
-    std::cout << "Elapsed time: " << elapsedSeconds << "s" << std::endl;
+    m_avgTime += elapsedSeconds;
+
+    //std::cout << "Elapsed time: " << elapsedSeconds << "s" << std::endl;
 }
 
 void FTAnalysis::writeAudioDataToBuffer()

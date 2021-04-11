@@ -30,6 +30,7 @@ private:
     QAudioDecoder m_decoder;
     QFile m_file;
     QAudioFormat m_format;
+    double m_avgTime;
 
     void startDecoder(const QString& filePath);
     void startTrials(const QString& filePath, const char* slot);
