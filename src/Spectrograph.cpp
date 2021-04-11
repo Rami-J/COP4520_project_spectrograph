@@ -64,7 +64,7 @@ void Spectrograph::cancelCalculation()
     m_FTController->clear();
 }
 
-void Spectrograph::calculateDFT(const QAudioFormat format)
+void Spectrograph::calculateSpectrum(const QAudioFormat format)
 {
     // Uncomment one of the lines to test parallel/sequential DFT/FFT
     //m_FTController->startDFTInAThread(format);

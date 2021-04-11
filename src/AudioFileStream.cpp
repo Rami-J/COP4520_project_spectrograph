@@ -319,7 +319,7 @@ void AudioFileStream::finished() // SLOT
 
     // When audio decoding is finished we can start calculating and plotting the
     // DFT graph on a new thread.
-    m_spectrograph->calculateDFT(m_format);
+    m_spectrograph->calculateSpectrum(m_format);
 }
 
 void AudioFileStream::cancelSpectrum()
