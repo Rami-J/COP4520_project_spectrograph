@@ -185,7 +185,6 @@ void FTController::handleDistributedDFTResults(const QVector<QPointF> points, co
         for (int i = 0; i < m_combinedPoints.size(); ++i)
         {
             m_combinedPoints[i].setY(m_combinedPoints[i].y() / DistributedDFTWorkerThread::getMaxSum());
-            qDebug() << "DistributedDFTWorkerThread Point is " << m_combinedPoints[i];
         }
 
         m_numWorkersFinished = 0;
@@ -202,18 +201,33 @@ void FTController::handleDistributedDFTResults(const QVector<QPointF> points, co
 
 void FTController::handleDistributedFFTResults(const QVector<QPointF> points, const int workerID)
 {
-    // TODO
+    for (int i = 0; i < points.size(); ++i)
+    {
+        int index = points[i].x() - Constants::MIN_FREQUENCY;
+        m_combinedPoints[index] = points[i];
+    }
 
-    qDebug() << "FTController::handleDistributedFFTResults() worker " << workerID << " finished";
+    qDebug() << "FTController::handleDistributedFFTResults() worker " << workerID << " finished. Received " << points.size() << " points";
 
     m_numWorkersFinished++;
 
     if (m_numWorkersFinished == Constants::NUM_FFT_WORKERS)
     {
+        // Normalize y values
+        for (int i = 0; i < m_combinedPoints.size(); ++i)
+        {
+            m_combinedPoints[i].setX(i + Constants::MIN_FREQUENCY);
+            m_combinedPoints[i].setY(m_combinedPoints[i].y() / DistributedFFTWorkerThread::getMaxSum());
+        }
+
+        m_numWorkersFinished = 0;
+        DistributedFFTWorkerThread::setMaxSum(0.0);
+        emit spectrumDataReady(m_combinedPoints);
+
         m_timeEnd = std::chrono::high_resolution_clock::now();
 
         /* Getting number of seconds as a double. */
         std::chrono::duration<double> elapsedSeconds = m_timeEnd - m_timeStart;
-        qDebug() << "FTController::startDistributedDFT() Total Elapsed Time (s): " << elapsedSeconds.count();
+        qDebug() << "FTController::startDistributedFFT() Total Elapsed Time (s): " << elapsedSeconds.count();
     }
 }
