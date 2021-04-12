@@ -28,7 +28,6 @@ signals:
 private:
     FTController m_ftController;
     QAudioDecoder m_decoder;
-    QFile m_file;
     QAudioFormat m_format;
     double m_avgTime;
 
