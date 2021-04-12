@@ -38,10 +38,10 @@ public:
 	QBuffer* getDataBuffer();
 	void cancelCalculation();
 
-	void calculateDFT(const QAudioFormat format);
+    void calculateSpectrum(const QAudioFormat format);
 
 private slots:
-	void plotSpectrumData(const QVector<QPointF> points);
+    void plotSpectrumData(const QVector<QPointF> points, const double elapsedSeconds);
 
 private:
 	QChart* m_spectrumChart;

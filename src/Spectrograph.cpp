@@ -64,7 +64,7 @@ void Spectrograph::cancelCalculation()
     m_FTController->clear();
 }
 
-void Spectrograph::calculateDFT(const QAudioFormat format)
+void Spectrograph::calculateSpectrum(const QAudioFormat format)
 {
     // Uncomment one of the lines to test parallel/sequential DFT/FFT
     //m_FTController->startDFTInAThread(format);
@@ -73,8 +73,10 @@ void Spectrograph::calculateDFT(const QAudioFormat format)
     m_FTController->startDistributedFFT(format);
 }
 
-void Spectrograph::plotSpectrumData(const QVector<QPointF> points)
+void Spectrograph::plotSpectrumData(const QVector<QPointF> points, const double elapsedSeconds)
 {
+    Q_UNUSED(elapsedSeconds);
+
     qDebug() << "Spectrograph::plotSpectrumData() plotting " << points.size() << " points";
 
     // Waiting to replace all the points on the graph at once is more efficient than constantly

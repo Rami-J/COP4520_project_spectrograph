@@ -39,7 +39,7 @@ void DFTWorkerThread::run()
         return;
     }
 
-    qDebug() << "DFTWorkerThread::run() Number of samples received: " << N;
+    //qDebug() << "DFTWorkerThread::run() Number of samples received: " << N;
 
     // Get raw data and define K
     const char* data = m_dataBuffer->buffer().constData();
@@ -98,7 +98,6 @@ void DFTWorkerThread::run()
 
         double abs = std::abs(output[i].second) / maxSum;
         QPointF point(output[i].first, abs);
-        qDebug() << "DFTWorkerThread::run() Adding point " << point;
         m_spectrumBuffer.append(point);
     }
 

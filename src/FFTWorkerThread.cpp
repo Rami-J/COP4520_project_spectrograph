@@ -56,7 +56,7 @@ std::vector<std::pair<size_t, double>> FFTWorkerThread::cooleyTukey(std::vector<
         imag.resize(powOf2);
         n = powOf2;
         levels++;
-        qDebug() << "FFTWorkerThread::cooleyTukey() padded vector to size " << powOf2;
+        //qDebug() << "FFTWorkerThread::cooleyTukey() padded vector to size " << powOf2;
     }
 
     output.reserve(n);
@@ -174,7 +174,7 @@ void FFTWorkerThread::run()
         return;
     }
 
-    qDebug() << "FFTWorkerThread::run() Number of samples received: " << N;
+    //qDebug() << "FFTWorkerThread::run() Number of samples received: " << N;
 
     // Get raw data and define K
     const char* data = m_dataBuffer->buffer().constData();

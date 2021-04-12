@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/audio">
+        <file alias="440Hz-1s.wav">audio/440Hz-1s.wav</file>
+        <file alias="440Hz-3s.wav">audio/440Hz-3s.wav</file>
+        <file alias="440Hz-30s.wav">audio/440Hz-30s.wav</file>
+    </qresource>
+</RCC>

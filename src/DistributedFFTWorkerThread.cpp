@@ -79,7 +79,7 @@ std::vector<std::pair<size_t, double>> DistributedFFTWorkerThread::cooleyTukey(s
         imag.resize(powOf2);
         n = powOf2;
         levels++;
-        qDebug() << "FFTWorkerThread::cooleyTukey() padded vector to size " << powOf2;
+        //qDebug() << "FFTWorkerThread::cooleyTukey() padded vector to size " << powOf2;
     }
 
     output.reserve(n);
@@ -200,8 +200,8 @@ void DistributedFFTWorkerThread::run()
     if (n_end < N && (m_workerID + 1) == Constants::NUM_FFT_WORKERS)
         n_end = N;
 
-    qDebug() << "DistributedFFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << (n_end - n_start + 1)
-             << " Starting at index " << n_start << " to " << n_end;
+    //qDebug() << "DistributedFFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << (n_end - n_start + 1)
+    //         << " Starting at index " << n_start << " to " << n_end;
 
     m_spectrumBuffer.reserve(Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY);
 

@@ -38,8 +38,7 @@ public:
     void clear();
 
 signals:
-    void spectrumDataReady(const QVector<QPointF> points);
-    void distributedSpectrumDataReady(const QVector<QPointF> points);
+    void spectrumDataReady(const QVector<QPointF> points, const double elapsedSeconds);
 
 public slots:
     void handleResults(const QVector<QPointF> points);

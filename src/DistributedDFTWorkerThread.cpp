@@ -74,7 +74,7 @@ void DistributedDFTWorkerThread::run()
     if (k_end < N && (m_workerID + 1) == Constants::NUM_DFT_WORKERS)
         k_end = N;
 
-    qDebug() << "DistributedDFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << (k_end - k_start + 1);
+    //qDebug() << "DistributedDFTWorkerThread::run() Worker ID: " << m_workerID << " Number of samples processing: " << (k_end - k_start + 1);
 
     m_spectrumBuffer.reserve(Constants::MAX_FREQUENCY - Constants::MIN_FREQUENCY);
 
