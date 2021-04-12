@@ -3,7 +3,7 @@
 static const QString SAMPLE_FILE_1s = ":/audio/440Hz-1s.wav";
 static const QString SAMPLE_FILE_3s = ":/audio/440Hz-3s.wav";
 static const QString SAMPLE_FILE_30s = ":/audio/440Hz-30s.wav";
-static const int NUM_TRIALS = 10;
+static const int NUM_TRIALS = 50;
 
 FTAnalysis::FTAnalysis(QObject *parent)
     : QObject(parent),
@@ -55,7 +55,7 @@ void FTAnalysis::startTrials(const QString& filePath, const char* slot)
 
     m_avgTime /= NUM_TRIALS;
 
-    std::cout << "Average running time: " << m_avgTime << std::endl;
+    std::cout << "Average running time: " << m_avgTime << "s" << std::endl;
 
     m_avgTime = 0.0;
 }
