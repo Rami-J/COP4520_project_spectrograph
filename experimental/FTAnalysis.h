@@ -29,6 +29,7 @@ private:
     FTController m_ftController;
     QAudioDecoder m_decoder;
     QAudioFormat m_format;
+    QFile m_file;
     double m_avgTime;
 
     void startDecoder(const QString& filePath);

@@ -100,9 +100,18 @@ void FTAnalysis::startDecoder(const QString& filePath)
 {
     m_ftController.clear();
 
+#ifdef Q_OS_WIN
     m_decoder.setSourceFilename(filePath);
-    m_decoder.start();
+#else
+    if (m_file.isOpen())
+        m_file.close();
 
+    m_file.setFileName(filePath);
+    m_file.open(QIODevice::ReadOnly);
+    m_decoder.setSourceDevice(&m_file);
+#endif
+
+    m_decoder.start();
     QSignalSpy spy(&m_decoder, &QAudioDecoder::finished);
     spy.wait();
 }
