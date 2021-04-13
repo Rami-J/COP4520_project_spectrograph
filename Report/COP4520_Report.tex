@@ -18,14 +18,27 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 \end{abstract}
 
 \section{Introduction}
-	\par The Fast Fourier transform (FFT) is an algorithm that uses Discrete Fourier transforms (DFT) on a time sequence to convert a signal, usually based on time, to a signal based in the frequency domain. This allows us to analyze a sequence of time-values by decomposing it into bins of different frequencies. The Fast Fourier transform is used in many applications ranging from digital signal processing, sampling, pitch correction software, and wave analysis.
+	\par {The Fast Fourier transform (FFT) is an algorithm that uses Discrete Fourier transforms
+	 (DFT) on a time sequence to convert a signal, usually based on time, to a signal based in the
+	 frequency domain. This allows us to analyze a sequence of time-values by decomposing it into 
+	 bins of different frequencies. The Fast Fourier transform is used in many applications ranging 
+	 from digital signal processing, sampling, pitch correction software, and wave analysis.}
 
-	\par The direct computation of the DFT results in $n^2$ multiplications and $n(n-1)$ additions, making the computation greatly expensive for sufficiently large $n$.  Over the course of many years of research done by researchers in the field, more efficient algorithms were developed for computing DFTs, such as the Cooley-Tukey FFT algorithm. This algorithm reduces the time complexity of the computation of Fourier transforms from $O(n^2)$ to $O(nlogn)$~\cite{Xiang}.
+	\par {The direct computation of the DFT results in $n^2$ multiplications and $n(n-1)$ additions, 
+	making the computation greatly expensive for sufficiently large $n$.  Over the course of many years
+	of research done by researchers in the field, more efficient algorithms were developed for computing DFTs,
+	such as the Cooley-Tukey FFT algorithm. This algorithm reduces the time complexity of the computation of
+	Fourier transforms from $O(n^2)$ to $O(nlogn)$~\cite{Xiang}}.
 
-	\par In this paper, we present our process of implementing the parallel FFT algorithm, specifically the Cooley-Tukey algorithm, and conduct performance comparisons between the sequential and parallel versions of the algorithm in C++.
+	\par {In this paper, we present our process of implementing the parallel FFT algorithm, specifically
+	the Cooley-Tukey algorithm, and conduct performance comparisons between the sequential and 
+	parallel versions of the algorithm in C++.}
 
 \section{Target Problem}
-	\par The main problem at hand is to create an application that is able to process signals provided to the program as audio files such as .WAV, .MP3, and .MP4. Then displaying the audio files as a spectrograph of its signals. This problem can be broken into several steps of what we need to acheive.
+	\par {The main problem at hand is to create an application that is able to process signals 
+	provided to the program as audio files such as .WAV, .MP3, and .MP4. Then displaying the audio 
+	files as a spectrograph of its signals. This problem can be broken into several steps of 
+	what we need to acheive.}
 
 \begin{itemize}
 	\item A GUI to interact with.
@@ -36,7 +49,16 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 \end{itemize}
 
 \subsection{Approach}
-	\par Tackling some of the above sub-problems. In order to create a GUI to interact with, we will write the program using the QT C++ GUI framework to simplify taking audio files from disk and decoding the raw data. Through the use of provided libraries of QT the basic functionality of loading files and playing/decoding audio is handled and we use them on a higher level. This will allow us to focus more on the problem of processing signals for the audio files. Then by handling extracting raw data from the audio files using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast Fourier Transforms to process the signals. (How do we plan to parllelize the FFT is what would be discussed here briefly since will be explained througouly within the algorithms subsection).
+	\par {Tackling some of the above sub-problems. In order to create a GUI to interact with, 
+	we will write the program using the QT C++ GUI framework to simplify taking audio files 
+	from disk and decoding the raw data. Through the use of provided libraries of QT the 
+	basic functionality of loading files and playing/decoding audio is handled and we use 
+	them on a higher level. This will allow us to focus more on the problem of processing 
+	signals for the audio files. Then by handling extracting raw data from the audio files 
+	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast 
+	Fourier Transforms to process the signals. (How do we plan to parllelize the FFT is 
+	what would be discussed here briefly since will be explained througouly within 
+	the algorithms subsection).}
 \subsubsection{Project Architecture}
 
 
@@ -104,10 +126,13 @@ Creating testing data sets \dots
 
 \section{State-of-the-Art Research}
 
-	\par The papers that we will use to implement the parallel 1D Fast Fourier Transform algorithm are the \textit{Proceedings of the Thirty-Seventh Southeastern Symposium on System Theory}~\cite{Al}, the ..............
+	\par {The papers that we will use to implement the parallel 1D Fast Fourier 
+	Transform algorithm are the \textit{Proceedings of the Thirty-Seventh 
+	Southeastern Symposium on System Theory}~\cite{Al}, 
+	the ..............}
 
 \section{Related Work}
-Here we will talk about how our work relates to currently worked on research.
+\par{Here we will talk about how our work relates to currently worked on research.}
 
 \section{Our Contributions}
 
