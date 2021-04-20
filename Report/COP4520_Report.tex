@@ -9,6 +9,7 @@
 
 \documentclass[journal]{IEEEtran}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
 
 \begin{document}
 \maketitle
@@ -20,24 +21,24 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 \section{Introduction}
 	\par {The Fast Fourier transform (FFT) is an algorithm that uses Discrete Fourier transforms
 	 (DFT) on a time sequence to convert a signal, usually based on time, to a signal based in the
-	 frequency domain. This allows us to analyze a sequence of time-values by decomposing it into 
-	 bins of different frequencies. The Fast Fourier transform is used in many applications ranging 
+	 frequency domain. This allows us to analyze a sequence of time-values by decomposing it into
+	 bins of different frequencies. The Fast Fourier transform is used in many applications ranging
 	 from digital signal processing, sampling, pitch correction software, and wave analysis.}
 
-	\par {The direct computation of the DFT results in $n^2$ multiplications and $n(n-1)$ additions, 
+	\par {The direct computation of the DFT results in $n^2$ multiplications and $n(n-1)$ additions,
 	making the computation greatly expensive for sufficiently large $n$.  Over the course of many years
 	of research done by researchers in the field, more efficient algorithms were developed for computing DFTs,
 	such as the Cooley-Tukey FFT algorithm. This algorithm reduces the time complexity of the computation of
 	Fourier transforms from $O(n^2)$ to $O(nlogn)$~\cite{Xiang}}.
 
 	\par {In this paper, we present our process of implementing the parallel FFT algorithm, specifically
-	the Cooley-Tukey algorithm, and conduct performance comparisons between the sequential and 
+	the Cooley-Tukey algorithm, and conduct performance comparisons between the sequential and
 	parallel versions of the algorithm in C++.}
 
 \section{Target Problem}
-	\par {The main problem at hand is to create an application that is able to process signals 
-	provided to the program as audio files such as .WAV, .MP3, and .MP4. Then displaying the audio 
-	files as a spectrograph of its signals. This problem can be broken into several steps of 
+	\par {The main problem at hand is to create an application that is able to process signals
+	provided to the program as audio files such as .WAV, .MP3, and .MP4. Then displaying the audio
+	files as a spectrograph of its signals. This problem can be broken into several steps of
 	what we need to acheive.}
 
 \begin{itemize}
@@ -49,18 +50,21 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 \end{itemize}
 
 \subsection{Approach}
-	\par {Tackling some of the above sub-problems. In order to create a GUI to interact with, 
-	we will write the program using the QT C++ GUI framework to simplify taking audio files 
-	from disk and decoding the raw data. Through the use of provided libraries of QT the 
-	basic functionality of loading files and playing/decoding audio is handled and we use 
-	them on a higher level. This will allow us to focus more on the problem of processing 
-	signals for the audio files. Then by handling extracting raw data from the audio files 
-	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast 
-	Fourier Transforms to process the signals. (How do we plan to parllelize the FFT is 
-	what would be discussed here briefly since will be explained througouly within 
+	\par {Tackling some of the above sub-problems. In order to create a GUI to interact with,
+	we will write the program using the QT C++ GUI framework to simplify taking audio files
+	from disk and decoding the raw data. Through the use of provided libraries of QT the
+	basic functionality of loading files and playing/decoding audio is handled and we use
+	them on a higher level. This will allow us to focus more on the problem of processing
+	signals for the audio files. Then by handling extracting raw data from the audio files
+	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast
+	Fourier Transforms to process the signals. (How do we plan to parallelize the FFT is
+	what would be discussed here briefly since will be explained thoroughly within
 	the algorithms subsection).}
 \subsubsection{Project Architecture}
-
+    \par{The core of the project resides in the FTController, which spawns threads using a queue to hold each one.}
+    \par{The number of samples is calculated and if the result is 0, it exits.  The raw data is taken as a char array and represented as a short array as well. Following is the calculation for the range of data that the thread will process. Each sample is evaluated where the raw data stored in the short array is accessed and multiplied by the real and imaginary values that are represented as cosine and sine respectfully. This product is added to the current sum, a complex double.}
+    \par{The magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest y-value seen so far. The point of the graph is stored as an (x,y) coordinate in the vector output.}
+    \par{The output vector is iterated only on the lower half, where the frequencies that are within the scope of our desired frequency are plotted in qt.}
 
 \subsection{Plan Outline}
 
@@ -72,12 +76,12 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 	\item Implement single-threaded Fast Fourier Transforms.
 	\item Implement multi-threaded Fast Fourier Transforms.
 	\item Display the frequency vs. amplitude data calculated from the Fourier transform.
-	\item Conducting experimental tests comparing multi-threaded implementation vs sequential implementation. 
+	\item Conducting experimental tests comparing multi-threaded implementation vs sequential implementation.
 Observing any performance boosts if any.
 \end{enumerate}
 
 \subsection{Algorithm}
-	 
+
 \subsubsection{Discrete Fourier Transform}
 % can go into just what the disrete fourier transform is and its runtime and space complexity.
 	\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
@@ -126,13 +130,18 @@ Creating testing data sets \dots
 
 \section{State-of-the-Art Research}
 
-	\par {The papers that we will use to implement the parallel 1D Fast Fourier 
-	Transform algorithm are the \textit{Proceedings of the Thirty-Seventh 
-	Southeastern Symposium on System Theory}~\cite{Al}, 
+	\par {The papers that we will use to implement the parallel 1D Fast Fourier
+	Transform algorithm are the \textit{Proceedings of the Thirty-Seventh
+	Southeastern Symposium on System Theory}~\cite{Al},
 	the ..............}
 
 \section{Related Work}
-\par{Here we will talk about how our work relates to currently worked on research.}
+\par{There are various applications of the Discrete Fourier Transform in different fields of study. We found topics ranging from digital image processing to modeling the earth's surface.}
+\par{When conducting remote sensing from satellites for modeling the earth's surface, one of the most important problems is modeling surface—fragments of dynamic surfaces such as the waves of the ocean and land forms that slowly shift as well. The use of a Discrete Fourier Transform is recommended by some researchers, where the timing of implementing the transform is crucial for improving the quality and accuracy. The use of parallel computations helps to decrease the implementation time. By decreasing the length of time, more of the model surface-fragment can be generated, which would improve the accuracy and quality of the overall model.[?]}
+\par{Another related research paper that was found had a focus on the possible parallelization techniques for multidimensional hypercomplex discrete Fourier transform (HDFT). The HDFT has been mainly utilized in image and multidimensional signal processing and can be given by the following algebraic expression:
+\[ \sum_{n_1,...,n_d=0}^{N-1} f(n_1,...,n_d)W^{<m,n>} = \prod_{k=1}^{d} w_k^{m_kn_k}, w_k^{N} = 1\]
+One notable aspect of the transform is that the N-th roots $w_{k}$ from unity are found in different sub-algebras that are isomorphic to a complex algebra of some $2^{d}$ algebra $B_{d}$. Computing a multidimensional transform takes great effort when the dimensionality increases. In generating the hypercomplex spectrum, an analog of the inner parallelism of the Cooley-Tukey scheme was used.}
+\par{Another related publishing had a focus on creating a more accurate calculation of the Discrete Fourier Transform. In some cases the Discrete Fourier Transform is insufficient in approximating the continuous Fourier transform. For example, a function such as $h (t) = e^{-50t}, t\in [0,1]$, the error on DFT \{h\} around f = 64 decreases to approximately $N^{-1/3}$. Which means that N must increase by a factor of 1000 in order to decrease the error by a factor of 10. The paper presented a method to provide accurate approximations of the continuous Fourier transform with a similar time complexity to the Fast Fourier Transform. The assumption of signal periodicity is no longer rigid and allows to compute numerical Fourier transforms in a broader domain of frequency than the usual half-period of the DFT. This behavior is highly recommended in image processing since it allows to obtain the Fourier transform of an image without the usual interference of the periodicity of the classical DFT.}
 
 \section{Our Contributions}
 
@@ -146,6 +155,3 @@ Creating testing data sets \dots
 \bibliography{report.bib}
 
 \end{document}
-
-
-
