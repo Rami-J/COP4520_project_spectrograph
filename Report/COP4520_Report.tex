@@ -116,7 +116,7 @@ Observe any performance boosts if any.
 	}
 	\par{
 		An equivalent summation can be derived in terms of the trigonemetric
-		functions cosine and sine using Euler's Identity $e^{ix}=cos\pi + isin\pi$,
+		functions cosine and sine using Euler's Identity $e^{ix}=cosx + isinx$,
 		as shown in equation (\ref{DFT2}).
 	}
 		\begin{equation}\label{DFT2}
@@ -134,7 +134,7 @@ Observe any performance boosts if any.
 		As mentioned in the introduction, the runtime complexity for direct
 		computation of the DFT is $O(n^2)$ which makes it unusable in real-time
 		applications for significantly large sample sizes; however, the main
-		idea behind the DFT computation is used in the FFT algorithm but the 
+		idea behind the DFT computation is used in the FFT algorithm, but the 
 		computation is repeatedly sub-divided instead, 
 		achieving better overall performance.
 	}
@@ -159,10 +159,8 @@ Observe any performance boosts if any.
 		original signal. This assumes that the original DFT size $N$ is a 
 		power of 2, which can be ensured by using zero-padding in applications 
 		where the original audio file might not be a power of 2.
-	}
-	\par{
-		An visualization of how the input-signal is divided in the Cooley-Tukey
-		radix-2 DIT algorithm is shown in figure \ref{fig:dft-decomp} below:
+		A visualization of how the input signal is divided in the Cooley-Tukey
+		radix-2 DIT algorithm is shown in Figure \ref{fig:dft-decomp}.
 	}
 	\begin{figure}[h]
 		\centering
@@ -301,14 +299,14 @@ Observe any performance boosts if any.
 		total samples, which is used as input for the parallel/sequential FFT.
 	}
 	\par{
-		Additionally, each audio file was ran for 50 trials each, for both
-		the sequential and parallel FFT algorithms, and the average runtimes
-		were calculated and are displayed in the Comp. Time column in the
-		table above. We observed a speedup factor of around 6x on the 30s
-		audio file, utilizing 8 worker threads with our parallel FFT 
-		algorithm. As the number of samples increase, there is a greater
-		performance increase between the sequential and parallel FFT
-		implementations, as can be observed in the table above.
+		Additionally, each audio file had its FFT computed for 50 trials each, 
+		for both the sequential and parallel FFT algorithms, and the 
+		average runtimes were calculated and are displayed in the Comp. Time 
+		column in the table above. We observed a speedup factor of 
+		around 6x on the 30s audio file, utilizing 8 worker threads with our 
+		parallel FFT algorithm. As the number of samples increase, 
+		there is a greater performance increase between the sequential and 
+		parallel FFT implementations, as can be observed in the table.
 	}
 
 \section{State-of-the-Art Research}
