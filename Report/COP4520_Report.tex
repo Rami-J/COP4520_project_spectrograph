@@ -9,12 +9,25 @@
 
 \documentclass[journal]{IEEEtran}
 \usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This research is in the Digtial Signal Processing field. Where our aims are to improve the performance of realtime signal processing using parallel processing techniques coupled with 1 dimensional Fast Fourier Transforms.  It has been done before by other researchers implementing multi-dimensional Fast Fourier Transforms in a multithreadeed context. The purpose of our research is to gain a better understanding of parallel processing techniques and digital signal processing. Thus the main goal is to observe the outcome of implementing the multithreaded Fast Fourier transform algorithm and learn from the state-of-the-art research.
+This research is in the Digital Signal Processing field 
+where our aims are to improve the performance of real-time signal 
+processing using parallel processing techniques coupled with 1 
+dimensional Fast Fourier Transforms. 
+It has been done before by other researchers implementing 
+multi-dimensional Fast Fourier Transforms in a multi-threaded context. 
+The purpose of our research is to gain a better understanding of 
+parallel processing techniques and digital signal processing. 
+Thus the main goal is to observe the outcome of implementing a 
+multi-threaded Fast Fourier transform algorithm and learn from the 
+state-of-the-art research.
 \end{abstract}
 
 \section{Introduction}
@@ -38,7 +51,7 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 	\par {The main problem at hand is to create an application that is able to process signals 
 	provided to the program as audio files such as .WAV, .MP3, and .MP4. Then displaying the audio 
 	files as a spectrograph of its signals. This problem can be broken into several steps of 
-	what we need to acheive.}
+	what we need to achieve.}
 
 \begin{itemize}
 	\item A GUI to interact with.
@@ -56,8 +69,8 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 	them on a higher level. This will allow us to focus more on the problem of processing 
 	signals for the audio files. Then by handling extracting raw data from the audio files 
 	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast 
-	Fourier Transforms to process the signals. (How do we plan to parllelize the FFT is 
-	what would be discussed here briefly since will be explained througouly within 
+	Fourier Transforms to process the signals. (How do we plan to parallelize the FFT is 
+	what would be discussed here briefly since will be explained thoroughly within 
 	the algorithms subsection).}
 \subsubsection{Project Architecture}
 
@@ -66,7 +79,7 @@ This research is in the Digtial Signal Processing field. Where our aims are to i
 
 \begin{enumerate}
 	\item Setup programming environment using Qt C++.
-	\item Add support using Qt multimedia API's to load and decode audio files from disk.
+	\item Add support using Qt multimedia APIs to load and decode audio files from disk.
 	\item Stream audio data to an output device such as speakers or headphones.
 	\item Display a waveform of the audio.
 	\item Implement single-threaded Fast Fourier Transforms.
@@ -79,50 +92,150 @@ Observing any performance boosts if any.
 \subsection{Algorithm}
 	 
 \subsubsection{Discrete Fourier Transform}
-% can go into just what the disrete fourier transform is and its runtime and space complexity.
-	\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
+% can go into just what the discrete fourier transform is and its runtime and space complexity.
+	\par{
+		The Discrete Fourier Transform (DFT) can be calculated as 
+		a summation of the product of the sample value and a complex
+		exponential term, shown below:
+	}
+		\begin{equation}
+			\displaystyle X_k = 
+			\sum_{n=0}^{N-1}x_ne^{\displaystyle\frac{-j2 \pi kn}{N}}
+		\end{equation}
+	\par{
+		Where $x_n$ denotes the sample value at index $n$, $j$ the imaginary
+		number, $k$ the desired frequency, and $N$ the total number of samples.
+		The output of the DFT $X_k$ is the Fourier Transform coefficient for
+		frequency $k$, which in our program is the magnitude of the real 
+		and imaginary output of the DFT, normalized between 0 and 1 with 1
+		indicating a large response from the DFT for that frequency $k$.
+	}
+	\par{
+		An equivalent summation can be derived in terms of the trigonemetric
+		functions cosine and sine using Euler's Identity $e^{ix}=cos\pi + isin\pi$,
+		as shown below:
+	}
+		\begin{equation}
+			\displaystyle X_k = \sum_{n=0}^{N-1}x_n[cos(\frac{2\pi}{N}kn) 
+			- jsin(\frac{2\pi}{N}kn)]
+		\end{equation}
+
+	\par{
+		This version of the DFT makes it easier to compute the real and
+		imaginary components of the equation in code through the use of 
+		the std::complex class in the C++ STL.
+	}
+
+	\par{
+		As mentioned in the introduction, the runtime complexity for direct
+		computation of the DFT is $O(n^2)$ which makes it unusable in real-time
+		applications for significantly large sample sizes; however, the main
+		idea behind the DFT computation is used in the FFT algorithm but the 
+		computation is repeatedly sub-divided instead, 
+		achieving better overall performance.
+	}
+
+	%\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
 \subsubsection{Fast Fourier Transform}
 % can go into just what the fast fourier transform is and its runtime and space complexity.
-	\par It is essential that we use an implementation that yields a better runtime as in the case of our program, operating on larger audio files will begin to take much longer being inefficient. Thus we will be working with the Fast Fourier transfom algorithm to reduce our upper asymptotic bound.  (Going to find a reference for this line to talk more about the $O(nlog{}n)$ implementation. But i need to read more).
-\subsection{Paralellized Fast Fourier Transform}
+	\par {
+		It is essential that we use an implementation that yields a 
+		better runtime as in the case of our program, operating on 
+		larger audio files will begin to take much longer and become more 
+		inefficient. Thus we will be working with the 
+		Fast Fourier transform algorithm to reduce our upper 
+		asymptotic bound. The specific FFT algorithm we used is the Cooley-Tukey 
+		radix-2 Decimation in Time (DIT) algorithm, which repeatedly divides a 
+		DFT of size $N$ into two interleaved DFTs of size $N / 2$.
+	}
+	\par{
+		The interleaving of DFTs is achieved by splitting the even-indexed samples
+		and odd-indexed samples of the original $N$ sized DFT, computing them using
+		the DFT formula, and combining the results to produce the DFT of the 
+		original signal. This assumes that the original DFT size $N$ is a 
+		power of 2, which can be ensured by using zero-padding in applications 
+		where the original audio file might not be a power of 2.
+	}
+	\par{
+		An visualization of how the input-signal is divided in the Cooley-Tukey
+		radix-2 DIT algorithm is shown in figure \ref{fig:dft-decomp} below:
+	}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\textwidth]{dft-decomp}
+		\caption{Example of interleaved decomposition of a 16 point input signal
+		\cite{DspGuide}.}
+		\label{fig:dft-decomp}
+	\end{figure}
+\subsection{Parallelized Fast Fourier Transform}
 % Can specify more on how the threads will interact with the fourier transform, why the number of threads we chose and such.
 
 \subsection{Experimental Results}
-Creating testing data sets \dots
+	\par{
+		Below is our performance results of the sequential and parallel
+		implementations of the Fast Fourier Transform
+		tested on three different WAV audio files. The computation
+		time may vary among different systems due to hardware capabilities.
+	}
 
+\vspace{1em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 1} \\
 	\hline
-	Algorithm & File Type & File Size & Computation Time \\
+	Algorithm & File & File Size & Comp. Time \\
 	\hline
-	Sequential FFT & foo.WAV & 100 kb & N \\
-	Parallel FFT & foo.WAV & 100 kb & N \\
+	Sequential FFT & 440Hz-1s.wav & 88 KB & 0.0051s \\
+	Parallel FFT & 440Hz-1s.wav & 88 KB & 0.0014s \\
 	\hline
 \end{tabular}
 
-
+\vspace{1em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 2} \\
 	\hline
-	Algorithm & File Type & File Size & Computation Time \\
+	Algorithm & File & File Size & Comp. Time \\
 	\hline
-	Sequential FFT & foo.WAV & 100 kb & N \\
-	Parallel FFT & foo.WAV & 100 kb & N \\
+	Sequential FFT & 440Hz-3s.wav & 260 KB & 0.023s \\
+	Parallel FFT & 440hz-3s.wav & 260 KB & 0.0047s \\
 	\hline
 \end{tabular}
 
+\vspace{1em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 3} \\
 	\hline
-	Algorithm & File Type & File Size & Computation Time \\
+	Algorithm & File & File Size & Comp. Time \\
 	\hline
-	Sequential FFT & foo.WAV & 100 kb & N \\
-	Parallel FFT & foo.WAV & 100 kb & N \\
+	Sequential FFT & 440Hz-30s.wav & 2.5 MB & 0.34s \\
+	Parallel FFT & 440Hz-30s.wav & 2.5 MB & 0.058s \\
 	\hline
 \end{tabular}
+
+	\vspace{1em}
+	\par{
+		The last data set, which contains the 440Hz-30s.wav file, has over
+		1.3 million total samples in the signal, which is sufficient enough
+		to compare runtimes of the sequential/parallel FFT algorithms. Each
+		audio file was sampled at 44100 Hz, with a 16 bit sample size. So, a 30
+		second audio file sampled at 44100 Hz contains $30 * 44100 = 1323000$
+		total samples, which is used as input for the parallel/sequential FFT.
+	}
+	\par{
+		Additionally, each audio file was ran for 50 trials each, for both
+		the sequential and parallel FFT algorithms, and the average runtimes
+		were calculated and are displayed in the Comp. Time column in the
+		table above. We observed a speedup factor of around 6x on the 30s
+		audio file, utilizing 8 worker threads with our parallel FFT 
+		algorithm. As the number of samples increase, there is a greater
+		performance increase between the sequential and parallel FFT
+		implementations, as can be observed in the table above.
+	}
 
 \section{State-of-the-Art Research}
 
@@ -136,11 +249,6 @@ Creating testing data sets \dots
 
 \section{Our Contributions}
 
-% This was just for testing biber, as I have never used before...
-
-% As \textcite{1dFft} says, there some weird stuff.
-
-% test \parencite{1dFft}
 \medskip
 \bibliographystyle{ieeetr}
 \bibliography{report.bib}
