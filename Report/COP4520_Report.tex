@@ -311,13 +311,46 @@ Observe any performance boosts if any.
 
 \section{State-of-the-Art Research}
 
-	\par {The papers that we will use to implement the parallel 1D Fast Fourier 
-	Transform algorithm are the \textit{Proceedings of the Thirty-Seventh 
-	Southeastern Symposium on System Theory}~\cite{Al}, 
-	the ..............}
+	\par {
+		The discrete fourier transforms have a variety of applications for the 
+		science and engineering fields \cite{Xiang}.Though due to how inefficient 
+		the base form of fourier transforms are, the cooley tukey fast fourier transform 
+		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
+		make up the state of the art research in digtial signal processing using fourier transforms. 
+		Although there are several implemenations, they are typically those that improve on the constant 
+		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. The different 
+		algorithms are explained in more detail in the following sub sections.
+	}
+	% Within each after describing the algorithms key difference I will elaborate on oppurtunities to parallelize,
+	% and reference papers that do parallelize the algorithm.
+	% Should state of the art talk about the different overall approaches to parallelizing these algorithms, such as
+	% communications between threads, or indpendantly computing calculations.
 
-\section{Related Work}
-\par{Here we will talk about how our work relates to currently worked on research.}
+	\subsection{Radix 2 Decimation in Time}
+		% Is it acceptable to use abbreviations?
+		\par{
+			This RAD 2 DIT algorithm makes use of the divide and conquer methodology. Through exploiting 
+			the symmetrical properties of the DFT the summation can be broken up into computations of even 
+			and odd sample points \cite{Soni}. The sub trees of even and odd points are then continuously 
+			broken up into smaller transforms. Due to the computations calculate not being in a natural ordering 
+			it is necessary to use bit reversal to obtain the natural ordering of the results.
+		}
+		\par{
+			There is a parallel implementation of the RAD2 DIT algorithm utilized 
+		}
+	\subsection{Split Radix FFT}
+		\par{
+
+		}
+	\subsection{Bluestein's Algorithm}
+		\par{
+
+		}
+
+\subsection{Related Work}
+\par{
+	Will talk about how our implementation comapares
+}
 
 \section{Our Contributions}
 
