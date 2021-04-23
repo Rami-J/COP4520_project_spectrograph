@@ -51,27 +51,36 @@ Another option is to use QtCreator to build/run the project.
 <ul>
 <li>Visual Studio:</li>
 
-1. To build and run on Windows using Visual Studio open the solution Spectrograph.sln and download the Qt VS Tools extension. 
+<ol>
+<li>To build and run on Windows using Visual Studio open the solution Spectrograph.sln and download the Qt VS Tools extension.</li>
 
-2. Navigate to Extensions -> Qt VS Tools -> Qt Versions
+<li>Navigate to Extensions -> Qt VS Tools -> Qt Versions
 and add the msvc2019_64 Qt version by browsing to its folder located in the Qt\5.15.2 folder.
-(Example: C:\Qt\5.15.2\msvc2019_64)
+(Example: C:\Qt\5.15.2\msvc2019_64)</li>
 
-3. Navigate to Extensions -> Qt VS Tools -> Qt Project Settings
-and make sure that Qt Installation = msvc2019_64 and Qt Modules = charts;core;gui;multimedia;widgets
+<li>Navigate to Extensions -> Qt VS Tools -> Qt Project Settings
+and make sure that Qt Installation = msvc2019_64 and Qt Modules = charts;core;gui;multimedia;widgets</li>
 
-4. Then hit the green run button at the top to build the solution and run.
+</li>Then hit the green run button at the top to build the solution and run.</li>
+</ol>
 
 <li>QtCreator:</li>
 
-1. Open the COP4520_project_spectrograph.pro file using QtCreator (File -> 
-Open File or Project).
+<ol>
+<li>Open the COP4520_project_spectrograph.pro file using QtCreator (File -> 
+Open File or Project).</li>
 
-2. Configure the project to build for Desktop Qt 5.15.2 MSVC2019 64-bit in the Projects tab.
+<li>Configure the project to build for Desktop Qt 5.15.2 MSVC2019 64-bit in the Projects tab.</li>
 
-3. With the build settings configured, click on the build hammer icon on the
-bottom-left corner.
+<li>With the build settings configured, click on the build hammer icon on the
+bottom-left corner.</li>
 
-4. Click on the green run icon on the bottom-left to run the program.
+<li>Click on the green run icon on the bottom-left to run the program.</li>
+</ol>
+
 </ul>
+
+## Experimental/Performance Analysis
+Instructions on running the experimental/performance analysis code can be 
+found in ./experimental/README.txt
 </ul>
