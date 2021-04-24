@@ -358,7 +358,7 @@ Observe any performance boosts if any.
 			number of \textit{N} samples, rather than specifically powers of 2.
 		}
 
-\subsection{Related Work}
+\section{Related Work}
 \par{
 	% When they refer to processes, does that directly translate to threads? Im unsure when reading it.
 	The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
@@ -368,6 +368,19 @@ Observe any performance boosts if any.
 }
 
 \section{Our Contributions}
+
+% Maybe we can find a fancier name rather than conclusion, if not it should be fine.
+% Also should I be more broad? Talking about the need to learn QT's framework on top of the math
+\section{Conclusion}
+	\par{
+		Overall the research was based on a difficult topic, so most of all learning and understanding the 
+		math behind it proved to be the toughest hurdle. It was imperative to understand the base discrete 
+		fourier transform, to be able to understand its optimization and then implement it. A more straight 
+		forward approach of no interprocessing communications was chosen for simplicity. It was easier to 
+		follow and understand with it being lockfree and not having and conflicting memory accesses while 
+		values were being computed. Also with the nature of the problem being relatively distrbuted, it 
+		seemed natural to apply a distributed approach to calculating the FFT.
+	}
 
 \medskip
 \bibliographystyle{ieeetr}
