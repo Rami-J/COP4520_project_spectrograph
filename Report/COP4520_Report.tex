@@ -318,8 +318,15 @@ Observe any performance boosts if any.
 		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
 		make up the state of the art research in digtial signal processing using fourier transforms. 
 		Although there are several implemenations, they are typically those that improve on the constant 
-		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. The different 
-		algorithms are explained in more detail in the following sub sections.
+		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
+		the efficiency of each algorithm is typically determined based on the total of operations which 
+		involves the addition and multiplication count aiming for less operations but yielding same results. 
+		Futher expanding on the FFT algorithms to futher increase performance, variations of the algorithms 
+		were parallelized. Where some utilize interprocessing communications, and others with no communications. 
+		A comparison between the two approaches to parallelizing the FFT is provided in \cite{Pan}, with a 
+		end result of no-communications performing better on smaller data sets, and interprocessing communications 
+		performing more efficient on larger data sets.
+		% Should I delve more into the specifics that are coverd by the \cite{Pan}?
 	}
 	% Within each after describing the algorithms key difference I will elaborate on oppurtunities to parallelize,
 	% and reference papers that do parallelize the algorithm.
@@ -336,20 +343,28 @@ Observe any performance boosts if any.
 			it is necessary to use bit reversal to obtain the natural ordering of the results.
 		}
 		\par{
-			There is a parallel implementation of the RAD2 DIT algorithm utilized 
+			There is a parallel implementation of the RAD2 DIT algorithm that proposes splitting the number of threads 
+			based on the number of processors available in a multiprocessing system.
 		}
 	\subsection{Split Radix FFT}
 		\par{
-
+			Similar to the Radix 2 DIT, the sample points are split into even and odd indicies. Although there is 
+			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
+			a radix-4 index map. 
 		}
 	\subsection{Bluestein's Algorithm}
 		\par{
-
+			The Bluestein's FFT also known as the Chirp-Z transform has the benefit of allowing for an arbitrary
+			number of \textit{N} samples, rather than specifically powers of 2.
 		}
 
 \subsection{Related Work}
 \par{
-	Will talk about how our implementation comapares
+	% When they refer to processes, does that directly translate to threads? Im unsure when reading it.
+	The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
+	interprocessing communications, where a constant number of 8 threads are utilized. It varies from the 
+	methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
+	
 }
 
 \section{Our Contributions}
