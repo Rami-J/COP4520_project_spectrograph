@@ -316,8 +316,22 @@ Observe any performance boosts if any.
 	Southeastern Symposium on System Theory}~\cite{Al}, 
 	the ..............}
 
+\section{Further Improvements}
+	\par Our implementation is only one of many implementation options we found in our research. In our research we found a few possible improvements on top of our current implementation. One possible improvement we could have added to our implementation could have been dynamically adjusting the number of threads we use for calculating our Fourier transform based on the number of samples we have in our audio file. We could have calculated some number of threads that would decrease the amount of padding required to reach a total number of samples that reach a power of 2, then we could theoretically decrease the total computation time by avoiding unhelpful computations.
+
+	\par Another technique that we never were able to implement was something called the split radix algorithm. The way our algorithm works is that we split our sample points of audio into 2 equal groups in radix 2. It is split so that one thread recursively splits the even indices of the audio file into more threads equally, and a second thread recursively splits the odd indices equally between more threads. The split radix approach splits the even indices recursively from one whole chunk, but the odd indices are split into 2 separate threads, to then further be split similarly. This is illustrated in Figure~\ref{fig:splitradix}.
+
+	\begin{figure}
+		\includegraphics[width=3.5in]{images/splitradix.png}
+		\caption{Example of a split radix approach~\cite{FFTLitReview}}
+		\label{fig:splitradix}
+	\end{figure}
+
+	\par This approach to splitting up the computation in practice improves performance by $20\%$~\cite{splitradix}.
+
+
 \section{Related Work}
-\par{Here we will talk about how our work relates to currently worked on research.}
+	\par{Here we will talk about how our work relates to currently worked on research.}
 
 \section{Our Contributions}
 
