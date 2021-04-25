@@ -83,7 +83,7 @@ state-of-the-art research.
 		For the distributed DFT, the number of samples is calculated and if the result is 0, it exits. 
 		The raw data is taken as a char array and represented as a short array as well. Following is the calculation 
 		for the range of data that the thread will process. Each sample is evaluated where the raw data stored in the 
-		short array is accessed and multiplied by the real and imaginary values that are represented as cosine and sine 
+		short array is accessed and multiplied by the real and imaginary values which are represented as cosine and sine 
 		respectfully. This product is added to the current sum, a complex double.
 	}
     \par{
@@ -92,26 +92,29 @@ state-of-the-art research.
 	}
     \par{
 		The output vector is iterated only on the lower half, where the frequencies that are within the scope 
-		of our desired frequency are plotted in qt.
+		of our desired frequency are plotted in the Qt chart for frequency visualization.
 	}
     \par{
 		For the distributed FFT, the Cooley-Turkey FFT algorithm is utilized. First, the length of the real and imaginary 
 		vectors are checked to be of the same length. Once that is verified the number of levels for the FFT are 
 		computed by bit shifting the length. If the length is not a power of 2, then both the real and imaginary 
-		vectors must be resized to the next highest power of 2. 
+		vectors must be resized to the next highest power of 2, automatically padding
+		with 0s. 
 	}
     \par{
 		The sine and cosine calculations are done next, followed by bit-reversing the addressing permutation. 
-		Next the Cookey-Tukey decimation-in-time radix-2 FFT algorithm is done. Finally the output vector is 
+		Next the Cooley-Tukey decimation-in-time radix-2 FFT algorithm is performed. Finally, the output vector is 
 		filled by calculating the magnitude of the complex element and updating the maxSum atomic member 
 		variable with the greatest magnitude.  The corresponding frequency bin from the current 
-		index is delivered from the FFTUtils and if the frequency is a duplicate from a previous index 
+		index is calculated using the FFTUtils class and if the frequency is a duplicate from a previous index 
 		it is skipped. The frequency and amplitude are added to the output vector as a pair.
 	}
     \par{
-		The FTController is able to terminate running threads by requesting an interruption and 
-		making the thread wait. If the thread notices that an interruption was requested, it will clear 
-		its data.  This check occurs when the thread is iterating through each sample.
+		Additionally, the FTController class is able to terminate running threads by requesting an interruption and 
+		waiting on clean terminations of currently running threads. This allows for clean and safe thread termination
+		in our application in the case that the user decides to load a new audio file while the distributed FFT calculation
+		is still processing. If the thread notices that an interruption was requested, it will clear 
+		its data. This check occurs when the thread is iterating through each sample.
 	}
 
 \subsection{Plan Outline}
@@ -289,7 +292,7 @@ Observe any performance boosts if any.
 	}
 
 \vspace{1em}
-\hspace{-2em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 1} \\
@@ -302,7 +305,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-2em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 2} \\
@@ -315,7 +318,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-2em}
+\hspace{-1em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 3} \\
@@ -446,32 +449,57 @@ Observe any performance boosts if any.
 		stays $O(nlogn)$ due to the main computation loops.
 	}
 
-
 \section{Related Work}
-\par{
-	% When they refer to processes, does that directly translate to threads? Im unsure when reading it.
-	The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
-	interprocessing communications, where a constant number of 8 threads are utilized. It varies from the 
-	methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
-}
+	\par{
+		The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
+		interprocessor communications, where a constant number of 8 threads are utilized. It varies from the 
+		methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
+	}
 
-\par{There are various applications of the Discrete Fourier Transform in different fields of study. We found topics ranging from digital image processing to modeling the earth's surface.}
-\par{When conducting remote sensing from satellites for modeling the earth's surface, one of the most important problems is modeling surface—fragments of dynamic surfaces such as the waves of the ocean and land forms that slowly shift as well. The use of a Discrete Fourier Transform is recommended by some researchers, where the timing of implementing the transform is crucial for improving the quality and accuracy. The use of parallel computations helps to decrease the implementation time. By decreasing the length of time, more of the model surface-fragment can be generated, which would improve the accuracy and quality of the overall model.}
-\cite{book:GIS}
-\par{Another related research paper that was found had a focus on the possible parallelization techniques for multidimensional hypercomplex discrete Fourier transform (HDFT). The HDFT has been mainly utilized in image and multidimensional signal processing and can be given by the following algebraic expression:
-\[ \sum_{n_1,...,n_d=0}^{N-1} f(n_1,...,n_d)W^{<m,n>} = \prod_{k=1}^{d} w_k^{m_kn_k}, w_k^{N} = 1\]
-One notable aspect of the transform is that the N-th roots $w_{k}$ from unity are found in different sub-algebras that are isomorphic to a complex algebra of some $2^{d}$ algebra $B_{d}$. Computing a multidimensional transform takes great effort when the dimensionality increases. In generating the hypercomplex spectrum, an analog of the inner parallelism of the Cooley-Tukey scheme was used.}
-\cite{Chicheva}
-\par{Another related publishing had a focus on creating a more accurate calculation of the Discrete Fourier Transform. In some cases the Discrete Fourier Transform is insufficient in approximating the continuous Fourier transform. For example, a function such as $h (t) = e^{-50t}, t\in [0,1]$, the error on DFT \{h\} around f = 64 decreases to approximately $N^{-1/3}$. Which means that N must increase by a factor of 1000 in order to decrease the error by a factor of 10. The paper presented a method to provide accurate approximations of the continuous Fourier transform with a similar time complexity to the Fast Fourier Transform. The assumption of signal periodicity is no longer rigid and allows to compute numerical Fourier transforms in a broader domain of frequency than the usual half-period of the DFT. This behavior is highly recommended in image processing since it allows to obtain the Fourier transform of an image without the usual interference of the periodicity of the classical DFT.}
-\cite{Beaudoin}
+	\par{
+		There are various applications of the Discrete Fourier Transform in different fields of study. We found topics ranging from digital 
+		image processing to modeling the earth's surface.
+	}
+	\par{
+		When conducting remote sensing from satellites for modeling the earth's surface, one of the most important problems is 
+		modeling surface—fragments of dynamic surfaces such as the waves of the ocean and land forms that slowly shift as well. 
+		The use of a Discrete Fourier Transform is recommended by some researchers, where the timing of implementing the transform 
+		is crucial for improving the quality and accuracy. The use of parallel computations helps to decrease the implementation time. 
+		By decreasing the length of time, more of the model surface-fragment can be generated, which would improve the accuracy and 
+		quality of the overall model.
+	}
+	\cite{book:GIS}
+	\par{
+		Another related research paper that was found had a focus on the possible parallelization techniques for multidimensional 
+		hypercomplex discrete Fourier transform (HDFT). The HDFT has been mainly utilized in image and multidimensional signal 
+		processing and can be given by the following algebraic expression:
+		\[ \sum_{n_1,...,n_d=0}^{N-1} f(n_1,...,n_d)W^{<m,n>} = \prod_{k=1}^{d} w_k^{m_kn_k}, w_k^{N} = 1\]
+		One notable aspect of the transform is that the N-th roots $w_{k}$ from unity are found in different sub-algebras that are 
+		isomorphic to a complex algebra of some $2^{d}$ algebra $B_{d}$. Computing a multidimensional transform takes great effort 
+		when the dimensionality increases. In generating the hypercomplex spectrum, an analog of the inner parallelism of the 
+		Cooley-Tukey scheme was used.
+	}
+	\cite{Chicheva}
+	\par{
+		Another related publishing had a focus on creating a more accurate calculation of the Discrete Fourier Transform. 
+		In some cases the Discrete Fourier Transform is insufficient in approximating the continuous Fourier transform. 
+		For example, a function such as $h (t) = e^{-50t}, t\in [0,1]$, the error on DFT \{h\} around f = 64 decreases 
+		to approximately $N^{-1/3}$. Which means that N must increase by a factor of 1000 in order to decrease the error 
+		by a factor of 10. The paper presented a method to provide accurate approximations of the continuous Fourier 
+		transform with a similar time complexity to the Fast Fourier Transform. The assumption of signal periodicity 
+		is no longer rigid and allows to compute numerical Fourier transforms in a broader domain of frequency than the 
+		usual half-period of the DFT. This behavior is highly recommended in image processing since it obtains the Fourier 
+		transform of an image without the usual interference of the periodicity of the classical DFT.
+	}
+	\cite{Beaudoin}
 
 \section{Our Contributions}
 	\par{
-		After performing experiments with sequential and paralell implementations. The exectuion times were 
-		recorded and proved that the parallel implementaions ran more efficiently. This contributes to the fact 
-		that paralell implemenations of the fast fourier transform are more effective. Also that the FFT algorithm 
-		is well suited for parallelization. Where there are many applications for FFT, any improvements to the speed 
-		of calculations are vital when calculating large sample of \textit{N}.
+		After performing experiments with sequential and parallel implementations of the FFT, the execution times were 
+		recorded and proven that the parallel implementaions ran more efficiently, based on trial data. This contributes to the fact 
+		that parallel implementations of the Fast Fourier transform are more effective. Also, that the FFT algorithm 
+		is well suited for parallelization. Since there are many applications for FFT calculation, any improvements to the speed 
+		of the algorithm are vital when calculating large samples of \textit{N}.
 	}
 % Maybe we can find a fancier name rather than conclusion, if not it should be fine.
 % Also should I be more broad? Talking about the need to learn QT's framework on top of the math
