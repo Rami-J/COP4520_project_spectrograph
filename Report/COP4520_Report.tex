@@ -329,6 +329,16 @@ Observe any performance boosts if any.
 
 	\par This approach to splitting up the computation in practice improves performance by $20\%$~\cite{splitradix}.
 
+	\par{
+		Another improvement we could have made to the Cooley-Tukey radix-2 DIT
+		algorithm was pre-computing the $\frac{N}{2}$ cosine and sine values and
+		re-using those values for each thread, since each of the 8 threads ends 
+		up re-computing the same cosine/sine functions independently anyways.
+		This could end up saving us $O(n)$ time in pre-computation for the 
+		Cooley-Tukey algorithm; however, the overall runtime complexity 
+		stays $O(nlogn)$ due to the main computation loops.
+	}
+
 
 \section{Related Work}
 	\par{Here we will talk about how our work relates to currently worked on research.}
