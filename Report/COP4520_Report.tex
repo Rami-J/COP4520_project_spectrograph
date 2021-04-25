@@ -341,11 +341,10 @@ Observe any performance boosts if any.
 			the symmetrical properties of the DFT the summation can be broken up into computations of even 
 			and odd sample points \cite{Soni}. The sub trees of even and odd points are then continuously 
 			broken up into smaller transforms. Due to the computations not being in a natural ordering 
-			it is necessary to use bit reversal to obtain the natural ordering of the results.
-		}
-		\par{
-			A parallel implementation of the RAD2 DIT algorithm that proposes splitting the number of threads 
-			based on the number of processors available in a multiprocessing system.
+			it is necessary to use bit reversal to obtain the natural ordering of the results. As said by 
+			Douglas L. Jones in \cite{Cnx}, it is considered one of the simplest Power-of-two FFT algorithms. 
+			That being the case it serves as a great approach to begin with due to its efficiency realtive to 
+			its simplicity.
 		}
 	\subsection{Split Radix FFT}
 		\par{
@@ -353,12 +352,20 @@ Observe any performance boosts if any.
 			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
 			a radix-4 index map. Since the even and odd indicies are computed independantly, it is possible to split 
 			them into the two diffrent index mappings. The number of computations required deduce to ${4n Log(n)}$ 
-			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}.
+			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}. Due to the efficiency provided by the split 
+			radix approach, it is preferred to the Radix 2 approach, as the implementation is not much more difficult 
+			to expand to.
 		}
-	\subsection{Bluestein's Algorithm}
+
+	\subsection{Prime Factor Algorithm}
 		\par{
-			The Bluestein's FFT also known as the Chirp-Z transform has the benefit of allowing for an arbitrary
-			number of \textit{N} samples, rather than specifically powers of 2.
+			The idea behind this algorithm is to reorder the DFT computations in such a way that any rendundancies 
+			are exposed, overall allowing for the computation of the DFT to be reduced \cite{Cnx}. 
+			This approach is not as widely used as the Power-of-two FFT's such as Split radix and Radix-2 DIT discussed above. 
+			One characteristic about this algorithm is that it serves to remove the twiddle factors and remaining with multiples 
+			of short length, the opposite affect that is acheived with the Power-of-two algorithms. Although this approach is not 
+			as widely used, it yields similar operation count on similar length samples \cite{Cnx}, making this approach not 
+			inferior to the latter.
 		}
 
 \section{Related Work}
