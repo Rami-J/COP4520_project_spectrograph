@@ -70,17 +70,49 @@ state-of-the-art research.
 	them on a higher level. This will allow us to focus more on the problem of processing 
 	signals for the audio files. Then by handling extracting raw data from the audio files 
 	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast 
-	Fourier Transforms to process the signals. (How do we plan to parallelize the FFT is 
-	what would be discussed here briefly since will be explained thoroughly within 
-	the algorithms subsection).}
+	Fourier Transforms (FFT) to process the signals. For our approach on parallelizing the FFT,
+	we plan on taking a distributed approach which evenly divides the work each thread does
+	when calculating the FFT over $N$ total samples. The algorithms for the sequential and parallel 
+	Fast Fourier Transforms will be discussed in more detail in section \ref{Algorithm}.
+	}
 \subsubsection{Project Architecture}
-    \par{The core of the project resides in the FTController, which spawns threads using a queue to hold each one.}
-    \par{For the distributed DFT, the number of samples is calculated and if the result is 0, it exits. The raw data is taken as a char array and represented as a short array as well. Following is the calculation for the range of data that the thread will process. Each sample is evaluated where the raw data stored in the short array is accessed and multiplied by the real and imaginary values that are represented as cosine and sine respectfully. This product is added to the current sum, a complex double.}
-    \par{The magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest y-value seen so far. The point of the graph is stored as an (x,y) coordinate in the vector output.}
-    \par{The output vector is iterated only on the lower half, where the frequencies that are within the scope of our desired frequency are plotted in qt.}
-    \par{For the distributed FFT, the Cooley-Turkey FFT algorithm is utilized. First, the length of the real and imaginary vectors are checked to be of the same length. Once that is verified the number of levels for the FFT are computed by bit shifting the length. If the length is not a power of 2, then both the real and imaginary vectors must be resized to the next highest power of 2. }
-    \par{The sine and cosine calculations are done next, followed by bit-reversing the addressing permutation. Next the Cookey-Tukey decimation-in-time radix-2 FFT algorithm is done. Finally the output vector is filled by calculating the magnitude of the complex element and updating the maxSum atomic member variable with the greatest magnitude.  The corresponding frequency bin from the current index is delivered from the FFTUtils and if the frequency is a duplicate from a previous index it is skipped. The frequency and amplitude are added to the output vector as a pair.}
-    \par{The FTController is able to terminate running threads by requesting an interruption and making the thread wait. If the thread notices that an interruption was requested, it will clear its data.  This check occurs when the thread is iterating through each sample.}
+    \par{
+		The core of the project resides in the FTController, which spawns threads using a queue to hold each one.
+	}
+    \par{
+		For the distributed DFT, the number of samples is calculated and if the result is 0, it exits. 
+		The raw data is taken as a char array and represented as a short array as well. Following is the calculation 
+		for the range of data that the thread will process. Each sample is evaluated where the raw data stored in the 
+		short array is accessed and multiplied by the real and imaginary values that are represented as cosine and sine 
+		respectfully. This product is added to the current sum, a complex double.
+	}
+    \par{
+		The magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest y-value seen so far. 
+		The point of the graph is stored as an (x,y) coordinate in the vector output.
+	}
+    \par{
+		The output vector is iterated only on the lower half, where the frequencies that are within the scope 
+		of our desired frequency are plotted in qt.
+	}
+    \par{
+		For the distributed FFT, the Cooley-Turkey FFT algorithm is utilized. First, the length of the real and imaginary 
+		vectors are checked to be of the same length. Once that is verified the number of levels for the FFT are 
+		computed by bit shifting the length. If the length is not a power of 2, then both the real and imaginary 
+		vectors must be resized to the next highest power of 2. 
+	}
+    \par{
+		The sine and cosine calculations are done next, followed by bit-reversing the addressing permutation. 
+		Next the Cookey-Tukey decimation-in-time radix-2 FFT algorithm is done. Finally the output vector is 
+		filled by calculating the magnitude of the complex element and updating the maxSum atomic member 
+		variable with the greatest magnitude.  The corresponding frequency bin from the current 
+		index is delivered from the FFTUtils and if the frequency is a duplicate from a previous index 
+		it is skipped. The frequency and amplitude are added to the output vector as a pair.
+	}
+    \par{
+		The FTController is able to terminate running threads by requesting an interruption and 
+		making the thread wait. If the thread notices that an interruption was requested, it will clear 
+		its data.  This check occurs when the thread is iterating through each sample.
+	}
 
 \subsection{Plan Outline}
 
@@ -99,7 +131,7 @@ state-of-the-art research.
 Observe any performance boosts if any.
 \end{enumerate}
 
-\subsection{Algorithm}
+\subsection{Algorithm}\label{Algorithm}
 
 \subsubsection{Discrete Fourier Transform}
 % can go into just what the discrete fourier transform is and its runtime and space complexity.
