@@ -251,7 +251,7 @@ Observe any performance boosts if any.
 	}
 
 \vspace{1em}
-\hspace{-1em}
+\hspace{-2em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 1} \\
@@ -264,7 +264,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-1em}
+\hspace{-2em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 2} \\
@@ -277,7 +277,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-1em}
+\hspace{-2em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 3} \\
@@ -314,25 +314,25 @@ Observe any performance boosts if any.
 	\par {
 		The discrete fourier transforms have a variety of applications for the 
 		science and engineering fields \cite{Xiang}.Though due to how inefficient 
-		the base form of fourier transforms are, the cooley tukey fast fourier transform 
+		the base form of fourier transforms are, the Cooley-Tukey Fast Fourier transform 
 		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
-		make up the state of the art research in digtial signal processing using fourier transforms. 
-		Although there are several implemenations, they are typically those that improve on the constant 
+		make up the state of the art research in digital signal processing using fourier transforms. 
+		Although there are several implementations, they are typically those that improve on the constant 
 		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
 		the efficiency of each algorithm is typically determined based on the total of operations which 
 		involves the addition and multiplication count aiming for less operations but yielding same results. 
-		Futher expanding on the FFT algorithms to futher increase performance, variations of the algorithms 
-		were parallelized. Where some utilize interprocessing communications, and others with no communications. 
+		Further expanding on the FFT algorithms to further increase performance, variations of the algorithms 
+		were parallelized. Where some utilize inter-processing communications, and others with no communications. 
 		A comparison between the two approaches to parallelizing the FFT is provided in \cite{Pan}, with a 
-		end result of no-communications performing better on smaller data sets, and interprocessing communications 
-		performing more efficient on larger data sets. In the below subsections, the different implemenations 
+		end result of no-communications performing better on smaller data sets, and inter-processing communications 
+		performing more efficient on larger data sets. In the below subsections, the different implementations 
 		are explained in more detail.
-		% Should I delve more into the specifics that are coverd by the \cite{Pan}?
+		% Should I delve more into the specifics that are covered by the \cite{Pan}?
 	}
-	% Within each after describing the algorithms key difference I will elaborate on oppurtunities to parallelize,
+	% Within each after describing the algorithms key difference I will elaborate on opportunities to parallelize,
 	% and reference papers that do parallelize the algorithm.
 	% Should state of the art talk about the different overall approaches to parallelizing these algorithms, such as
-	% communications between threads, or indpendantly computing calculations.
+	% communications between threads, or independently computing calculations.
 
 	\subsection{Radix 2 Decimation in Time}
 		% Is it acceptable to use abbreviations?
@@ -343,7 +343,7 @@ Observe any performance boosts if any.
 			broken up into smaller transforms. Due to the computations not being in a natural ordering 
 			it is necessary to use bit reversal to obtain the natural ordering of the results. As said by 
 			Douglas L. Jones in \cite{Cnx}, it is considered one of the simplest Power-of-two FFT algorithms. 
-			That being the case it serves as a great approach to begin with due to its efficiency realtive to 
+			That being the case it serves as a great approach to begin with due to its efficiency relative to 
 			its simplicity.
 		}
 	\subsection{Split Radix FFT}
@@ -363,10 +363,50 @@ Observe any performance boosts if any.
 			are exposed, overall allowing for the computation of the DFT to be reduced \cite{Cnx}. 
 			This approach is not as widely used as the Power-of-two FFT's such as Split radix and Radix-2 DIT discussed above. 
 			One characteristic about this algorithm is that it serves to remove the twiddle factors and remaining with multiples 
-			of short length, the opposite affect that is acheived with the Power-of-two algorithms. Although this approach is not 
+			of short length, the opposite affect that is achieved with the Power-of-two algorithms. Although this approach is not 
 			as widely used, it yields similar operation count on similar length samples \cite{Cnx}, making this approach not 
 			inferior to the latter.
 		}
+
+\section{Further Improvements}
+	\par {
+		Our implementation is only one of many implementation options we found in our research. In our research 
+		we found a few possible improvements on top of our current implementation. One possible improvement we 
+		could have added to our implementation could have been dynamically adjusting the number of threads we 
+		use for calculating our Fourier transform based on the number of samples we have in our audio file. 
+		We could have calculated some number of threads that would decrease the amount of padding required 
+		to reach a total number of samples that reach a power of 2, then we could theoretically 
+		decrease the total computation time by avoiding unhelpful computations.
+	}
+
+	\par {
+		Another technique that we never were able to implement was something called the split radix algorithm. 
+		The way our algorithm works is that we split our sample points of audio into 2 equal groups in radix 2. 
+		It is split so that one thread recursively splits the even indices of the audio file into more threads 
+		equally, and a second thread recursively splits the odd indices equally between more threads. 
+		The split radix approach splits the even indices recursively from one whole chunk, but the odd indices are 
+		split into 2 separate threads, to then further be split similarly. 
+		This is illustrated in Figure~\ref{fig:splitradix}.
+	}
+
+	\begin{figure}
+		\includegraphics[width=3.5in]{images/splitradix.png}
+		\caption{Example of a split radix approach~\cite{FFTLitReview}}
+		\label{fig:splitradix}
+	\end{figure}
+
+	\par This approach to splitting up the computation in practice improves performance by $20\%$~\cite{splitradix}.
+
+	\par{
+		Another improvement we could have made to the Cooley-Tukey radix-2 DIT
+		algorithm was pre-computing the $\frac{N}{2}$ cosine and sine values and
+		re-using those values for each thread, since each of the 8 threads ends 
+		up re-computing the same cosine/sine functions independently anyways.
+		This could end up saving us $O(n)$ time in pre-computation for the 
+		Cooley-Tukey algorithm; however, the overall runtime complexity 
+		stays $O(nlogn)$ due to the main computation loops.
+	}
+
 
 \section{Related Work}
 \par{
