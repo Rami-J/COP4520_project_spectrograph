@@ -117,6 +117,27 @@ state-of-the-art research.
 		its data. This check occurs when the thread is iterating through each sample.
 	}
 
+	\par{
+		The core structure of our application is represented via the class
+		diagram in Figure \ref{fig:class-diagram}. The AudioFileStream class
+		handles decoding the raw audio data from an audio file via Qt's
+		QAudioDecoder class and writes the data to the Spectrograph's buffer.
+		When the AudioFileStream finishes writing all the audio data to the
+		buffer it calls the Spectrograph calculateSpectrum() method which
+		tells the FTController class to start spawning the 8
+		DistributedFFTWorkerThreads. Under the hood, the FTController class
+		automatically sets the worker IDs for each thread and passes the
+		required audio data to each thread, also providing support for
+		clean termination of these threads if needed by the Spectrograph.
+	}
+
+	\begin{figure}
+		\centering
+		\includegraphics[height=0.75\textwidth]{class-diagram}
+		\caption{Class diagram of the core classes of our application.}
+		\label{fig:class-diagram}
+	\end{figure}
+
 \subsection{Plan Outline}
 
 \par{
@@ -285,14 +306,19 @@ Observe any performance boosts if any.
 
 \subsection{Experimental Results}
 	\par{
-		Below is our performance results of the sequential and parallel
-		implementations of the Fast Fourier Transform
+		Figure \ref{fig:data-table} displays our performance results of 
+		the sequential and parallel implementations of the Fast Fourier Transform
 		tested on three different WAV audio files. The computation
 		time may vary among different systems due to hardware capabilities.
 	}
 
+
+	\begin{figure}
+		\centering
+		%\includegraphics[height=0.75\textwidth]{class-diagram}
+
 \vspace{1em}
-\hspace{-1em}
+\hspace{-2em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 1} \\
@@ -305,7 +331,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-1em}
+\hspace{-2em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 2} \\
@@ -318,7 +344,7 @@ Observe any performance boosts if any.
 \end{tabular}
 
 \vspace{1em}
-\hspace{-1em}
+\hspace{-1.5em}
 \begin{tabular} { |c|c|c|c| }
 	\hline
 	\multicolumn{4} {|c|} {Data Set 3} \\
@@ -329,6 +355,9 @@ Observe any performance boosts if any.
 	Parallel FFT & 440Hz-30s.wav & 2.5 MB & 0.058s \\
 	\hline
 \end{tabular}
+\caption{Data sets and computation times for each sample audio file.}
+\label{fig:data-table}
+\end{figure}
 
 	\vspace{1em}
 	\par{
@@ -343,7 +372,7 @@ Observe any performance boosts if any.
 		Additionally, each audio file had its FFT computed for 50 trials each, 
 		for both the sequential and parallel FFT algorithms, and the 
 		average runtimes were calculated and are displayed in the Comp. Time 
-		column in the table above. We observed a speedup factor of 
+		column in Figure \ref{fig:data-table}. We observed a speedup factor of 
 		around 6x on the 30s audio file, utilizing 8 worker threads with our 
 		parallel FFT algorithm. As the number of samples increase, 
 		there is a greater performance increase between the sequential and 
@@ -512,7 +541,7 @@ Observe any performance boosts if any.
 		follow and understand with it being lockfree and not having and conflicting memory accesses while 
 		values were being computed. Also with the nature of the problem being relatively distrbuted, it 
 		seemed natural to apply a distributed approach to calculating the FFT. The performance gains made 
-		with our parallelized implementaion were a relatively large improvment, as the sequential fft was 
+		with our parallelized implementaion were a relatively large improvment, as the sequential FFT was 
 		about 6 times as slow, making a significant improvement over large number of \textit{N} samples.
 	}
 
