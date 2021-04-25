@@ -325,7 +325,8 @@ Observe any performance boosts if any.
 		were parallelized. Where some utilize interprocessing communications, and others with no communications. 
 		A comparison between the two approaches to parallelizing the FFT is provided in \cite{Pan}, with a 
 		end result of no-communications performing better on smaller data sets, and interprocessing communications 
-		performing more efficient on larger data sets.
+		performing more efficient on larger data sets. In the below subsections, the different implemenations 
+		are explained in more detail.
 		% Should I delve more into the specifics that are coverd by the \cite{Pan}?
 	}
 	% Within each after describing the algorithms key difference I will elaborate on oppurtunities to parallelize,
@@ -339,18 +340,20 @@ Observe any performance boosts if any.
 			This RAD 2 DIT algorithm makes use of the divide and conquer methodology. Through exploiting 
 			the symmetrical properties of the DFT the summation can be broken up into computations of even 
 			and odd sample points \cite{Soni}. The sub trees of even and odd points are then continuously 
-			broken up into smaller transforms. Due to the computations calculate not being in a natural ordering 
+			broken up into smaller transforms. Due to the computations not being in a natural ordering 
 			it is necessary to use bit reversal to obtain the natural ordering of the results.
 		}
 		\par{
-			There is a parallel implementation of the RAD2 DIT algorithm that proposes splitting the number of threads 
+			A parallel implementation of the RAD2 DIT algorithm that proposes splitting the number of threads 
 			based on the number of processors available in a multiprocessing system.
 		}
 	\subsection{Split Radix FFT}
 		\par{
 			Similar to the Radix 2 DIT, the sample points are split into even and odd indicies. Although there is 
 			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
-			a radix-4 index map. 
+			a radix-4 index map. Since the even and odd indicies are computed independantly, it is possible to split 
+			them into the two diffrent index mappings. The number of computations required deduce to ${4n Log(n)}$ 
+			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}.
 		}
 	\subsection{Bluestein's Algorithm}
 		\par{
@@ -364,11 +367,18 @@ Observe any performance boosts if any.
 	The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
 	interprocessing communications, where a constant number of 8 threads are utilized. It varies from the 
 	methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
+
 	
 }
 
 \section{Our Contributions}
-
+	\par{
+		After performing experiments with sequential and paralell implementations. The exectuion times were 
+		recorded and proved that the parallel implementaions ran more efficiently. This contributes to the fact 
+		that paralell implemenations of the fast fourier transform are more effective. Also that the FFT algorithm 
+		is well suited for parallelization. Where there are many applications for FFT, any improvements to the speed 
+		of calculations are vital when calculating large sample of \textit{N}.
+	}
 % Maybe we can find a fancier name rather than conclusion, if not it should be fine.
 % Also should I be more broad? Talking about the need to learn QT's framework on top of the math
 \section{Conclusion}
@@ -379,7 +389,9 @@ Observe any performance boosts if any.
 		forward approach of no interprocessing communications was chosen for simplicity. It was easier to 
 		follow and understand with it being lockfree and not having and conflicting memory accesses while 
 		values were being computed. Also with the nature of the problem being relatively distrbuted, it 
-		seemed natural to apply a distributed approach to calculating the FFT.
+		seemed natural to apply a distributed approach to calculating the FFT. The performance gains made 
+		with our parallelized implementaion were a relatively large improvment, as the sequential fft was 
+		about 6 times as slow, making a significant improvement over large number of \textit{N} samples.
 	}
 
 \medskip
