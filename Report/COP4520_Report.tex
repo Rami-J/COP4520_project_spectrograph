@@ -313,50 +313,49 @@ Observe any performance boosts if any.
 	}
 
 
-	\begin{figure}
-		\centering
-		%\includegraphics[height=0.75\textwidth]{class-diagram}
+\begin{figure}
+	\centering
 
-\vspace{1em}
-\hspace{-2em}
-\begin{tabular} { |c|c|c|c| }
-	\hline
-	\multicolumn{4} {|c|} {Data Set 1} \\
-	\hline
-	Algorithm & File & File Size & Comp. Time \\
-	\hline
-	Sequential FFT & 440Hz-1s.wav & 88 KB & 0.0051s \\
-	Parallel FFT & 440Hz-1s.wav & 88 KB & 0.0014s \\
-	\hline
-\end{tabular}
+	\vspace{1em}
+	\hspace{-2em}
+	\begin{tabular} { |c|c|c|c| }
+		\hline
+		\multicolumn{4} {|c|} {Data Set 1} \\
+		\hline
+		Algorithm & File & File Size & Comp. Time \\
+		\hline
+		Sequential FFT & 440Hz-1s.wav & 88 KB & 0.0051s \\
+		Parallel FFT & 440Hz-1s.wav & 88 KB & 0.0014s \\
+		\hline
+	\end{tabular}
 
-\vspace{1em}
-\hspace{-2em}
-\begin{tabular} { |c|c|c|c| }
-	\hline
-	\multicolumn{4} {|c|} {Data Set 2} \\
-	\hline
-	Algorithm & File & File Size & Comp. Time \\
-	\hline
-	Sequential FFT & 440Hz-3s.wav & 260 KB & 0.023s \\
-	Parallel FFT & 440hz-3s.wav & 260 KB & 0.0047s \\
-	\hline
-\end{tabular}
+	\vspace{1em}
+	\hspace{-2em}
+	\begin{tabular} { |c|c|c|c| }
+		\hline
+		\multicolumn{4} {|c|} {Data Set 2} \\
+		\hline
+		Algorithm & File & File Size & Comp. Time \\
+		\hline
+		Sequential FFT & 440Hz-3s.wav & 260 KB & 0.023s \\
+		Parallel FFT & 440hz-3s.wav & 260 KB & 0.0047s \\
+		\hline
+	\end{tabular}
 
-\vspace{1em}
-\hspace{-1.5em}
-\begin{tabular} { |c|c|c|c| }
-	\hline
-	\multicolumn{4} {|c|} {Data Set 3} \\
-	\hline
-	Algorithm & File & File Size & Comp. Time \\
-	\hline
-	Sequential FFT & 440Hz-30s.wav & 2.5 MB & 0.34s \\
-	Parallel FFT & 440Hz-30s.wav & 2.5 MB & 0.058s \\
-	\hline
-\end{tabular}
-\caption{Data sets and computation times for each sample audio file.}
-\label{fig:data-table}
+	\vspace{1em}
+	\hspace{-1.5em}
+	\begin{tabular} { |c|c|c|c| }
+		\hline
+		\multicolumn{4} {|c|} {Data Set 3} \\
+		\hline
+		Algorithm & File & File Size & Comp. Time \\
+		\hline
+		Sequential FFT & 440Hz-30s.wav & 2.5 MB & 0.34s \\
+		Parallel FFT & 440Hz-30s.wav & 2.5 MB & 0.058s \\
+		\hline
+	\end{tabular}
+	\caption{Data sets and computation times for each sample audio file.}
+	\label{fig:data-table}
 \end{figure}
 
 	\vspace{1em}
@@ -521,6 +520,28 @@ Observe any performance boosts if any.
 		transform of an image without the usual interference of the periodicity of the classical DFT.
 	}
 	\cite{Beaudoin}
+	\par{
+		One popular and very efficient implementation of FFTs comes from a library
+		called FFTW (Fastest Fourier Transform in the West) developed by Matteo 
+		Frigo and Steven G. Johnson at MIT. The library was developed with
+		portability and flexibility in mind, allowing computation of real and
+		complex-valued input of arbitrary size and dimension in $O(nlogn)$ runtime.
+		Additionally, it supports many variants of the Cooley-Tukey algorithm,
+		and chooses the variant that it estimates to be the most preferable in
+		the specific situation. For example, it switches to using either Rader's
+		or Bluestein's FFT algorithm for computing the FFT on prime-sized input, and
+		chooses among variants of the Cooley-Tukey algorithm for composite sized
+		input. FFTW was written in C and is currently used as the matrix package
+		for calculating FFTs in MATLAB.
+
+		Additionally, FFTW has parallel subroutines for the FFT calculations,
+		including one-dimensional, multi-dimensional (with shared memory), and
+		multi-dimensional (with distributed memory) versions. In FFTW's
+		one-dimensional parallel implementation, which uses the Cooley-Tukey
+		algorithm, the recursive sub-problems of the original input are divided
+		equally among different threads.
+		\cite{FFTW}
+	}
 
 \section{Our Contributions}
 	\par{
