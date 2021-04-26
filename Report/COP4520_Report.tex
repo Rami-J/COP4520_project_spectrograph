@@ -25,7 +25,7 @@ It has been done before by other researchers implementing
 multi-dimensional Fast Fourier Transforms in a multi-threaded context. 
 The purpose of our research is to gain a better understanding of 
 parallel processing techniques and digital signal processing. 
-Thus the main goal is to observe the outcome of implementing a 
+Thus, the main goal is to observe the outcome of implementing a 
 multi-threaded Fast Fourier transform algorithm and learn from the 
 state-of-the-art research.
 \end{abstract}
@@ -214,7 +214,7 @@ Observe any performance boosts if any.
 		It is essential that we use an implementation that yields a 
 		better runtime as in the case of our program, operating on 
 		larger audio files will begin to take much longer and become more 
-		inefficient. Thus we will be working with the 
+		inefficient. Thus, we will be working with the 
 		Fast Fourier transform algorithm to reduce our upper 
 		asymptotic bound. The specific FFT algorithm we used is the Cooley-Tukey 
 		radix-2 Decimation in Time (DIT) algorithm, which repeatedly divides a 
@@ -233,7 +233,7 @@ Observe any performance boosts if any.
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=0.5\textwidth]{dft-decomp}
-		\caption{Example of interleaved decomposition of a 16 point input signal
+		\caption{Example of interleaved decomposition of a 16-point input signal
 		\cite{DspGuide}.}
 		\label{fig:dft-decomp}
 	\end{figure}
@@ -369,9 +369,9 @@ Observe any performance boosts if any.
 	\vspace{1em}
 	\par{
 		The last data set, which contains the 440Hz-30s.wav file, has over
-		1.3 million total samples in the signal, which is sufficient enough
+		1.3 million total samples in the signal, which is sufficient
 		to compare runtimes of the sequential/parallel FFT algorithms. Each
-		audio file was sampled at 44100 Hz, with a 16 bit sample size. So, a 30
+		audio file was sampled at 44100 Hz, with a 16-bit sample size. So, a 30
 		second audio file sampled at 44100 Hz contains $30 * 44100 = 1323000$
 		total samples, which is used as input for the parallel/sequential FFT.
 	}
@@ -394,7 +394,7 @@ Observe any performance boosts if any.
 		science and engineering fields \cite{Xiang}.Though due to how inefficient 
 		the base form of Fourier transforms are, the Cooley-Tukey Fast Fourier transform 
 		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
-		make up the state of the art research in digital signal processing using Fourier transforms. 
+		make up the state-of-the-art research in digital signal processing using Fourier transforms. 
 		Although there are several implementations, they are typically those that improve on the constant 
 		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
 		the efficiency of each algorithm is typically determined based on the total amount of operations which 
@@ -479,10 +479,10 @@ Observe any performance boosts if any.
 		remains $O(nlogn)$ due to the main computation loops.
 	}
 
-\section{Related Work}
+\section{Related Work}\label{RelatedWork}
 	\par{
 		The implementation that we went with was the Radix 2 Decimation in Time algorithm. Parallelizing it without 
-		interprocessor communications, where a constant number of 8 threads are utilized. It varies from the 
+		inter-processor communications, where a constant number of 8 threads are utilized. It varies from the 
 		methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
 	}
 
@@ -492,7 +492,7 @@ Observe any performance boosts if any.
 	}
 	\par{
 		When conducting remote sensing from satellites for modeling the earth's surface, one of the most important problems is 
-		modeling surface—fragments of dynamic surfaces such as the waves of the ocean and land forms that slowly shift as well. 
+		modeling surface—fragments of dynamic surfaces such as the waves of the ocean and landforms that slowly shift as well. 
 		The use of a Discrete Fourier Transform is recommended by some researchers, where the timing of implementing the transform 
 		is crucial for improving the quality and accuracy. The use of parallel computations helps to decrease the implementation time. 
 		By decreasing the length of time, more of the model surface-fragment can be generated, which would improve the accuracy and 
@@ -512,7 +512,7 @@ Observe any performance boosts if any.
 	\cite{Chicheva}
 	\par{
 		Another related publishing had a focus on creating a more accurate calculation of the Discrete Fourier Transform. 
-		In some cases the Discrete Fourier Transform is insufficient in approximating the continuous Fourier transform. 
+		In some cases, the Discrete Fourier Transform is insufficient in approximating the continuous Fourier transform. 
 		For example, a function such as $h (t) = e^{-50t}, t\in [0,1]$, the error on DFT \{h\} around f = 64 decreases 
 		to approximately $N^{-1/3}$. Which means that N must increase by a factor of 1000 in order to decrease the error 
 		by a factor of 10. The paper presented a method to provide accurate approximations of the continuous Fourier 
@@ -551,11 +551,11 @@ Observe any performance boosts if any.
 		are by no means terrible, but by comparison to supercomputers,
 		the focus of FFT computations will most likely remain on the supercomputing 
 		platforms for some time. Although there are still resources available further 
-		pushing the research within the FFT field. As mentioned in \textit{section V} FFTW
+		pushing the research within the FFT field. As mentioned in section \ref{RelatedWork}, FFTW
 		has become an increasingly popular open-source library for furthering FFT research.
 		It serves well as it is easily accessible and flexible to allow engineers of other
 		fields to make improvements and further develop the library. Relative to the 
-		current standing of the field, overall it seems the need for more efficient FFT's 
+		current standing of the field overall, it seems the need for more efficient FFT's 
 		will become necessary as the increase in size of datasets will demand it. Even more so 
 		the improvement of parallel FFT's will be required, as Ben Karsin says,
 		"For many applications, sequential FFT algorithms are simply not powerful enough" \cite{FFTLitReview}.
@@ -570,11 +570,10 @@ Observe any performance boosts if any.
 		is well suited for parallelization. Since there are many applications for FFT calculation, any improvements to the speed 
 		of the algorithm are vital when calculating large samples of \textit{N}.
 	}
-% Maybe we can find a fancier name rather than conclusion, if not it should be fine.
-% Also should I be more broad? Talking about the need to learn QT's framework on top of the math
+
 \section{Conclusion}
 	\par{
-		Overall the research was based on a difficult topic, so most of all learning and understanding the 
+		Overall, the research was based on a difficult topic, so most of all learning and understanding the 
 		math behind it proved to be the toughest hurdle. It was imperative to understand the base discrete 
 		Fourier transform, to be able to understand its optimization and then implement it. A more straight 
 		forward approach of no inter-processor communication was chosen for simplicity. It was easier to 
