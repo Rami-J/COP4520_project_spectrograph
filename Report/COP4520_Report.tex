@@ -63,13 +63,13 @@ state-of-the-art research.
 \end{itemize}
 
 \subsection{Approach}\label{Approach}
-	\par {Tackling some of the above sub-problems. In order to create a GUI to interact with, 
-	we will write the program using the QT C++ GUI framework to simplify taking audio files 
-	from disk and decoding the raw data. Through the use of provided libraries of QT the 
+	\par {Tackling some of the above sub-problems, in order to create a GUI to interact with 
+	we will write the program using the Qt C++ GUI framework to simplify taking audio files 
+	from disk and decoding the raw data. Through the use of provided libraries of Qt the 
 	basic functionality of loading files and playing/decoding audio is handled and we use 
 	them on a higher level. This will allow us to focus more on the problem of processing 
-	signals for the audio files. Then by handling extracting raw data from the audio files 
-	using the QAudioDecoder class provided by QT, we intend to use one-dimensional Fast 
+	signals for the audio files. Then by extracting raw data from the audio files 
+	using the QAudioDecoder class provided by Qt, we intend to use one-dimensional Fast 
 	Fourier Transforms (FFT) to process the signals. For our approach on parallelizing the FFT,
 	we plan on taking a distributed approach which evenly divides the work each thread does
 	when calculating the FFT over $N$ total samples. The algorithms for the sequential and parallel 
@@ -77,25 +77,30 @@ state-of-the-art research.
 	}
 \subsubsection{Project Architecture}
     \par{
-		The core of the project resides in the FTController, which spawns threads using a queue to hold each one.
+		The core of the project resides in the FTController, which spawns DistributedFFTWorkerThreads using an array to hold each one.
 	}
     \par{
 		For the distributed DFT, the number of samples is calculated and if the result is 0, it exits. 
-		The raw data is taken as a char array and represented as a short array as well. Following is the calculation 
-		for the range of data that the thread will process. Each sample is evaluated where the raw data stored in the 
-		short array is accessed and multiplied by the real and imaginary values which are represented as cosine and sine 
-		respectfully. This product is added to the current sum, a complex double.
+		The raw data is taken as a char array and is iterated through as a short array to retrieve the actual
+		data from the samples. Then the calculation 
+		for the range of data that the thread will process is performed, based on the thread's worker ID. 
+		Each sample is evaluated from the 
+		short array and multiplied by the real and imaginary terms which are represented with cosine and sine 
+		respectfully. This product is added to the current sum for the current iteration of frequency $k$.
 	}
     \par{
-		The magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest y-value seen so far. 
-		The point of the graph is stored as an (x,y) coordinate in the vector output.
+		After the summation is finished, the magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest amplitude calculated so far. 
+		The point of the graph is stored as an $(x,y)$ coordinate in the final vector output, which reperesents a
+		frequency bin $x$ and corresponding amplitude $y$.
 	}
     \par{
 		The output vector is iterated only on the lower half, where the frequencies that are within the scope 
-		of our desired frequency are plotted in the Qt chart for frequency visualization.
+		of our desired frequency are plotted in the Qt chart for frequency visualization. The point vector is then
+		sent to the FTController where it normalizes the amplitude values
+		between 0 and 1 based on the maximum summation we calculated.
 	}
     \par{
-		For the distributed FFT, the Cooley-Turkey FFT algorithm is utilized. First, the length of the real and imaginary 
+		For the distributed FFT, the Cooley-Tukey FFT algorithm is utilized. First, the length of the real and imaginary 
 		vectors are checked to be of the same length. Once that is verified the number of levels for the FFT are 
 		computed by bit shifting the length. If the length is not a power of 2, then both the real and imaginary 
 		vectors must be resized to the next highest power of 2, automatically padding
@@ -141,7 +146,8 @@ state-of-the-art research.
 \subsection{Plan Outline}
 
 \par{
-	An outline of how our project development was structured is detailed below:
+	An outline of how our project development was structured and the steps we took
+	to ensure we achieved our goals is detailed below:
 }
 \begin{enumerate}
 	\item Setup programming environment using Qt C++.
@@ -247,7 +253,7 @@ Observe any performance boosts if any.
 	\par{
 		This equation is simplified in terms of cosine and sine for code
 		simplicity in the implementation, similar to equation (\ref{DFT2}).
-		The algorithm for the Cooley-Tukey radix-2 DIT algorithm also makes
+		The Cooley-Tukey radix-2 DIT algorithm also makes
 		use of bit-reversal permutation addressing, which swaps the
 		real/imaginary signal input elements based on the bit reversal of their
 		respective index in the signal. This is needed because the splitting
@@ -270,13 +276,13 @@ Observe any performance boosts if any.
 			slice of the original input of size $N$. This implementation makes use
 			of the QThread API from the Qt 5 C++ core library. We decided to use 8
 			total FFT worker threads with each thread operating on an evenly-split
-			amount of samples, padded to the next power of 2 if needed, using
-			bit-shifting to find the size and resizing the std::vector, padded with
-			0s.
+			amount of samples, padded with zeros to the next power of 2 if needed, using
+			bit-shifting to find the size and resizing the std::vector.
 
 			Each thread is spawned in the FTController class which assigns each thread
 			a unique ID from 0-7, which is used in the range calculation
-			(\ref{RangeEq}) of the indices to calculate the FFT on. 
+			(\ref{RangeEq}) of the indices to perform the FFT on for that particular
+			thread. 
 			
 			\begin{equation}\label{RangeEq}
 				data_i = signal[i*N/p, (i+1)*N/p - 1] (i = 0, ..., p-1)
@@ -284,7 +290,8 @@ Observe any performance boosts if any.
 
 			Where $N$ is the total size of the $signal$ input array,
 			$i$ is the unique worker ID, and $p$ is the total amount of worker
-			threads.
+			threads. The output $data_i$ is the array slice of the input $signal$ 
+			array for thread $i$.
 
 			This range calculation (\ref{RangeEq}) is a relatively common
 			approach to distributing work between multiple threads, allowing for
@@ -300,7 +307,7 @@ Observe any performance boosts if any.
 			the use of thread-safe signals available in the Qt Core library, 
 			which could lead to a potential bottleneck for a greater amount of
 			threads. Finally, the FTController combines the split output of the worker
-			threads into a local vector of (frequency, magnitude) points, which
+			threads into a single local vector of (frequency, magnitude) points, which
 			is used to plot the Frequency vs. Amplitude graph in our application.
 		}
 
@@ -308,8 +315,9 @@ Observe any performance boosts if any.
 	\par{
 		Figure \ref{fig:data-table} displays our performance results of 
 		the sequential and parallel implementations of the Fast Fourier Transform
-		tested on three different WAV audio files. The computation
-		time may vary among different systems due to hardware capabilities.
+		tested on three different WAV audio files. Obviously, the computation
+		time may vary among different systems due to hardware capabilities, but
+		we generally expect the speedup factor to be around the same.
 	}
 
 
@@ -389,38 +397,32 @@ Observe any performance boosts if any.
 		make up the state of the art research in digital signal processing using fourier transforms. 
 		Although there are several implementations, they are typically those that improve on the constant 
 		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
-		the efficiency of each algorithm is typically determined based on the total of operations which 
+		the efficiency of each algorithm is typically determined based on the total amount of operations which 
 		involves the addition and multiplication count aiming for less operations but yielding same results. 
-		Further expanding on the FFT algorithms to further increase performance, variations of the algorithms 
-		were parallelized. Where some utilize inter-processing communications, and others with no communications. 
-		A comparison between the two approaches to parallelizing the FFT is provided in \cite{Pan}, with a 
-		end result of no-communications performing better on smaller data sets, and inter-processing communications 
+		Further expanding on the FFT algorithms to further increase performance on distributed and multi-processor systems, variations of the algorithms 
+		were parallelized. Where some utilize inter-processor communications, and others with no communications. 
+		A comparison between the two approaches to parallelizing the FFT is provided in \cite{Pan}, with an 
+		end result of no utilization of inter-processor communications performing better on smaller data sets, and utilization of inter-processor communications 
 		performing more efficient on larger data sets. In the below subsections, the different implementations 
 		are explained in more detail.
-		% Should I delve more into the specifics that are covered by the \cite{Pan}?
 	}
-	% Within each after describing the algorithms key difference I will elaborate on opportunities to parallelize,
-	% and reference papers that do parallelize the algorithm.
-	% Should state of the art talk about the different overall approaches to parallelizing these algorithms, such as
-	% communications between threads, or independently computing calculations.
 
 	\subsection{Radix 2 Decimation in Time}
-		% Is it acceptable to use abbreviations?
 		\par{
 			This RAD 2 DIT algorithm makes use of the divide and conquer methodology. Through exploiting 
 			the symmetrical properties of the DFT the summation can be broken up into computations of even 
 			and odd sample points \cite{Soni}. The sub trees of even and odd points are then continuously 
-			broken up into smaller transforms. Due to the computations not being in a natural ordering 
-			it is necessary to use bit reversal to obtain the natural ordering of the results. As said by 
+			broken up into smaller transforms. Due to the computations not being in a natural ordering,
+			it is necessary to use bit-reversed addressing permutations to obtain the natural ordering of the results. As said by 
 			Douglas L. Jones in \cite{Cnx}, it is considered one of the simplest Power-of-two FFT algorithms. 
-			That being the case it serves as a great approach to begin with due to its efficiency relative to 
+			That being the case, it serves as a great approach to begin with due to its efficiency relative to 
 			its simplicity.
 		}
 	\subsection{Split Radix FFT}
 		\par{
 			Similar to the Radix 2 DIT, the sample points are split into even and odd indicies. Although there is 
 			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
-			a radix-4 index map. Since the even and odd indicies are computed independantly, it is possible to split 
+			a radix-4 index map. Since the even and odd indicies are computed independently, it is possible to split 
 			them into the two diffrent index mappings. The number of computations required deduce to ${4n Log(n)}$ 
 			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}. Due to the efficiency provided by the split 
 			radix approach, it is preferred to the Radix 2 approach, as the implementation is not much more difficult 
@@ -433,7 +435,7 @@ Observe any performance boosts if any.
 			are exposed, overall allowing for the computation of the DFT to be reduced \cite{Cnx}. 
 			This approach is not as widely used as the Power-of-two FFT's such as Split radix and Radix-2 DIT discussed above. 
 			One characteristic about this algorithm is that it serves to remove the twiddle factors and remaining with multiples 
-			of short length, the opposite affect that is achieved with the Power-of-two algorithms. Although this approach is not 
+			of short length, the opposite effect that is achieved with the Power-of-two algorithms. Although this approach is not 
 			as widely used, it yields similar operation count on similar length samples \cite{Cnx}, making this approach not 
 			inferior to the latter.
 		}
@@ -474,7 +476,7 @@ Observe any performance boosts if any.
 		up re-computing the same cosine/sine functions independently anyways.
 		This could end up saving us $O(n)$ time in pre-computation for the 
 		Cooley-Tukey algorithm; however, the overall runtime complexity 
-		stays $O(nlogn)$ due to the main computation loops.
+		remains $O(nlogn)$ due to the main computation loops.
 	}
 
 \section{Related Work}
@@ -546,8 +548,8 @@ Observe any performance boosts if any.
 \section{Our Contributions}
 	\par{
 		After performing experiments with sequential and parallel implementations of the FFT, the execution times were 
-		recorded and proven that the parallel implementaions ran more efficiently, based on trial data. This contributes to the fact 
-		that parallel implementations of the Fast Fourier transform are more effective. Also, that the FFT algorithm 
+		recorded and proven that the parallel implementations ran more efficiently, based on trial data. This contributes to the fact 
+		that parallel implementations of the Fast Fourier transform are more effective for large $N$. Also, that the FFT algorithm 
 		is well suited for parallelization. Since there are many applications for FFT calculation, any improvements to the speed 
 		of the algorithm are vital when calculating large samples of \textit{N}.
 	}
@@ -558,11 +560,11 @@ Observe any performance boosts if any.
 		Overall the research was based on a difficult topic, so most of all learning and understanding the 
 		math behind it proved to be the toughest hurdle. It was imperative to understand the base discrete 
 		fourier transform, to be able to understand its optimization and then implement it. A more straight 
-		forward approach of no interprocessing communications was chosen for simplicity. It was easier to 
-		follow and understand with it being lockfree and not having and conflicting memory accesses while 
-		values were being computed. Also with the nature of the problem being relatively distrbuted, it 
+		forward approach of no inter-processor communication was chosen for simplicity. It was easier to 
+		follow and understand with it being lock free and not having any conflicting memory accesses while 
+		values were being computed. Also, due to the nature of the problem being relatively distributed, it 
 		seemed natural to apply a distributed approach to calculating the FFT. The performance gains made 
-		with our parallelized implementaion were a relatively large improvment, as the sequential FFT was 
+		with our parallelized implementation were a relatively large improvement, as the sequential FFT was 
 		about 6 times as slow, making a significant improvement over large number of \textit{N} samples.
 	}
 
