@@ -523,7 +523,7 @@ Observe any performance boosts if any.
 	}
 	\cite{Beaudoin}
 	\par{
-		One popular and very efficient implementation of FFTs comes from a library
+		One popular and very efficient implementation of FFT's comes from a library
 		called FFTW (Fastest Fourier Transform in the West) developed by Matteo 
 		Frigo and Steven G. Johnson at MIT. The library was developed with
 		portability and flexibility in mind, allowing computation of real and
@@ -544,7 +544,25 @@ Observe any performance boosts if any.
 		equally among different threads.
 		\cite{FFTW}
 	}
-
+\section{Open Research}
+	\par{
+		The top-performing platforms best suited for FFT's in the current day are 
+		distributed-memory supercomputers \cite{FFTLitReview}. Current day GPU's 
+		are by no means terrible, but by comparison to supercomputers, the   
+		the focus of FFT computations will most likley remain on the supercomputing 
+		platforms for some time. Although there are still resources available further 
+		pushing the research within the FFT field. A open source library that contributes 
+		greatly to that is, \textit{Fastest Fourier Transform in the West} otherwise 
+		known as \textit{FFTW}. Open source software such as \textit{FFTW} serves as a great 
+		way of furthering the research of FFT's as it is easily accessesible to engineers 
+		from different fields, allowing for different takes and improvements. Relative to the 
+		current standing of the field, overall it seems the need for more efficient FFT's 
+		will become necessary as the increase in size of datasets will demand it. Even more so 
+		the improvement of parallel FFT's will be required, as Ben Karsin says,
+		"For many applications, sequential FFT algorithms are simply not powerful enough" \cite{FFTLitReview}.
+		The growing use cases for the FFT will certainly in the future provide new and improved 
+		algorithms or findings.
+	}
 \section{Our Contributions}
 	\par{
 		After performing experiments with sequential and parallel implementations of the FFT, the execution times were 
