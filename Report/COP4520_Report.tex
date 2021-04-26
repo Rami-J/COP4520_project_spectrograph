@@ -396,7 +396,7 @@ Observe any performance boosts if any.
 		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
 		make up the state-of-the-art research in digital signal processing using Fourier transforms. 
 		Although there are several implementations, they are typically those that improve on the constant 
-		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
+		factors, none of which that obtain a better upper asymptotic bound of $O(nlogn)$. Although 
 		the efficiency of each algorithm is typically determined based on the total amount of operations which 
 		involves the addition and multiplication count aiming for less operations but yielding same results. 
 		Further expanding on the FFT algorithms to further increase performance on distributed and multi-processor systems, variations of the algorithms 
@@ -423,8 +423,8 @@ Observe any performance boosts if any.
 			Similar to the Radix 2 DIT, the sample points are split into even and odd indices. Although there is 
 			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
 			a radix-4 index map. Since the even and odd indices are computed independently, it is possible to split 
-			them into the two different index mappings. The number of computations required deduce to ${4n Log(n)}$ 
-			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}. Due to the efficiency provided by the split 
+			them into the two different index mappings. The number of computations required deduce to ${4n log(n)}$ 
+			as opposed to the Radix 2 DIT's ${5n log(n)}$ \cite{Soni}. Due to the efficiency provided by the split 
 			radix approach, it is preferred to the Radix 2 approach, as the implementation is not much more difficult 
 			to expand to.
 		}
