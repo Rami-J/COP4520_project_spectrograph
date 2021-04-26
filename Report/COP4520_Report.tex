@@ -90,7 +90,7 @@ state-of-the-art research.
 	}
     \par{
 		After the summation is finished, the magnitude of the current sum is evaluated and stored as the maximum sum if it is the largest amplitude calculated so far. 
-		The point of the graph is stored as an $(x,y)$ coordinate in the final vector output, which reperesents a
+		The point of the graph is stored as an $(x,y)$ coordinate in the final vector output, which represents a
 		frequency bin $x$ and corresponding amplitude $y$.
 	}
     \par{
@@ -164,7 +164,7 @@ Observe any performance boosts if any.
 \subsection{Algorithm}\label{Algorithm}
 
 \subsubsection{Discrete Fourier Transform}
-% can go into just what the discrete fourier transform is and its runtime and space complexity.
+% can go into just what the discrete Fourier transform is and its runtime and space complexity.
 	\par{
 		The Discrete Fourier Transform (DFT) can be calculated as 
 		a summation of the product of the sample value and a complex
@@ -183,7 +183,7 @@ Observe any performance boosts if any.
 		indicating a large response from the DFT for that frequency $k$.
 	}
 	\par{
-		An equivalent summation can be derived in terms of the trigonemetric
+		An equivalent summation can be derived in terms of the trigonometric
 		functions cosine and sine using Euler's Identity $e^{ix}=cosx + isinx$,
 		as shown in equation (\ref{DFT2}).
 	}
@@ -207,9 +207,9 @@ Observe any performance boosts if any.
 		achieving better overall performance.
 	}
 
-	%\par While we established that we will be using the Fourier Transforms. As the base implementation of fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
+	%\par While we established that we will be using the Fourier Transforms. As the base implementation of Fourier transforms resolves to a $O(n^2)$ runtime according to~\cite{Xie}.
 \subsubsection{Fast Fourier Transform}
-% can go into just what the fast fourier transform is and its runtime and space complexity.
+% can go into just what the fast Fourier transform is and its runtime and space complexity.
 	\par {
 		It is essential that we use an implementation that yields a 
 		better runtime as in the case of our program, operating on 
@@ -268,7 +268,7 @@ Observe any performance boosts if any.
 		\cite{Nayuki} and was modified for our use-case.
 	}
 \subsection{Parallelized Fast Fourier Transform}
-% Can specify more on how the threads will interact with the fourier transform, 
+% Can specify more on how the threads will interact with the Fourier transform, 
 % why the number of threads we chose and such.
 		\par{
 			As explained in section \ref{Approach}, our application implements
@@ -390,11 +390,11 @@ Observe any performance boosts if any.
 
 
 	\par {
-		The discrete fourier transforms have a variety of applications for the 
+		The discrete Fourier transforms have a variety of applications for the 
 		science and engineering fields \cite{Xiang}.Though due to how inefficient 
-		the base form of fourier transforms are, the Cooley-Tukey Fast Fourier transform 
+		the base form of Fourier transforms are, the Cooley-Tukey Fast Fourier transform 
 		was developed in 1965 that was later expanded on \cite{CTA}. These modified implementations 
-		make up the state of the art research in digital signal processing using fourier transforms. 
+		make up the state of the art research in digital signal processing using Fourier transforms. 
 		Although there are several implementations, they are typically those that improve on the constant 
 		factors, none of which that obtain a better upper asymptotic bound of ${O(N Log(N))}$. Although 
 		the efficiency of each algorithm is typically determined based on the total amount of operations which 
@@ -420,10 +420,10 @@ Observe any performance boosts if any.
 		}
 	\subsection{Split Radix FFT}
 		\par{
-			Similar to the Radix 2 DIT, the sample points are split into even and odd indicies. Although there is 
+			Similar to the Radix 2 DIT, the sample points are split into even and odd indices. Although there is 
 			a key difference where the even indexed terms uses a radix-2 index map, and the odd indexed terms uses 
-			a radix-4 index map. Since the even and odd indicies are computed independently, it is possible to split 
-			them into the two diffrent index mappings. The number of computations required deduce to ${4n Log(n)}$ 
+			a radix-4 index map. Since the even and odd indices are computed independently, it is possible to split 
+			them into the two different index mappings. The number of computations required deduce to ${4n Log(n)}$ 
 			as opposed to the Radix 2 DIT's ${5n Log(n)}$ \cite{Soni}. Due to the efficiency provided by the split 
 			radix approach, it is preferred to the Radix 2 approach, as the implementation is not much more difficult 
 			to expand to.
@@ -431,7 +431,7 @@ Observe any performance boosts if any.
 
 	\subsection{Prime Factor Algorithm}
 		\par{
-			The idea behind this algorithm is to reorder the DFT computations in such a way that any rendundancies 
+			The idea behind this algorithm is to reorder the DFT computations in such a way that any redundancies 
 			are exposed, overall allowing for the computation of the DFT to be reduced \cite{Cnx}. 
 			This approach is not as widely used as the Power-of-two FFT's such as Split radix and Radix-2 DIT discussed above. 
 			One characteristic about this algorithm is that it serves to remove the twiddle factors and remaining with multiples 
@@ -481,7 +481,7 @@ Observe any performance boosts if any.
 
 \section{Related Work}
 	\par{
-		The implementation that we went with was the Radix 2 Decimation in Time algorithm. Paralleizing it without 
+		The implementation that we went with was the Radix 2 Decimation in Time algorithm. Parallelizing it without 
 		interprocessor communications, where a constant number of 8 threads are utilized. It varies from the 
 		methods used in \cite{Xie}, which instead made use of an arbitrary number of processes \textit{P}. 
 	}
@@ -548,13 +548,13 @@ Observe any performance boosts if any.
 	\par{
 		The top-performing platforms best suited for FFT's in the current day are 
 		distributed-memory supercomputers \cite{FFTLitReview}. Current day GPU's 
-		are by no means terrible, but by comparison to supercomputers, the   
-		the focus of FFT computations will most likley remain on the supercomputing 
+		are by no means terrible, but by comparison to supercomputers,
+		the focus of FFT computations will most likely remain on the supercomputing 
 		platforms for some time. Although there are still resources available further 
 		pushing the research within the FFT field. A open source library that contributes 
 		greatly to that is, \textit{Fastest Fourier Transform in the West} otherwise 
 		known as \textit{FFTW}. Open source software such as \textit{FFTW} serves as a great 
-		way of furthering the research of FFT's as it is easily accessesible to engineers 
+		way of furthering the research of FFT's as it is easily accessible to engineers 
 		from different fields, allowing for different takes and improvements. Relative to the 
 		current standing of the field, overall it seems the need for more efficient FFT's 
 		will become necessary as the increase in size of datasets will demand it. Even more so 
@@ -577,7 +577,7 @@ Observe any performance boosts if any.
 	\par{
 		Overall the research was based on a difficult topic, so most of all learning and understanding the 
 		math behind it proved to be the toughest hurdle. It was imperative to understand the base discrete 
-		fourier transform, to be able to understand its optimization and then implement it. A more straight 
+		Fourier transform, to be able to understand its optimization and then implement it. A more straight 
 		forward approach of no inter-processor communication was chosen for simplicity. It was easier to 
 		follow and understand with it being lock free and not having any conflicting memory accesses while 
 		values were being computed. Also, due to the nature of the problem being relatively distributed, it 
